@@ -25,6 +25,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display"
         <p style="font-size:17px;line-height:23px;color:#454541;margin:0">Your assistants have been keeping things in order. Pick up where you like.</p>
       </div>
       <dc-import name="LifeTopicsModule" variant="home" topics="{{ topics }}" addAction="{{ addTopic }}" hint-size="100%,260px"></dc-import>
+      <dc-import name="RecentChatsModule" variant="home" chats="{{ chats }}" seeMore="{{ seeMore }}" hint-size="100%,280px"></dc-import>
       <dc-import name="ConversationStartersModule" assistant="assistant" firstTime="{{ true }}" starters="{{ starters }}" hint-size="100%,260px"></dc-import>
     </div>
     <div style="position:sticky;bottom:0;background:linear-gradient(to top,#F4F4F1 70%,rgba(244,244,241,0));padding-top:4px">
@@ -46,6 +47,12 @@ class Component extends DCLogic {
         { id: 'money', label: 'Money', status: '1 review', icon: 'money', action: () => go('maya') },
       ],
       addTopic: () => {},
+      chats: [
+        { id: 'c1', assistant: 'Home helper', preview: 'Moved Thursday\u2019s session to Friday', unread: true, route: 'alison', action: () => go('alison') },
+        { id: 'c2', assistant: 'Health coach', preview: 'Your recovery-day plan is ready', unread: false, route: 'becca', action: () => go('becca') },
+        { id: 'c3', assistant: 'Financial coach', preview: 'Found a subscription you don\u2019t use', unread: false, route: 'maya', action: () => go('maya') },
+      ],
+      seeMore: () => go('assistants'),
       starters: [
         { label: 'Plan my recovery day', action: () => go('becca') },
         { label: 'Check my subscriptions', action: () => go('maya') },
