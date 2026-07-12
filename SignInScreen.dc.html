@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display",system-ui,sans-serif;background:#D8D8D3;color:#1A1A1A;-webkit-font-smoothing:antialiased}
+</style>
+</helmet>
+<div style="max-width:440px;margin:0 auto;min-height:100vh;background:#F4F4F1;display:flex;flex-direction:column;box-shadow:0 0 40px rgba(0,0,0,0.06)">
+  <main role="main" style="display:flex;flex-direction:column;flex:1;min-height:0;padding:24px 20px 28px">
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+      <span aria-hidden="true" style="font-size:40px;line-height:1;font-weight:700;color:#1A1A1A;letter-spacing:-0.03em;margin-bottom:16px">(o)</span>
+      <h1 style="font-size:30px;line-height:36px;font-weight:700;letter-spacing:-0.02em;margin:0 0 8px">Capsule</h1>
+      <p style="font-size:17px;line-height:23px;color:#454541;margin:0;max-width:300px">Assistants that work for you — and never act without asking.</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <button onClick="{{ signIn }}" style="width:100%;min-height:52px;border-radius:14px;border:none;background:#2E5AAC;color:#FFFFFF;font-size:17px;font-weight:600;cursor:pointer;font-family:inherit">Continue</button>
+      <button onClick="{{ skip }}" style="width:100%;min-height:52px;border-radius:14px;background:transparent;color:#1A1A1A;border:2px solid #1A1A1A;font-size:17px;font-weight:600;cursor:pointer;font-family:inherit">Skip to the demo</button>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{ &quot;$preview&quot;: { &quot;width&quot;: 440, &quot;height&quot;: 900 } }">
+class Component extends DCLogic {
+  renderVals() {
+    const go = this.props.onNavigate || (() => {});
+    return { signIn: () => go('onboarding'), skip: () => go('home') };
+  }
+}
+</script>
+</body>
+</html>

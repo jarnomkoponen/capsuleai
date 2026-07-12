@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display",system-ui,sans-serif;background:#EAEAE6;color:#1A1A1A;-webkit-font-smoothing:antialiased}
+</style>
+</helmet>
+<div style="max-width:460px;margin:0 auto;padding:16px">
+  <form onSubmit="{{ onSubmit }}" style="display:flex;align-items:flex-end;gap:8px;background:#FFFFFF;border:1px solid #E4E3DF;border-radius:24px;padding:6px">
+
+    <sc-if value="{{ showUpload }}" hint-placeholder-val="{{ false }}">
+      <button type="button" aria-label="Add attachment" onClick="{{ noop }}" style="width:44px;height:44px;flex:none;border:none;background:transparent;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#454541" style-hover="background:#F4F4F1">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+      </button>
+    </sc-if>
+
+    <label for="cap-chat-input" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">{{ label }}</label>
+    <input id="cap-chat-input" type="text" placeholder="{{ placeholder }}" value="{{ value }}" onInput="{{ onInput }}" disabled="{{ disabled }}" style="flex:1;min-height:44px;border:none;outline:none;background:transparent;font-size:17px;line-height:22px;color:#1A1A1A;padding:0 6px;font-family:inherit" />
+
+    <sc-if value="{{ showVoice }}" hint-placeholder-val="{{ false }}">
+      <button type="button" aria-label="{{ voiceLabel }}" aria-pressed="{{ voiceActive }}" onClick="{{ toggleVoice }}" style="width:44px;height:44px;flex:none;border:none;background:{{ voiceBg }};border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:{{ voiceColor }}">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"></rect><path d="M6 11a6 6 0 0 0 12 0"></path><path d="M12 17v4"></path></svg>
+      </button>
+    </sc-if>
+
+    <button type="submit" aria-label="Send message" disabled="{{ sendDisabled }}" style="width:44px;height:44px;flex:none;border:none;background:{{ sendBg }};border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:{{ sendCursor }};color:#FFFFFF">
+      <sc-if value="{{ sending }}" hint-placeholder-val="{{ false }}">
+        <span style="font-size:11px;font-weight:700">…</span>
+      </sc-if>
+      <sc-if value="{{ notSending }}" hint-placeholder-val="{{ true }}">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 19V5"></path><path d="M5 12l7-7 7 7"></path></svg>
+      </sc-if>
+    </button>
+  </form>
+  <sc-if value="{{ voiceActive }}" hint-placeholder-val="{{ false }}">
+    <div aria-live="polite" style="font-size:13px;color:#2E5AAC;font-weight:600;margin:8px 0 0 12px">Listening… tap the mic to stop.</div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;$preview&quot;: { &quot;width&quot;: 492, &quot;height&quot;: 110 },
+  &quot;context&quot;: { &quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;assistant&quot;, &quot;onboarding&quot;, &quot;search&quot;], &quot;default&quot;: &quot;assistant&quot;, &quot;tsType&quot;: &quot;'onboarding'|'assistant'|'search'&quot; },
+  &quot;placeholder&quot;: { &quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Message your assistant&quot;, &quot;tsType&quot;: &quot;string&quot; },
+  &quot;disabled&quot;: { &quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot; }
+}">
+class Component extends DCLogic {
+  state = { value: '', voice: false, sending: false };
+  renderVals() {
+    const context = this.props.context ?? 'assistant';
+    const placeholderMap = {
+      onboarding: 'Tell Capsule what\u2019s on your mind',
+      assistant: 'Message your assistant',
+      search: 'Search',
+    };
+    const placeholder = this.props.placeholder ?? placeholderMap[context];
+    const disabled = this.props.disabled ?? false;
+    const showUpload = (this.props.showUpload ?? (context === 'assistant'));
+    const showVoice = (this.props.showVoice ?? (context !== 'search'));
+    const val = this.state.value;
+    const voice = this.state.voice;
+    const sending = this.state.sending;
+    const canSend = !disabled && val.trim().length > 0 && !sending;
+    return {
+      placeholder,
+      label: context === 'search' ? 'Search' : 'Message',
+      value: val, disabled,
+      showUpload, showVoice,
+      voiceActive: voice,
+      voiceLabel: voice ? 'Stop voice input' : 'Start voice input',
+      voiceBg: voice ? '#2E5AAC' : 'transparent',
+      voiceColor: voice ? '#FFFFFF' : '#454541',
+      sending, notSending: !sending,
+      sendDisabled: !canSend,
+      sendBg: canSend ? '#2E5AAC' : '#B9C4D8',
+      sendCursor: canSend ? 'pointer' : 'default',
+      noop: () => {},
+      onInput: (e) => this.setState({ value: e.target.value }),
+      toggleVoice: () => this.setState(s => ({ voice: !s.voice })),
+      onSubmit: (e) => {
+        e.preventDefault();
+        if (!canSend) return;
+        this.setState({ sending: true });
+        setTimeout(() => this.setState({ sending: false, value: '' }), 700);
+      },
+    };
+  }
+}
+</script>
+</body>
+</html>

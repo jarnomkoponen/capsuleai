@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display",system-ui,sans-serif;background:#EAEAE6;color:#1A1A1A;-webkit-font-smoothing:antialiased}
+@keyframes capsulePulse{0%,80%,100%{opacity:.2}40%{opacity:1}}
+@media (prefers-reduced-motion: reduce){.capsule-anim{animation:none !important;opacity:1 !important}}
+</style>
+</helmet>
+<div style="max-width:492px;margin:0 auto;padding:4px 0">
+  <div role="log" aria-live="polite" aria-label="Conversation with your assistant" style="display:flex;flex-direction:column;gap:2px">
+
+    <dc-import name="AssistantMessageModule" assistant="Health coach" body="Welcome back. How are you feeling after yesterday\u2019s session?" hint-size="100%,120px"></dc-import>
+
+    <dc-import name="UserMessageModule" body="A bit sore, but okay." state="sent" timestamp="9:41" hint-size="100%,90px"></dc-import>
+
+    <dc-import name="AssistantMessageModule" assistant="Health coach" status="Reviewing your recovery plan" body="That\u2019s normal on day one. Let\u2019s keep today light and check in tonight." hint-size="100%,150px"></dc-import>
+
+    <sc-if value="{{ streaming }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:4px 16px 8px">
+        <div style="display:flex;align-items:center;gap:10px;background:#FFFFFF;border:1px solid #E4E3DF;border-radius:14px;padding:12px 14px;max-width:280px">
+          <sc-if value="{{ reduced }}" hint-placeholder-val="{{ false }}">
+            <span style="width:8px;height:8px;border-radius:50%;background:#2E5AAC;flex:none"></span>
+          </sc-if>
+          <sc-if value="{{ notReduced }}" hint-placeholder-val="{{ true }}">
+            <span style="display:inline-flex;gap:4px;flex:none">
+              <span class="capsule-anim" style="width:8px;height:8px;border-radius:50%;background:#2E5AAC;animation:capsulePulse 1.2s infinite"></span>
+              <span class="capsule-anim" style="width:8px;height:8px;border-radius:50%;background:#2E5AAC;animation:capsulePulse 1.2s infinite;animation-delay:.15s"></span>
+              <span class="capsule-anim" style="width:8px;height:8px;border-radius:50%;background:#2E5AAC;animation:capsulePulse 1.2s infinite;animation-delay:.3s"></span>
+            </span>
+          </sc-if>
+          <span style="font-size:15px;color:#454541;font-weight:500">Preparing your plan…</span>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ idle }}" hint-placeholder-val="{{ true }}">
+      <dc-import name="FollowUpButtonsModule" hint-size="100%,120px"></dc-import>
+    </sc-if>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;$preview&quot;: { &quot;width&quot;: 500, &quot;height&quot;: 620 },
+  &quot;state&quot;: { &quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;idle&quot;, &quot;streaming&quot;, &quot;loading&quot;], &quot;default&quot;: &quot;idle&quot;, &quot;tsType&quot;: &quot;'loading'|'streaming'|'idle'&quot; },
+  &quot;forceReducedMotion&quot;: { &quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Motion&quot; }
+}">
+class Component extends DCLogic {
+  renderVals() {
+    const state = this.props.state ?? 'idle';
+    const reduced = this.props.forceReducedMotion ?? false;
+    return {
+      streaming: state === 'streaming' || state === 'loading',
+      idle: state === 'idle',
+      reduced,
+      notReduced: !reduced,
+    };
+  }
+}
+</script>
+</body>
+</html>

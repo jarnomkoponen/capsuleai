@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display",system-ui,sans-serif;background:#D8D8D3;color:#1A1A1A;-webkit-font-smoothing:antialiased}
+</style>
+</helmet>
+<div style="max-width:440px;margin:0 auto;min-height:100vh;background:#F4F4F1;display:flex;flex-direction:column;box-shadow:0 0 40px rgba(0,0,0,0.06)">
+  <main role="main" style="display:flex;flex-direction:column;flex:1;min-height:0">
+    <div style="position:sticky;top:0;z-index:5;background:#F4F4F1;padding-bottom:2px">
+      <dc-import name="TopNavModule" variant="home" title="Assistants" startChat="{{ startChat }}" hint-size="100%,88px"></dc-import>
+    </div>
+    <div style="flex:1;overflow:auto;padding-bottom:8px">
+      <div style="padding:8px 16px 0">
+        <h1 style="font-size:28px;line-height:34px;font-weight:700;letter-spacing:-0.02em;margin:0 0 2px">My assistants</h1>
+        <p style="font-size:16px;line-height:22px;color:#454541;margin:0">Each keeps its own context. They share only what you allow.</p>
+      </div>
+      <dc-import name="AssistantsModule" assistants="{{ roster }}" exploreMore="{{ explore }}" hint-size="100%,470px"></dc-import>
+      <dc-import name="ConversationStartersModule" assistant="assistant" firstTime="{{ false }}" starters="{{ starters }}" hint-size="100%,240px"></dc-import>
+      <dc-import name="RecentChatsModule" variant="assistant-view" chats="{{ chats }}" seeMore="{{ seeMore }}" hint-size="100%,300px"></dc-import>
+    </div>
+    <div style="position:sticky;bottom:0;background:linear-gradient(to top,#F4F4F1 70%,rgba(244,244,241,0));padding-top:4px">
+      <dc-import name="BottomNavModule" items="{{ navItems }}" hint-size="100%,88px"></dc-import>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{ &quot;$preview&quot;: { &quot;width&quot;: 440, &quot;height&quot;: 940 } }">
+class Component extends DCLogic {
+  renderVals() {
+    const go = this.props.onNavigate || (() => {});
+    const roster = [
+      { id:'alison', name:'Home helper', role:'Coordinates your family & home', initial:'H', chat:() => go('alison'), settings:() => {} },
+      { id:'becca', name:'Health coach', role:'Your recovery-day plan', initial:'H', chat:() => go('becca'), settings:() => {} },
+      { id:'jo', name:'Companion', role:'Here to think things through', initial:'C', chat:() => go('jo'), settings:() => {} },
+      { id:'maya', name:'Financial coach', role:'Keeps an eye on your money', initial:'F', chat:() => go('maya'), settings:() => {} },
+    ];
+    return {
+      startChat: () => go('jo'),
+      roster,
+      explore: () => {},
+      starters: [
+        { label:'Ask Home helper to plan the week', action:() => go('alison') },
+        { label:'Check in with your Health coach', action:() => go('becca') },
+        { label:'Talk something through', action:() => go('jo') },
+      ],
+      chats: [
+        { id:'c1', assistant:'Home helper', preview:'Moved Thursday\u2019s session to Friday', unread:true, route:'alison', action:() => go('alison') },
+        { id:'c2', assistant:'Health coach', preview:'Your recovery-day plan is ready', unread:false, route:'becca', action:() => go('becca') },
+        { id:'c3', assistant:'Financial coach', preview:'Found a subscription you don\u2019t use', unread:false, route:'maya', action:() => go('maya') },
+      ],
+      seeMore: () => {},
+      navItems: [
+        { label:'Home', icon:'home', current:false, action:() => go('home') },
+        { label:'Assistants', icon:'assistants', current:true, action:() => go('assistants') },
+        { label:'You', icon:'you', current:false, action:() => go('you') },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

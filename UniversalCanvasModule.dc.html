@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display",system-ui,sans-serif;background:#EAEAE6;color:#1A1A1A;-webkit-font-smoothing:antialiased}
+@keyframes capsuleShimmer{0%{opacity:.55}50%{opacity:1}100%{opacity:.55}}
+@media (prefers-reduced-motion: reduce){.capsule-skel{animation:none !important}}
+</style>
+</helmet>
+<div style="max-width:460px;margin:0 auto;padding:16px">
+  <main role="main" aria-busy="{{ busy }}" style="display:flex;flex-direction:column;gap:{{ gap }};max-width:{{ maxW }};margin:0 auto;width:100%">
+
+    <sc-if value="{{ isReady }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-direction:column;gap:{{ gap }}">
+        <div style="background:#FFFFFF;border:1px solid #E4E3DF;border-radius:16px;padding:{{ pad }}">
+          <div style="font-size:12px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:#6E6A62;margin-bottom:4px">Slot · priority 0</div>
+          <div style="font-size:17px;line-height:22px;color:#1A1A1A">An ordered module slot renders here. The canvas owns layout, order and density; slots own their content.</div>
+        </div>
+        <div style="background:#FFFFFF;border:1px solid #E4E3DF;border-radius:16px;padding:{{ pad }}">
+          <div style="font-size:12px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:#6E6A62;margin-bottom:4px">Slot · priority 1</div>
+          <div style="font-size:17px;line-height:22px;color:#1A1A1A">Slots may reorder by priority under population rules; pinned slots (nav) stay put.</div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:{{ gap }}">
+        <div class="capsule-skel" style="height:88px;border-radius:16px;background:#EDEDE8;animation:capsuleShimmer 1.4s ease-in-out infinite"></div>
+        <div class="capsule-skel" style="height:88px;border-radius:16px;background:#EDEDE8;animation:capsuleShimmer 1.4s ease-in-out infinite;animation-delay:.2s"></div>
+        <span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)" aria-live="polite">Loading</span>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+      <div style="background:#FFFFFF;border:1px solid #E4E3DF;border-radius:16px;padding:32px 20px;text-align:center">
+        <div style="font-size:17px;line-height:22px;font-weight:600;color:#1A1A1A;margin-bottom:4px">Nothing here yet</div>
+        <div style="font-size:15px;line-height:20px;color:#454541">This screen has no modules to show.</div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isError }}" hint-placeholder-val="{{ false }}">
+      <div role="alert" style="background:#FFFFFF;border:1px solid #E4C9C6;border-radius:16px;padding:20px;display:flex;gap:10px;align-items:flex-start">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C0342B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style="flex:none;margin-top:1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path></svg>
+        <div><div style="font-size:17px;line-height:22px;font-weight:600;color:#1A1A1A">Couldn't load this screen</div><div style="font-size:15px;line-height:20px;color:#454541;margin-top:2px">Check your connection and try again.</div></div>
+      </div>
+    </sc-if>
+
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;$preview&quot;: { &quot;width&quot;: 492, &quot;height&quot;: 320 },
+  &quot;state&quot;: { &quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;ready&quot;, &quot;loading&quot;, &quot;empty&quot;, &quot;error&quot;], &quot;default&quot;: &quot;ready&quot;, &quot;tsType&quot;: &quot;'loading'|'ready'|'empty'|'error'&quot; },
+  &quot;density&quot;: { &quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;comfortable&quot;, &quot;compact&quot;], &quot;default&quot;: &quot;comfortable&quot;, &quot;tsType&quot;: &quot;'comfortable'|'compact'&quot; },
+  &quot;variant&quot;: { &quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;mobile&quot;, &quot;wide&quot;], &quot;default&quot;: &quot;mobile&quot;, &quot;tsType&quot;: &quot;'mobile'|'wide'&quot; }
+}">
+class Component extends DCLogic {
+  renderVals() {
+    const state = this.props.state ?? 'ready';
+    const density = this.props.density ?? 'comfortable';
+    const variant = this.props.variant ?? 'mobile';
+    return {
+      isReady: state === 'ready',
+      isLoading: state === 'loading',
+      isEmpty: state === 'empty',
+      isError: state === 'error',
+      busy: state === 'loading',
+      gap: density === 'compact' ? '8px' : '12px',
+      pad: density === 'compact' ? '12px' : '16px',
+      maxW: variant === 'wide' ? '760px' : '100%',
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display",system-ui,"Segoe UI",sans-serif;background:#EAEAE6;color:#1A1A1A;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+a{color:#2E5AAC;text-decoration:none}
+a:hover{color:#22447f;text-decoration:underline}
+@keyframes capsulePulse{0%,80%,100%{opacity:.18}40%{opacity:1}}
+@media (prefers-reduced-motion: reduce){.capsule-anim{animation:none !important;opacity:1 !important}}
+</style>
+</helmet>
+<div style="max-width:430px;margin:0 auto;padding:20px 16px 48px">
+
+  <div style="margin-bottom:16px;padding:2px">
+    <p style="font-size:11px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:#8A8A82;margin:0 0 8px">Capsule · Foundation</p>
+    <h1 style="font-size:30px;line-height:35px;font-weight:700;letter-spacing:-0.02em;margin:0 0 8px">Layer 0 — Design tokens</h1>
+    <p style="font-size:15px;line-height:21px;color:#5C5C5C;margin:0">The style layer every module builds on: color roles, the type ramp, spacing, touch targets, motion and consent. These are starting values — tune them in the panel and everything downstream inherits.</p>
+  </div>
+
+  <!-- COLOR ROLES -->
+  <section style="background:#FFFFFF;border:1px solid #E4E3DF;border-radius:16px;padding:20px;margin-bottom:12px">
+    <p style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#8A8A82;margin:0 0 6px">Semantic color roles</p>
+    <h2 style="font-size:19px;line-height:24px;font-weight:600;letter-spacing:-0.01em;margin:0 0 4px">Color</h2>
+    <p style="font-size:13px;line-height:18px;color:#5C5C5C;margin:0 0 12px">Roles, not raw values. Consent has its own role, kept deliberately separate from accent-trust.</p>
+
+    <p style="font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#A6A69E;margin:12px 0 2px">Surfaces</p>
+    <div style="display:flex;gap:12px;align-items:center;padding:9px 0;border-top:1px solid #F1F1ED">
+      <div style="width:40px;height:40px;border-radius:10px;flex:none;background:#F4F4F1;box-shadow:inset 0 0 0 1px rgba(0,0,0,0.08)"></div>
+      <div><div style="font-size:15px;font-weight:600;line-height:18px">surface</div><div style="font-size:12px;color:#5C5C5C;line-height:16px;margin-top:2px">#F4F4F1 · app background</div></div>
+    </div>
+    <div style="display:flex;gap:12px;align-items:center;padding:9px 0;border-top:1px solid #F1F1ED">
+      <div style="width:40px;height:40px;border-radius:10px;flex:none;background:#FFFFFF;box-shadow:inset 0 0 0 1px rgba(0,0,0,0.10)"></div>
+      <div><div style="font-size:15px;font-weight:600;line-height:18px">surface-raised</div><div style="font-size:12px;color:#5C5C5C;line-height:16px;margin-top:2px">#FFFFFF · module / card background</div></div>
+    </div>
+
+    <p style="font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#A6A69E;margin:16px 0 2px">Content</p>
+    <div style="display:flex;gap:12px;align-items:center;padding:9px 0;border-top:1px solid #F1F1ED">
+      <div style="width:40px;height:40px;border-radius:10px;flex:none;background:#1A1A1A"></div>
+      <div><div style="font-size:15px;font-weight:600;line-height:18px">content-primary</div><div style="font-size:12px;color:#5C5C5C;line-height:16px;margin-top:2px">#1A1A1A · primary text · 16:1 on surface</div></div>
+    </div>
+    <div style="display:flex;gap:12px;align-items:center;padding:9px 0;border-top:1px solid #F1F1ED">
+      <div style="width:40px;height:40px;border-radius:10px;flex:none;background:#5C5C5C"></div>
+      <div><div style="font-size:15px;font-weight:600;line-height:18px">content-secondary</div><div style="font-size:12px;color:#5C5C5C;line-height:16px;margin-top:2px">#5C5C5C · supporting text · 6.7:1 AA</div></div>
+    </div>
+
+    <p style="font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#A6A69E;margin:16px 0 2px">Brand accent</p>
+    <div style="display:flex;gap:12px;align-items:center;padding:9px 0;border-top:1px solid #F1F1ED">
+      <div style="width:40px;height:40px;border-radius:10px;flex:none;background:{{ accent }}"></div>
+      <div><div style="font-size:15px;font-weight:600;line-height:18px">accent-trust</div><div style="font-size:12px;color:#5C5C5C;line-height:16px;margin-top:2px">{{ accentHex }} · single brand accent · actions & active states</div></div>
+    </div>
+
+    <!-- CONSENT: visually offset as its own role -->
+    <div style="margin-top:16px;padding:14px;border-radius:14px;background:{{ consentTint }};border:1px solid {{ consentBorder }}">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px">
+        <p style="font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:{{ consent }};margin:0">Consent · separate role</p>
+        <span style="font-size:10px;font-weight:700;letter-spacing:0.04em;color:#FFFFFF;background:{{ consent }};padding:3px 7px;border-radius:999px">AAA</span>
+      </div>
+      <div style="display:flex;gap:12px;align-items:center;padding:9px 0 4px">
+        <div style="width:40px;height:40px;border-radius:10px;flex:none;background:{{ consent }}"></div>
+        <div><div style="font-size:15px;font-weight:600;line-height:18px">consent</div><div style="font-size:12px;color:#5C5C5C;line-height:16px;margin-top:2px">{{ consentHex }} · permission moments · 10.4:1 target</div></div>
+      </div>
+      <p style="font-size:12px;line-height:17px;color:#4A4A44;margin:6px 0 0">Deliberately distinct from accent-trust so a permission ask never reads as an ordinary button. Because control is the product, consent is a first-class visual state.</p>
+    </div>
+
+    <p style="font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#A6A69E;margin:16px 0 2px">Status &amp; lines</p>
+    <div style="display:flex;gap:12px;align-items:center;padding:9px 0;border-top:1px solid #F1F1ED">
+      <div style="width:40px;height:40px;border-radius:10px;flex:none;background:#1E7A46"></div>
+      <div><div style="font-size:15px;font-weight:600;line-height:18px">success</div><div style="font-size:12px;color:#5C5C5C;line-height:16px;margin-top:2px">#1E7A46 · 5.0:1 AA</div></div>
+    </div>
+    <div style="display:flex;gap:12px;align-items:center;padding:9px 0;border-top:1px solid #F1F1ED">
+      <div style="width:40px;height:40px;border-radius:10px;flex:none;background:#8A5A00"></div>
+      <div><div style="font-size:15px;font-weight:600;line-height:18px">warning</div><div style="font-size:12px;color:#5C5C5C;line-height:16px;margin-top:2px">#8A5A00 · 4.8:1 AA</div></div>
+    </div>
+    <div style="display:flex;gap:12px;align-items:center;padding:9px 0;border-top:1px solid #F1F1ED">
+      <div style="width:40px;height:40px;border-radius:10px;flex:none;background:#C0342B"></div>
+      <div><div style="font-size:15px;font-weight:600;line-height:18px">danger</div><div style="font-size:12px;color:#5C5C5C;line-height:16px;margin-top:2px">#C0342B · 5.2:1 AA</div></div>
+    </div>
+    <div style="display:flex;gap:12px;align-items:center;padding:9px 0;border-top:1px solid #F1F1ED">
+      <div style="width:40px;height:40px;border-radius:10px;flex:none;background:#FFFFFF;box-shadow:inset 0 0 0 1px #E4E3DF"></div>
+      <div><div style="font-size:15px;font-weight:600;line-height:18px">separator</div><div style="font-size:12px;color:#5C5C5C;line-height:16px;margin-top:2px">#E4E3DF · hairlines</div></div>
+    </div>
+  </section>
+
+  <!-- TYPE RAMP -->
+  <section style="background:#FFFFFF;border:1px solid #E4E3DF;border-radius:16px;padding:20px;margin-bottom:12px">
+    <p style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#8A8A82;margin:0 0 6px">SF Pro / system · Dynamic Type</p>
+    <h2 style="font-size:19px;line-height:24px;font-weight:600;letter-spacing:-0.01em;margin:0 0 4px">Type ramp</h2>
+    <p style="font-size:13px;line-height:18px;color:#5C5C5C;margin:0 0 14px">Body is 17pt — the HIG baseline for readability. Sizes shown as pt / leading. Nothing is hard-locked; the ramp honors the OS Dynamic Type setting.</p>
+
+    <div style="background:#F4F4F1;border:1px solid #EDEDE8;border-radius:12px;padding:12px 14px;margin-bottom:16px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
+        <label for="dtype" style="font-size:13px;font-weight:600;color:#1A1A1A">Dynamic Type</label>
+        <span style="font-size:13px;font-weight:600;color:{{ accent }};font-variant-numeric:tabular-nums">{{ typePct }}%</span>
+      </div>
+      <input id="dtype" type="range" min="0.85" max="2" step="0.05" value="1" onChange="{{ onType }}" style="width:100%;accent-color:{{ accent }};height:24px;cursor:pointer" />
+      <p style="font-size:11px;line-height:15px;color:#8A8A82;margin:6px 0 0">Drag to preview scaling to 200% (WCAG 1.4.4). The ramp scales; layout must not clip.</p>
+    </div>
+
+    <sc-for list="{{ ramp }}" as="t" hint-placeholder-count="8">
+      <div style="padding:11px 0;border-top:1px solid #F1F1ED">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+          <span style="font-size:12px;font-weight:600;color:#1A1A1A">{{ t.name }}</span>
+          <span style="font-size:11px;color:#A6A69E;font-variant-numeric:tabular-nums">{{ t.meta }}</span>
+          <sc-if value="{{ t.base }}" hint-placeholder-val="{{ false }}">
+            <span style="font-size:9px;font-weight:700;letter-spacing:0.05em;color:{{ accent }};background:{{ accentTint }};padding:2px 6px;border-radius:999px;text-transform:uppercase">Base</span>
+          </sc-if>
+        </div>
+        <div style="font-size:{{ t.fontSize }};line-height:{{ t.lineHeight }};font-weight:{{ t.weight }};color:#1A1A1A;letter-spacing:-0.01em">{{ t.sample }}</div>
+      </div>
+    </sc-for>
+  </section>
+
+  <!-- SPACING -->
+  <section style="background:#FFFFFF;border:1px solid #E4E3DF;border-radius:16px;padding:20px;margin-bottom:12px">
+    <p style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#8A8A82;margin:0 0 6px">4pt base grid · HIG-aligned</p>
+    <h2 style="font-size:19px;line-height:24px;font-weight:600;letter-spacing:-0.01em;margin:0 0 4px">Spacing scale</h2>
+    <p style="font-size:13px;line-height:18px;color:#5C5C5C;margin:0 0 14px">Default module padding is space-4 (16). Default gap between modules is space-3 (12).</p>
+
+    <div style="display:flex;align-items:center;gap:12px;padding:6px 0"><div style="width:104px;flex:none;font-size:13px;color:#1A1A1A;font-variant-numeric:tabular-nums"><span style="font-weight:600">space-0</span> <span style="color:#A6A69E">0</span></div><div style="height:14px;border-radius:4px;background:#CFCFC9;width:1px"></div></div>
+    <div style="display:flex;align-items:center;gap:12px;padding:6px 0"><div style="width:104px;flex:none;font-size:13px;color:#1A1A1A;font-variant-numeric:tabular-nums"><span style="font-weight:600">space-1</span> <span style="color:#A6A69E">4</span></div><div style="height:14px;border-radius:4px;background:#CFCFC9;width:4px"></div></div>
+    <div style="display:flex;align-items:center;gap:12px;padding:6px 0"><div style="width:104px;flex:none;font-size:13px;color:#1A1A1A;font-variant-numeric:tabular-nums"><span style="font-weight:600">space-2</span> <span style="color:#A6A69E">8</span></div><div style="height:14px;border-radius:4px;background:#CFCFC9;width:8px"></div></div>
+    <div style="display:flex;align-items:center;gap:12px;padding:6px 0"><div style="width:104px;flex:none;font-size:13px;color:#1A1A1A;font-variant-numeric:tabular-nums"><span style="font-weight:600">space-3</span> <span style="color:{{ accent }}">12 · gap</span></div><div style="height:14px;border-radius:4px;background:{{ accent }};width:12px"></div></div>
+    <div style="display:flex;align-items:center;gap:12px;padding:6px 0"><div style="width:104px;flex:none;font-size:13px;color:#1A1A1A;font-variant-numeric:tabular-nums"><span style="font-weight:600">space-4</span> <span style="color:{{ accent }}">16 · pad</span></div><div style="height:14px;border-radius:4px;background:{{ accent }};width:16px"></div></div>
+    <div style="display:flex;align-items:center;gap:12px;padding:6px 0"><div style="width:104px;flex:none;font-size:13px;color:#1A1A1A;font-variant-numeric:tabular-nums"><span style="font-weight:600">space-5</span> <span style="color:#A6A69E">24</span></div><div style="height:14px;border-radius:4px;background:#CFCFC9;width:24px"></div></div>
+    <div style="display:flex;align-items:center;gap:12px;padding:6px 0"><div style="width:104px;flex:none;font-size:13px;color:#1A1A1A;font-variant-numeric:tabular-nums"><span style="font-weight:600">space-6</span> <span style="color:#A6A69E">32</span></div><div style="height:14px;border-radius:4px;background:#CFCFC9;width:32px"></div></div>
+    <div style="display:flex;align-items:center;gap:12px;padding:6px 0"><div style="width:104px;flex:none;font-size:13px;color:#1A1A1A;font-variant-numeric:tabular-nums"><span style="font-weight:600">space-7</span> <span style="color:#A6A69E">48</span></div><div style="height:14px;border-radius:4px;background:#CFCFC9;width:48px"></div></div>
+    <div style="display:flex;align-items:center;gap:12px;padding:6px 0"><div style="width:104px;flex:none;font-size:13px;color:#1A1A1A;font-variant-numeric:tabular-nums"><span style="font-weight:600">space-8</span> <span style="color:#A6A69E">64</span></div><div style="height:14px;border-radius:4px;background:#CFCFC9;width:64px"></div></div>
+  </section>
+
+  <!-- TOUCH TARGETS -->
+  <section style="background:#FFFFFF;border:1px solid #E4E3DF;border-radius:16px;padding:20px;margin-bottom:12px">
+    <p style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#8A8A82;margin:0 0 6px">HIG · WCAG 2.5.8</p>
+    <h2 style="font-size:19px;line-height:24px;font-weight:600;letter-spacing:-0.01em;margin:0 0 4px">Touch targets</h2>
+    <p style="font-size:13px;line-height:18px;color:#5C5C5C;margin:0 0 16px">Every icon button is a 44 × 44 pt hit area, even when the glyph inside is smaller. Applies to every control in the nav and chat box.</p>
+
+    <div style="display:flex;gap:12px;align-items:center">
+      <div style="width:44px;height:44px;border-radius:12px;border:1.5px dashed {{ accent }};display:flex;align-items:center;justify-content:center;color:#1A1A1A" title="44pt hit area, 22pt glyph">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+      </div>
+      <button style="width:44px;height:44px;border-radius:12px;border:1px solid #E4E3DF;background:#FFFFFF;display:flex;align-items:center;justify-content:center;color:#1A1A1A;cursor:pointer;padding:0" style-hover="background:#F4F4F1">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.7 21a2 2 0 0 1-3.4 0"></path></svg>
+      </button>
+      <button style="width:44px;height:44px;border-radius:12px;border:none;background:{{ accent }};display:flex;align-items:center;justify-content:center;color:#FFFFFF;cursor:pointer;padding:0">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 19V5"></path><path d="M5 12l7-7 7 7"></path></svg>
+      </button>
+      <p style="font-size:12px;line-height:16px;color:#5C5C5C;margin:0">44 × 44 pt minimum<br/>22 pt glyph inside</p>
+    </div>
+  </section>
+
+  <!-- MOTION -->
+  <section style="background:#FFFFFF;border:1px solid #E4E3DF;border-radius:16px;padding:20px;margin-bottom:12px">
+    <p style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#8A8A82;margin:0 0 6px">prefers-reduced-motion · WCAG 2.2.2</p>
+    <h2 style="font-size:19px;line-height:24px;font-weight:600;letter-spacing:-0.01em;margin:0 0 4px">Motion</h2>
+    <p style="font-size:13px;line-height:18px;color:#5C5C5C;margin:0 0 14px">Streaming and transitions respect reduced motion — movement is replaced by a static status label. Status is always text, never a spinner alone.</p>
+
+    <div style="display:flex;align-items:center;gap:10px;background:#F4F4F1;border:1px solid #EDEDE8;border-radius:12px;padding:14px">
+      <sc-if value="{{ reduced }}" hint-placeholder-val="{{ false }}">
+        <span style="width:9px;height:9px;border-radius:50%;background:{{ accent }};flex:none"></span>
+      </sc-if>
+      <sc-if value="{{ notReduced }}" hint-placeholder-val="{{ true }}">
+        <span style="display:inline-flex;gap:5px;flex:none">
+          <span class="capsule-anim" style="width:9px;height:9px;border-radius:50%;background:{{ accent }};animation:capsulePulse 1.2s infinite"></span>
+          <span class="capsule-anim" style="width:9px;height:9px;border-radius:50%;background:{{ accent }};animation:capsulePulse 1.2s infinite;animation-delay:0.15s"></span>
+          <span class="capsule-anim" style="width:9px;height:9px;border-radius:50%;background:{{ accent }};animation:capsulePulse 1.2s infinite;animation-delay:0.3s"></span>
+        </span>
+      </sc-if>
+      <span style="font-size:15px;color:#1A1A1A;font-weight:500">Analysing your data</span>
+    </div>
+    <p style="font-size:11px;line-height:15px;color:#8A8A82;margin:8px 0 0">{{ motionNote }}</p>
+  </section>
+
+  <!-- CONSENT TREATMENT -->
+  <section style="background:#FFFFFF;border:1px solid #E4E3DF;border-radius:16px;padding:20px;margin-bottom:12px">
+    <p style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#8A8A82;margin:0 0 6px">Consent moment · AAA</p>
+    <h2 style="font-size:19px;line-height:24px;font-weight:600;letter-spacing:-0.01em;margin:0 0 4px">Consent treatment</h2>
+    <p style="font-size:13px;line-height:18px;color:#5C5C5C;margin:0 0 16px">Consent is never styled like a primary action. Held to 7:1 contrast, never color alone, grant and decline equal weight, always revocable.</p>
+
+    <p style="font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#A6A69E;margin:0 0 8px">Everyday action — accent-trust</p>
+    <button style="width:100%;height:48px;border-radius:12px;border:none;background:{{ accent }};color:#FFFFFF;font-size:17px;font-weight:600;cursor:pointer;font-family:inherit">Start chat</button>
+
+    <div style="height:1px;background:#F1F1ED;margin:18px 0"></div>
+
+    <p style="font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#A6A69E;margin:0 0 8px">Permission ask — consent role</p>
+    <div style="border-radius:16px;background:{{ consentTint }};border:1.5px solid {{ consentBorder }};padding:16px">
+      <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="{{ consent }}" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+        <span style="font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:{{ consent }}">Permission needed</span>
+      </div>
+      <div style="font-size:17px;line-height:22px;font-weight:600;color:#1A1A1A;margin-bottom:4px">Home Helper wants to join this Health chat</div>
+      <div style="font-size:15px;line-height:20px;color:#4A4A44;margin-bottom:14px">To suggest changes based on your recovery plan.</div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px;padding:4px 0;border-top:1px solid {{ consentBorder }};border-bottom:1px solid {{ consentBorder }}">
+        <div>
+          <div style="font-size:15px;font-weight:600;color:#1A1A1A;line-height:18px">Health data</div>
+          <div style="font-size:12px;color:#4A4A44;line-height:16px;margin-top:2px">{{ scopeStateText }}</div>
+        </div>
+        <button role="switch" aria-checked="{{ scopeOn }}" onClick="{{ toggleScope }}" style="width:50px;height:30px;border-radius:15px;border:none;padding:2px;cursor:pointer;flex:none;display:flex;transition:background .15s;background:{{ scopeTrack }}">
+          <span style="width:26px;height:26px;border-radius:50%;background:#FFFFFF;box-shadow:0 1px 3px rgba(0,0,0,0.3);transition:transform .15s;transform:translateX({{ knobShift }})"></span>
+        </button>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:14px">
+        <button onClick="{{ toggleGrant }}" style="flex:1;height:48px;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;background:{{ grantBg }};color:{{ grantColor }};border:{{ grantBorderCss }}">
+          <sc-if value="{{ granted }}" hint-placeholder-val="{{ false }}">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>
+          </sc-if>
+          {{ grantLabel }}
+        </button>
+        <button style="flex:1;height:48px;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;font-family:inherit;background:transparent;color:#1A1A1A;border:1.5px solid #C7C7C1">Decline</button>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:6px;margin-top:12px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="{{ consent }}" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 3v4h4"></path></svg>
+        <span style="font-size:13px;line-height:17px;color:#4A4A44">Revocable anytime — Capsule never asks for permanent access.</span>
+      </div>
+    </div>
+    <p style="font-size:11px;line-height:15px;color:#8A8A82;margin:10px 0 0">AAA: 7:1 contrast · scope is a labelled switch, state announced · Grant &amp; Decline equal in the a11y tree · focus moves here on render.</p>
+  </section>
+
+  <!-- ACCESSIBILITY SUMMARY -->
+  <section style="background:#1A1A1A;border-radius:16px;padding:20px;margin-bottom:0">
+    <p style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#9A9A92;margin:0 0 6px">Locked target</p>
+    <h2 style="font-size:19px;line-height:24px;font-weight:600;letter-spacing:-0.01em;margin:0 0 12px;color:#FFFFFF">WCAG 2.2 AA — AAA for consent</h2>
+    <div style="display:flex;flex-direction:column;gap:9px">
+      <div style="display:flex;gap:9px"><span style="color:#7FB3FF;flex:none;font-weight:700">4.5:1</span><span style="font-size:14px;line-height:19px;color:#D6D6D0">Body &amp; UI text (AA); large text 3:1.</span></div>
+      <div style="display:flex;gap:9px"><span style="color:#C6A9FF;flex:none;font-weight:700">7:1</span><span style="font-size:14px;line-height:19px;color:#D6D6D0">Consent-critical text &amp; controls (AAA).</span></div>
+      <div style="display:flex;gap:9px"><span style="color:#7FB3FF;flex:none;font-weight:700">3:1</span><span style="font-size:14px;line-height:19px;color:#D6D6D0">Non-text UI — toggles, focus rings, meaningful icons.</span></div>
+      <div style="display:flex;gap:9px"><span style="color:#8FE0AE;flex:none;font-weight:700">↺</span><span style="font-size:14px;line-height:19px;color:#D6D6D0">Reduced motion honored; status is text. Dynamic Type to 200%. Never color alone.</span></div>
+    </div>
+  </section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;$preview&quot;: { &quot;width&quot;: 462, &quot;height&quot;: 900 },
+  &quot;accentTrust&quot;: { &quot;editor&quot;: &quot;color&quot;, &quot;default&quot;: &quot;#2E5AAC&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Color&quot;, &quot;options&quot;: [&quot;#2E5AAC&quot;, &quot;#1F6FA8&quot;, &quot;#2E7D6B&quot;, &quot;#3A5AC0&quot;] },
+  &quot;consentColor&quot;: { &quot;editor&quot;: &quot;color&quot;, &quot;default&quot;: &quot;#4B2E83&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Color&quot;, &quot;options&quot;: [&quot;#4B2E83&quot;, &quot;#7A2E6B&quot;, &quot;#8A4B00&quot;, &quot;#2E5A5A&quot;] },
+  &quot;bodySize&quot;: { &quot;editor&quot;: &quot;int&quot;, &quot;default&quot;: 17, &quot;min&quot;: 15, &quot;max&quot;: 21, &quot;step&quot;: 1, &quot;unit&quot;: &quot;pt&quot;, &quot;tsType&quot;: &quot;number&quot;, &quot;section&quot;: &quot;Type&quot; },
+  &quot;forceReducedMotion&quot;: { &quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Motion&quot; }
+}">
+class Component extends DCLogic {
+  state = { typeScale: 1, scopeOn: true, granted: false };
+
+  hexToRgba(hex, a) {
+    let h = String(hex || '#000000').replace('#', '');
+    if (h.length === 3) h = h.split('').map(c => c + c).join('');
+    const n = parseInt(h, 16);
+    const r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+    return `rgba(${r},${g},${b},${a})`;
+  }
+  r1(n) { return Math.round(n * 10) / 10; }
+
+  renderVals() {
+    const accent = this.props.accentTrust ?? '#2E5AAC';
+    const consent = this.props.consentColor ?? '#4B2E83';
+    const base = this.props.bodySize ?? 17;
+    const reduced = this.props.forceReducedMotion ?? false;
+    const scale = this.state.typeScale;
+
+    const specs = [
+      { name: 'Display', pt: 34, lh: 41, weight: 700, sample: 'Control is the product' },
+      { name: 'Title',   pt: 28, lh: 34, weight: 700, sample: 'Your life, one picture' },
+      { name: 'Heading', pt: 22, lh: 28, weight: 600, sample: 'Connected apps' },
+      { name: 'Body',    pt: 17, lh: 22, weight: 400, base: true, sample: 'Every data access is visible, every action is asked, every grant is reversible.' },
+      { name: 'Callout', pt: 16, lh: 21, weight: 400, sample: 'Home Helper adjusted Thursday dinner.' },
+      { name: 'Subhead', pt: 15, lh: 20, weight: 400, sample: 'Recovery progress' },
+      { name: 'Footnote',pt: 13, lh: 18, weight: 400, sample: 'You can revoke this anytime.' },
+      { name: 'Caption', pt: 12, lh: 16, weight: 400, sample: '3 unread' },
+    ];
+    const wname = w => w >= 700 ? 'Bold' : w >= 600 ? 'Semibold' : 'Regular';
+    const ramp = specs.map(s => {
+      const tp = Math.round(s.pt * base / 17);
+      const tl = Math.round(s.lh * base / 17);
+      return {
+        name: s.name, sample: s.sample, base: !!s.base, weight: s.weight,
+        meta: `${tp} / ${tl} · ${wname(s.weight)}`,
+        fontSize: `${this.r1(tp * scale)}px`,
+        lineHeight: `${this.r1(tl * scale)}px`,
+      };
+    });
+
+    const scopeOn = this.state.scopeOn;
+    const granted = this.state.granted;
+
+    return {
+      accent, consent,
+      accentHex: accent.toUpperCase(),
+      consentHex: consent.toUpperCase(),
+      accentTint: this.hexToRgba(accent, 0.12),
+      consentTint: this.hexToRgba(consent, 0.07),
+      consentBorder: this.hexToRgba(consent, 0.30),
+      ramp,
+      typePct: Math.round(scale * 100),
+      onType: (e) => this.setState({ typeScale: parseFloat(e.target.value) }),
+      reduced,
+      notReduced: !reduced,
+      motionNote: reduced
+        ? 'Reduced-motion preview on: the indicator holds still and status stays as text.'
+        : 'Toggle “reduced-motion preview” in the panel to see the static fallback.',
+      scopeOn,
+      toggleScope: () => this.setState(s => ({ scopeOn: !s.scopeOn })),
+      scopeStateText: scopeOn ? 'Will be shared while active' : 'Not shared',
+      scopeTrack: scopeOn ? consent : '#C7C7C1',
+      knobShift: scopeOn ? '20px' : '0px',
+      granted,
+      toggleGrant: () => this.setState(s => ({ granted: !s.granted })),
+      grantLabel: granted ? 'Granted' : 'Grant access',
+      grantBg: granted ? this.hexToRgba(consent, 0.12) : consent,
+      grantColor: granted ? consent : '#FFFFFF',
+      grantBorderCss: granted ? `1.5px solid ${this.hexToRgba(consent, 0.45)}` : 'none',
+    };
+  }
+}
+</script>
+</body>
+</html>

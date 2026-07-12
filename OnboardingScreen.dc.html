@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display",system-ui,sans-serif;background:#D8D8D3;color:#1A1A1A;-webkit-font-smoothing:antialiased}
+</style>
+</helmet>
+<div style="max-width:440px;margin:0 auto;min-height:100vh;background:#F4F4F1;display:flex;flex-direction:column;box-shadow:0 0 40px rgba(0,0,0,0.06)">
+  <main role="main" style="display:flex;flex-direction:column;flex:1;min-height:0;padding:24px 20px 28px">
+    <div style="flex:1;overflow:auto">
+      <div style="font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#8A8A82;margin-bottom:6px">A few things to know</div>
+      <h1 style="font-size:28px;line-height:34px;font-weight:700;letter-spacing:-0.02em;margin:0 0 18px">How Capsule works</h1>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <sc-for list="{{ points }}" as="p" hint-placeholder-count="3">
+          <div style="display:flex;gap:12px;align-items:flex-start;background:#FFFFFF;border:1px solid #E4E3DF;border-radius:16px;padding:14px">
+            <span aria-hidden="true" style="width:32px;height:32px;flex:none;border-radius:50%;background:#EAF0FA;color:#2E5AAC;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700">{{ p.n }}</span>
+            <div><div style="font-size:17px;line-height:22px;font-weight:600;color:#1A1A1A">{{ p.title }}</div><div style="font-size:15px;line-height:20px;color:#454541;margin-top:2px">{{ p.body }}</div></div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:16px">
+      <button onClick="{{ done }}" style="width:100%;min-height:52px;border-radius:14px;border:none;background:#2E5AAC;color:#FFFFFF;font-size:17px;font-weight:600;cursor:pointer;font-family:inherit">Get started</button>
+      <button onClick="{{ back }}" style="width:100%;min-height:52px;border-radius:14px;background:transparent;color:#1A1A1A;border:2px solid #1A1A1A;font-size:17px;font-weight:600;cursor:pointer;font-family:inherit">Back</button>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{ &quot;$preview&quot;: { &quot;width&quot;: 440, &quot;height&quot;: 900 } }">
+class Component extends DCLogic {
+  renderVals() {
+    const go = this.props.onNavigate || (() => {});
+    return {
+      done: () => go('home'), back: () => go('signin'),
+      points: [
+        { n: '1', title: 'You stay in control', body: 'Every access is visible and every action is asked first.' },
+        { n: '2', title: 'Consent is explicit', body: 'Permissions are per-scope, and reversible anytime.' },
+        { n: '3', title: 'Assistants coordinate', body: 'They compare notes so you don\u2019t have to — but only within what you allow.' },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

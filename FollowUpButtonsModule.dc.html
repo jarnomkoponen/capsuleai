@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display",system-ui,sans-serif;background:#EAEAE6;color:#1A1A1A;-webkit-font-smoothing:antialiased}
+</style>
+</helmet>
+<div style="max-width:460px;margin:0 auto;padding:16px">
+  <div role="group" aria-label="Suggested replies" style="display:flex;flex-wrap:wrap;gap:10px">
+    <sc-for list="{{ prompts }}" as="p" hint-placeholder-count="3">
+      <button onClick="{{ p.action }}" aria-disabled="{{ disabled }}" style="min-height:44px;padding:10px 16px;border:1.5px solid {{ borderColor }};background:{{ bgColor }};color:{{ textColor }};border-radius:22px;font-size:16px;line-height:20px;font-weight:500;cursor:{{ cursor }};font-family:inherit;text-align:left;max-width:100%;white-space:normal">{{ p.label }}</button>
+    </sc-for>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;$preview&quot;: { &quot;width&quot;: 492, &quot;height&quot;: 180 },
+  &quot;disabled&quot;: { &quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot; },
+  &quot;prompts&quot;: { &quot;editor&quot;: null, &quot;default&quot;: [{&quot;label&quot;: &quot;Tell me more about the plan&quot;}, {&quot;label&quot;: &quot;What should I do first?&quot;}, {&quot;label&quot;: &quot;Adjust for my schedule&quot;}], &quot;tsType&quot;: &quot;{ label: string; action?: Action }[]&quot; }
+}">
+class Component extends DCLogic {
+  renderVals() {
+    const raw = Array.isArray(this.props.prompts) && this.props.prompts.length ? this.props.prompts : [
+      { label: 'Tell me more about the plan' },
+      { label: 'What should I do first?' },
+      { label: 'Adjust for my schedule' },
+    ];
+    const disabled = this.props.disabled ?? false;
+    const noop = () => {};
+    const prompts = raw.map(p => ({ label: p.label, action: disabled ? noop : (p.action || noop) }));
+    return {
+      prompts, disabled,
+      borderColor: disabled ? '#D8D8D2' : '#2E5AAC',
+      bgColor: disabled ? '#F4F4F1' : '#FFFFFF',
+      textColor: disabled ? '#8A8A82' : '#2E5AAC',
+      cursor: disabled ? 'default' : 'pointer',
+    };
+  }
+}
+</script>
+</body>
+</html>

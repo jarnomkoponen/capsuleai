@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display",system-ui,sans-serif;background:#D8D8D3;color:#1A1A1A;-webkit-font-smoothing:antialiased}
+</style>
+</helmet>
+<div style="max-width:440px;margin:0 auto;min-height:100vh;background:#F4F4F1;display:flex;flex-direction:column;box-shadow:0 0 40px rgba(0,0,0,0.06)">
+  <main role="main" style="display:flex;flex-direction:column;flex:1;min-height:0">
+    <div style="position:sticky;top:0;z-index:5;background:#F4F4F1;padding-bottom:2px">
+      <dc-import name="TopNavModule" variant="home" title="Capsule" startChat="{{ startChat }}" hint-size="100%,88px"></dc-import>
+    </div>
+    <div style="flex:1;overflow:auto;padding-bottom:8px">
+      <div style="padding:8px 16px 4px">
+        <div style="font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#8A8A82;margin-bottom:4px">Today</div>
+        <h1 style="font-size:28px;line-height:34px;font-weight:700;letter-spacing:-0.02em;margin:0 0 2px">Good morning.</h1>
+        <p style="font-size:17px;line-height:23px;color:#454541;margin:0">Your assistants have been keeping things in order. Pick up where you like.</p>
+      </div>
+      <dc-import name="LifeTopicsModule" variant="home" topics="{{ topics }}" addAction="{{ addTopic }}" hint-size="100%,260px"></dc-import>
+      <dc-import name="ConversationStartersModule" assistant="assistant" firstTime="{{ true }}" starters="{{ starters }}" hint-size="100%,260px"></dc-import>
+    </div>
+    <div style="position:sticky;bottom:0;background:linear-gradient(to top,#F4F4F1 70%,rgba(244,244,241,0));padding-top:4px">
+      <dc-import name="BottomNavModule" items="{{ navItems }}" hint-size="100%,88px"></dc-import>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{ &quot;$preview&quot;: { &quot;width&quot;: 440, &quot;height&quot;: 900 } }">
+class Component extends DCLogic {
+  renderVals() {
+    const go = this.props.onNavigate || (() => {});
+    return {
+      startChat: () => go('jo'),
+      topics: [
+        { id: 'home', label: 'Home', status: '2 tasks today', icon: 'home', action: () => go('alison') },
+        { id: 'health', label: 'Health', status: 'recovery progress', icon: 'health', action: () => go('becca') },
+        { id: 'family', label: 'Family & Friends', status: 'week coordinated', icon: 'family', action: () => go('alison') },
+        { id: 'money', label: 'Money', status: '1 review', icon: 'money', action: () => go('maya') },
+      ],
+      addTopic: () => {},
+      starters: [
+        { label: 'Plan my recovery day', action: () => go('becca') },
+        { label: 'Check my subscriptions', action: () => go('maya') },
+        { label: 'Coordinate the family week', action: () => go('alison') },
+        { label: 'Talk something through', action: () => go('jo') },
+      ],
+      navItems: [
+        { label: 'Home', icon: 'home', current: true, action: () => go('home') },
+        { label: 'Assistants', icon: 'assistants', current: false, action: () => go('assistants') },
+        { label: 'You', icon: 'you', current: false, action: () => go('you') },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

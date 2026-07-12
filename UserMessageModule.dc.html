@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display",system-ui,sans-serif;background:#EAEAE6;color:#1A1A1A;-webkit-font-smoothing:antialiased}
+</style>
+</helmet>
+<div style="max-width:460px;margin:0 auto;padding:16px">
+  <div style="display:flex;justify-content:flex-end">
+    <div style="max-width:380px">
+      <div aria-label="{{ ariaName }}" style="background:#EAF0FA;border:1px solid #D3E0F3;border-radius:16px 16px 4px 16px;padding:12px 14px">
+        <div style="font-size:17px;line-height:23px;color:#1A1A1A">{{ body }}</div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;align-items:center;gap:5px;margin-top:4px">
+        <sc-if value="{{ isFailed }}" hint-placeholder-val="{{ false }}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C0342B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path></svg>
+          <button onClick="{{ retry }}" style="font-size:12px;line-height:16px;color:#C0342B;font-weight:600;background:none;border:none;padding:0;cursor:pointer;font-family:inherit">Not sent · Tap to retry</button>
+        </sc-if>
+        <sc-if value="{{ isSending }}" hint-placeholder-val="{{ false }}">
+          <span style="font-size:12px;line-height:16px;color:#6E6A62">Sending…</span>
+        </sc-if>
+        <sc-if value="{{ isSent }}" hint-placeholder-val="{{ true }}">
+          <span style="font-size:12px;line-height:16px;color:#6E6A62">{{ sentLabel }}</span>
+        </sc-if>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;$preview&quot;: { &quot;width&quot;: 492, &quot;height&quot;: 130 },
+  &quot;body&quot;: { &quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;How much walking is safe today?&quot;, &quot;tsType&quot;: &quot;string&quot; },
+  &quot;state&quot;: { &quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;sent&quot;, &quot;sending&quot;, &quot;failed&quot;], &quot;default&quot;: &quot;sent&quot;, &quot;tsType&quot;: &quot;'sent'|'sending'|'failed'&quot; },
+  &quot;timestamp&quot;: { &quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Sent&quot;, &quot;tsType&quot;: &quot;string&quot; }
+}">
+class Component extends DCLogic {
+  renderVals() {
+    const body = this.props.body ?? 'How much walking is safe today?';
+    const state = this.props.state ?? 'sent';
+    const timestamp = this.props.timestamp ?? 'Sent';
+    return {
+      body,
+      ariaName: 'You: ' + body,
+      isFailed: state === 'failed',
+      isSending: state === 'sending',
+      isSent: state === 'sent',
+      sentLabel: timestamp,
+      retry: this.props.retry || (() => {}),
+    };
+  }
+}
+</script>
+</body>
+</html>

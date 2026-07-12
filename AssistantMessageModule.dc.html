@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display",system-ui,sans-serif;background:#EAEAE6;color:#1A1A1A;-webkit-font-smoothing:antialiased}
+</style>
+</helmet>
+<div style="max-width:460px;margin:0 auto;padding:16px">
+  <div style="display:flex;gap:10px;align-items:flex-start">
+    <div aria-hidden="true" style="width:30px;height:30px;border-radius:50%;flex:none;background:#EAF0FA;display:flex;align-items:center;justify-content:center;margin-top:2px">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2E5AAC" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12h4l3 8 4-16 3 8h4"></path></svg>
+    </div>
+    <div style="min-width:0;max-width:380px">
+      <div style="font-size:13px;font-weight:600;color:#454541;margin-bottom:3px">{{ assistant }}</div>
+      <div style="background:#FFFFFF;border:1px solid #E4E3DF;border-radius:4px 16px 16px 16px;padding:12px 14px">
+        <sc-if value="{{ hasStatus }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:13px;line-height:17px;color:#454541;font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:6px">
+            <span aria-hidden="true" style="width:6px;height:6px;border-radius:50%;background:#2E5AAC;display:block"></span>{{ status }}
+          </div>
+        </sc-if>
+        <div style="font-size:17px;line-height:23px;color:#1A1A1A">{{ body }}</div>
+      </div>
+      <sc-if value="{{ hasTimestamp }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:12px;line-height:16px;color:#6E6A62;margin-top:4px">{{ timestamp }}</div>
+      </sc-if>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;$preview&quot;: { &quot;width&quot;: 492, &quot;height&quot;: 180 },
+  &quot;assistant&quot;: { &quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Health coach&quot;, &quot;tsType&quot;: &quot;string&quot; },
+  &quot;status&quot;: { &quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;&quot;, &quot;tsType&quot;: &quot;string&quot; },
+  &quot;body&quot;: { &quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Based on your recovery plan, I\u2019d keep today light \u2014 a 20-minute walk and your morning medication with food.&quot;, &quot;tsType&quot;: &quot;string&quot; },
+  &quot;timestamp&quot;: { &quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;&quot;, &quot;tsType&quot;: &quot;string&quot; }
+}">
+class Component extends DCLogic {
+  renderVals() {
+    const assistant = this.props.assistant ?? 'Health coach';
+    const status = this.props.status ?? '';
+    const body = this.props.body ?? 'Based on your recovery plan, I\u2019d keep today light \u2014 a 20-minute walk and your morning medication with food.';
+    const timestamp = this.props.timestamp ?? '';
+    return {
+      assistant, status, body, timestamp,
+      hasStatus: !!status,
+      hasTimestamp: !!timestamp,
+    };
+  }
+}
+</script>
+</body>
+</html>

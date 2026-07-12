@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display",system-ui,sans-serif;background:#D8D8D3;color:#1A1A1A;-webkit-font-smoothing:antialiased}
+</style>
+</helmet>
+<div style="max-width:440px;margin:0 auto;min-height:100vh;background:#F4F4F1;display:flex;flex-direction:column;box-shadow:0 0 40px rgba(0,0,0,0.06)">
+  <main role="main" style="display:flex;flex-direction:column;flex:1;min-height:0">
+    <div style="position:sticky;top:0;z-index:5;background:#F4F4F1;padding-bottom:2px">
+      <dc-import name="TopNavModule" variant="chat" back="{{ onBack }}" title="Home Helper" hint-size="100%,88px"></dc-import>
+    </div>
+    <div role="log" aria-live="polite" aria-label="Coordination conversation with Home Helper" style="flex:1;overflow:auto;display:flex;flex-direction:column;gap:2px;padding-bottom:8px">
+      <dc-import name="AssistantMessageModule"
+        assistant="Home Helper"
+        status="Comparing notes with your Health Coach"
+        body="Your Health Coach put a demanding interval session on Thursday evening. I've already nudged Thursday's dinner toward recovery-friendly food the whole family will still eat. One catch: that session overlaps Eli's football pickup. Want me to swap it with Friday's lighter run?"
+        hint-size="100%,220px"></dc-import>
+      <dc-import name="ChatCanvasModule" variant="confirmation"
+        summary="Move Thursday's session to Friday?"
+        confirmLabel="Swap to Friday"
+        keepLabel="Keep Thursday"
+        reminderLabel="Remind me the morning of the session"
+        details="{{ details }}"
+        hint-size="100%,540px"></dc-import>
+      <dc-import name="FollowUpButtonsModule" prompts="{{ prompts }}" hint-size="100%,120px"></dc-import>
+    </div>
+    <div style="position:sticky;bottom:0;background:linear-gradient(to top,#F4F4F1 70%,rgba(244,244,241,0));padding-top:4px">
+      <dc-import name="ChatBoxModule" context="assistant" placeholder="Message Home Helper" hint-size="100%,92px"></dc-import>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{ &quot;$preview&quot;: { &quot;width&quot;: 440, &quot;height&quot;: 940 } }">
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      details: [
+        { label: 'Dinner', value: 'Updated \u2014 recovery-friendly' },
+        { label: 'Football pickup', value: 'Conflict resolved' },
+        { label: 'Friday run', value: 'Swapped in (lighter)' },
+      ],
+      prompts: [
+        { label: 'Show me the week' },
+        { label: 'Why Friday?' },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>
