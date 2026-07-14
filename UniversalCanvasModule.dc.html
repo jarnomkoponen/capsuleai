@@ -12,11 +12,9 @@
   * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
   body { margin: 0; }
   .uc-scroll::-webkit-scrollbar { width: 0; }
-  @media (max-width:520px){
-    .cap-stage{padding:0 !important;background:#FFFFFF !important;}
-    .cap-phone{width:100% !important;max-width:none !important;height:100vh !important;height:100dvh !important;border-radius:0 !important;border:none !important;padding-top:env(safe-area-inset-top,0) !important;}
-    .cap-fakestatus{display:none !important;}
-  }
+  .cap-fakestatus{display:none !important;}
+  .cap-stage{min-height:100dvh !important;padding:0 !important;align-items:stretch !important;}
+  .cap-phone{width:100% !important;max-width:480px !important;height:100vh !important;height:100dvh !important;border-radius:0 !important;border:none !important;padding-top:env(safe-area-inset-top,0) !important;}
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 </helmet>
