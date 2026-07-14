@@ -11,14 +11,20 @@
 <style>
   * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
   body { margin: 0; }
-  .oas-btn:focus-visible { outline: 2px solid #0F766E; outline-offset: 2px; }
+  .oas-btn:focus-visible, .oas-back:focus-visible { outline: 2px solid #0F766E; outline-offset: 2px; }
 </style>
 </helmet>
 <dc-import name="UniversalCanvasModule" hint-size="100%,100%">
   <div style="flex:1;display:flex;flex-direction:column;padding:12px 20px 24px;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display','Segoe UI',system-ui,sans-serif;">
-    <div style="display:flex;align-items:center;justify-content:center;gap:10px;padding:8px 0 18px;border-bottom:1px solid #ECECEE;margin-bottom:18px;">
-      <dc-import name="LogoModule" size="header" hint-size="26px,26px"></dc-import>
-      <span style="font-size:17px;line-height:22px;font-weight:600;color:#17171A;">Set up {{ assistant }}</span>
+    <div style="display:flex;align-items:center;gap:8px;padding:8px 0 18px;border-bottom:1px solid #ECECEE;margin-bottom:18px;">
+      <button type="button" class="oas-back" onClick="{{ onBack }}" aria-label="Back" style="flex:none;width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;border:none;background:transparent;cursor:pointer;border-radius:8px;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 5l-7 7 7 7" stroke="#0F766E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div style="flex:1;display:flex;align-items:center;justify-content:center;gap:10px;">
+        <dc-import name="LogoModule" size="header" hint-size="26px,26px"></dc-import>
+        <span style="font-size:17px;line-height:22px;font-weight:600;color:#17171A;">Set up {{ assistant }}</span>
+      </div>
+      <span aria-hidden="true" style="flex:none;width:44px;"></span>
     </div>
 
     <dc-import name="AssistantSetupModule" assistant="{{ assistant }}" topic="{{ topic }}" efficiency="{{ efficiency }}" vizKind="{{ vizKind }}" caption="{{ caption }}" hint-size="100%,300px"></dc-import>
@@ -26,6 +32,13 @@
     <div style="margin-top:22px;">
       <sc-if value="{{ showConsent }}" hint-placeholder-val="{{ false }}">
         <dc-import name="ChatCanvasModule" variant="consent" requester="{{ assistant }}" purpose="{{ consentPurpose }}" scopes="{{ consentScopes }}" on-grant="{{ onGrant }}" on-decline="{{ onDecline }}" hint-size="100%,460px"></dc-import>
+      </sc-if>
+
+      <sc-if value="{{ showConnecting }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:12px;padding:32px 0;">
+          <dc-import name="StreamingMessageModule" phases="{{ connectPhases }}" hint-size="100%,60px"></dc-import>
+          <span style="font-size:13px;line-height:18px;color:#6E6E77;text-align:center;">Establishing a secure, encrypted connection.</span>
+        </div>
       </sc-if>
 
       <sc-if value="{{ showOptions }}" hint-placeholder-val="{{ true }}">
@@ -108,12 +121,30 @@ class Component extends DCLogic {
     const ordered = order.filter((n) => names.includes(n));
     return ordered.length ? ordered : ['Home helper'];
   }
-  state = { index: 0, connected: {}, pending: null };
+  state = { index: 0, connected: {}, pending: null, connecting: null };
   advance() {
     const list = this.selectedAssistants();
     if (this.state.index >= list.length - 1) { (this.props.onFinish || (() => {}))(); }
-    else { this.setState((s) => ({ index: s.index + 1, pending: null })); }
+    else { this.setState((s) => ({ index: s.index + 1, pending: null, connecting: null })); }
   }
+  back() {
+    if (this.state.connecting) { clearTimeout(this._t); this.setState({ connecting: null, pending: this.state.connecting }); return; }
+    if (this.state.pending) { this.setState({ pending: null }); return; }
+    if (this.state.index > 0) { this.setState((s) => ({ index: s.index - 1, pending: null, connecting: null })); return; }
+    (this.props.onBack || (() => {}))();
+  }
+  startConnect(o) {
+    const key = this.selectedAssistants()[Math.min(this.state.index, this.selectedAssistants().length - 1)];
+    this.setState({ pending: null, connecting: o });
+    clearTimeout(this._t);
+    this._t = setTimeout(() => {
+      this.setState((s) => {
+        const cur = s.connected[key] || [];
+        return { connected: { ...s.connected, [key]: cur.indexOf(o.id) === -1 ? [...cur, o.id] : cur }, connecting: null };
+      });
+    }, 2600);
+  }
+  componentWillUnmount() { clearTimeout(this._t); }
   renderVals() {
     const list = this.selectedAssistants();
     const idx = Math.min(this.state.index, list.length - 1);
@@ -121,7 +152,9 @@ class Component extends DCLogic {
     const cfg = this.configs()[key] || this.configs()['Home helper'];
     const connectedIds = this.state.connected[key] || [];
     const pending = this.state.pending;
+    const connecting = this.state.connecting;
     const isLast = idx >= list.length - 1;
+    const cName = connecting ? connecting.label.replace(/^Connect (with )?|^Give access to |^Share (your )?/i, '') : '';
     return {
       assistant: key, topic: cfg.topic, efficiency: cfg.efficiency, vizKind: cfg.vizKind, caption: cfg.caption,
       personalizeHeading: 'Personalize ' + key,
@@ -133,19 +166,24 @@ class Component extends DCLogic {
       helperLine: connectedIds.length > 0
         ? 'Connect more, or continue — you can change this anytime.'
         : 'You can skip connecting for now and set it up later.',
-      showOptions: !pending,
+      showOptions: !pending && !connecting,
       showConsent: !!pending,
+      showConnecting: !!connecting,
+      connectPhases: connecting ? [
+        'Connecting to ' + cName + '…',
+        'Authorising secure access…',
+        'Fetching your data…',
+        'Finishing up…',
+      ] : [],
       consentPurpose: pending ? pending.purpose : '',
       consentScopes: pending ? pending.scopes : [],
       step: idx + 1, total: list.length,
       stepLabel: 'Assistant ' + (idx + 1) + ' of ' + list.length,
       onOption: (o) => this.setState({ pending: o }),
-      onGrant: () => this.setState((s) => {
-        const cur = s.connected[key] || [];
-        return { connected: { ...s.connected, [key]: cur.indexOf(pending.id) === -1 ? [...cur, pending.id] : cur }, pending: null };
-      }),
+      onGrant: () => this.startConnect(pending),
       onDecline: () => this.setState({ pending: null }),
       onContinue: () => this.advance(),
+      onBack: () => this.back(),
     };
   }
 }

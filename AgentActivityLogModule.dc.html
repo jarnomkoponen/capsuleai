@@ -11,7 +11,7 @@
 <style>
   * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
   body { margin: 0; }
-  .al-int:focus-visible { outline: 2px solid #0F766E; outline-offset: 2px; }
+  .al-int:focus-visible, .al-x:focus-visible, .al-mbtn:focus-visible { outline: 2px solid #0F766E; outline-offset: 2px; }
 </style>
 </helmet>
 <section aria-label="{{ heading }}" style="font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display','Segoe UI',system-ui,sans-serif;">
@@ -36,35 +36,101 @@
       </li>
     </sc-for>
   </ol>
+
+  <sc-if value="{{ modalOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ onClose }}" style="position:fixed;inset:0;background:rgba(23,23,26,0.4);display:flex;align-items:flex-end;justify-content:center;z-index:50;">
+      <div role="dialog" aria-modal="true" aria-label="{{ modalTitle }}" onClick="{{ stop }}" style="width:100%;max-width:480px;background:#FFFFFF;border-radius:20px 20px 0 0;max-height:86%;overflow-y:auto;padding:20px 20px 28px;">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:6px;">
+          <span style="font-size:12px;line-height:16px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:{{ modalTagColor }};">{{ modalTag }}</span>
+          <button type="button" class="al-x" onClick="{{ onClose }}" aria-label="Close" style="flex:none;width:32px;height:32px;margin-top:-4px;border:none;background:transparent;color:#6E6E77;cursor:pointer;font-size:20px;line-height:1;border-radius:8px;">×</button>
+        </div>
+        <h3 style="margin:0 0 4px;font-size:20px;line-height:26px;font-weight:700;letter-spacing:-0.01em;color:#17171A;">{{ modalTitle }}</h3>
+        <p style="margin:0 0 16px;font-size:14px;line-height:20px;color:#6E6E77;">{{ modalMeta }}</p>
+        <div style="border-top:1px solid #ECECEE;padding-top:16px;display:flex;flex-direction:column;gap:12px;">
+          <sc-for list="{{ modalLines }}" as="ln" hint-placeholder-count="3">
+            <div style="display:flex;justify-content:space-between;gap:16px;">
+              <span style="font-size:15px;line-height:21px;color:#6E6E77;">{{ ln.label }}</span>
+              <span style="font-size:15px;line-height:21px;color:#17171A;font-weight:500;text-align:right;">{{ ln.value }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <sc-if value="{{ isUndo }}" hint-placeholder-val="{{ false }}">
+          <div aria-live="polite">
+            <sc-if value="{{ undoDone }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;align-items:center;gap:10px;margin-top:20px;">
+                <span aria-hidden="true" style="flex:none;width:24px;height:24px;border-radius:50%;background:#17171A;color:#FFFFFF;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;">✓</span>
+                <span style="font-size:16px;line-height:22px;font-weight:600;color:#17171A;">Undone. The change has been reversed.</span>
+              </div>
+            </sc-if>
+            <sc-if value="{{ undoPending }}" hint-placeholder-val="{{ true }}">
+              <button type="button" class="al-mbtn" onClick="{{ onConfirmUndo }}" style="margin-top:22px;appearance:none;border:none;background:#17171A;color:#FFFFFF;font:600 16px/1 inherit;min-height:50px;border-radius:14px;cursor:pointer;width:100%;">Confirm undo</button>
+            </sc-if>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
 </section>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:360,&quot;height&quot;:420},&quot;scope&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;all&quot;,&quot;options&quot;:[&quot;all&quot;,&quot;assistant&quot;],&quot;tsType&quot;:&quot;string&quot;},&quot;assistant&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Financial coach&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;live&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
 class Component extends DCLogic {
+  state = { modal: null, undoDone: false };
+  open(entry, mode) { this.setState({ modal: { entry, mode }, undoDone: false }); }
   renderVals() {
     const scope = this.props.scope || 'all';
     const assistant = this.props.assistant || 'Financial coach';
     const live = this.props.live ?? false;
     const defaults = [
       { timestamp: 'Today, 09:12', assistant: 'Home helper', description: 'Checked your calendar for conflicts this week.' },
-      { timestamp: 'Today, 08:40', assistant: 'Health coach', description: 'Reviewed your recovery log and updated the plan.', interactions: [{ label: 'Review' }, { label: 'Undo' }] },
+      { timestamp: 'Today, 08:40', assistant: 'Health coach', description: 'Reviewed your recovery log and updated the plan.', interactions: [{ label: 'Review' }, { label: 'Undo' }],
+        detail: [
+          { label: 'Change', value: 'Thursday intervals \u2192 easy run' },
+          { label: 'Reason', value: 'Recovery ahead of plan' },
+          { label: 'Load this week', value: '\u221215% vs. planned' },
+        ],
+        undo: [
+          { label: 'Reverts', value: 'Thursday back to intervals' },
+          { label: 'Affects', value: 'This week\u2019s plan only' },
+          { label: 'Calendar', value: 'Football pickup clash returns' },
+        ],
+      },
       { timestamp: 'Yesterday, 18:05', assistant: 'Financial coach', description: 'Flagged a subscription you may want to cancel.' },
       { timestamp: 'Yesterday, 14:22', assistant: 'Companion', description: 'Prepared notes for your school conversation.' },
     ];
     const raw = this.props.entries || defaults;
-    const onInteraction = this.props.onInteraction || (() => {});
     const entries = raw.map((e) => ({
       timestamp: e.timestamp,
       assistant: e.assistant,
       showAssistant: scope === 'all',
       description: e.description,
       hasInteractions: Array.isArray(e.interactions) && e.interactions.length > 0,
-      interactions: (e.interactions || []).map((it) => ({ label: it.label, action: () => onInteraction(e, it) })),
+      interactions: (e.interactions || []).map((it) => ({
+        label: it.label,
+        action: () => this.open(e, /undo/i.test(it.label) ? 'undo' : 'review'),
+      })),
     }));
+
+    const m = this.state.modal;
+    const isUndo = m && m.mode === 'undo';
+    const lines = m ? (isUndo ? (m.entry.undo || []) : (m.entry.detail || [{ label: 'Detail', value: m.entry.description }])) : [];
+
     return {
       entries,
       heading: scope === 'assistant' ? (assistant + ': Activity log / history') : 'All assistant/agent activity',
       role: live ? 'log' : 'list',
       live: live ? 'polite' : 'off',
+      modalOpen: !!m,
+      isUndo,
+      modalTag: m ? (isUndo ? 'Confirm undo' : 'Review') : '',
+      modalTagColor: isUndo ? '#17171A' : '#6E6E77',
+      modalTitle: m ? m.entry.description : '',
+      modalMeta: m ? (m.entry.assistant + ' \u00b7 ' + m.entry.timestamp) : '',
+      modalLines: lines,
+      undoDone: this.state.undoDone,
+      undoPending: isUndo && !this.state.undoDone,
+      onClose: () => this.setState({ modal: null, undoDone: false }),
+      onConfirmUndo: () => this.setState({ undoDone: true }),
+      stop: (e) => e.stopPropagation(),
     };
   }
 }

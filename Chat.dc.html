@@ -253,13 +253,32 @@ class Component extends DCLogic {
     }, 1400);
   }
   componentWillUnmount() { clearTimeout(this._t); }
+  seeds() {
+    return {
+      't1': { assistant: 'Health coach', messages: [
+        { type: 'assistant', assistant: 'Health coach', body: 'One thing to confirm: did you complete Tuesday\u2019s mobility session? I\u2019ll only mark it done once you say so.', timestamp: this.now() },
+        { type: 'confirm', summary: 'Mark Tuesday\u2019s mobility session as complete?', details: [ { label: 'Session', value: 'Mobility \u00b7 20 min' }, { label: 'Planned', value: 'Tuesday' }, { label: 'Effect', value: 'Updates your recovery log' } ], confirmLabel: 'Yes, mark complete', cancelLabel: 'Not done yet', actedText: 'Marked complete — recovery log updated.' },
+      ] },
+      't2': { assistant: 'Home helper', messages: [
+        { type: 'assistant', assistant: 'Home helper', body: 'To coordinate your week, I need your permission to see your calendar and mail. You choose exactly what I can access.', timestamp: this.now() },
+        { type: 'consent', requester: 'Home helper', purpose: 'coordinate your week across calendar and mail', scopes: [ { id: 'cal', label: 'Calendar', accessLabel: 'see and add events' }, { id: 'mail', label: 'Mail', accessLabel: 'read confirmations and receipts' } ] },
+      ] },
+      't3': { assistant: 'Health coach', messages: [
+        { type: 'assistant', assistant: 'Health coach', body: 'To tailor your recovery safely, I\u2019d like access to your medical data. Nothing is shared with anyone else, and you can revoke any part at any time.', timestamp: this.now() },
+        { type: 'consent', requester: 'Health coach', purpose: 'read your medical data to tailor your recovery', scopes: [ { id: 'records', label: 'Medical records', accessLabel: 'diagnoses and clinician notes' }, { id: 'meds', label: 'Medication', accessLabel: 'current prescriptions and timing' } ] },
+      ] },
+    };
+  }
   renderVals() {
-    const key = this.props.assistant || 'Health coach';
+    const seedId = this.props.seed || '';
+    const seed = this.seeds()[seedId];
+    const key = seed ? seed.assistant : (this.props.assistant || 'Health coach');
     const fresh = this.props.fresh === true || this.props.fresh === 'true';
     const convos = this.conversations();
     const convo = convos[key] || convos['Health coach'];
     const sd = this.starterData()[key] || { starters: [] };
-    const all = fresh ? [...(this.state.extra || [])] : [...convo.messages, ...(this.state.extra || [])];
+    const all = seed ? [...seed.messages, ...(this.state.extra || [])]
+      : (fresh ? [...(this.state.extra || [])] : [...convo.messages, ...(this.state.extra || [])]);
     const messages = all.map((m) => ({
       isAssistant: m.type === 'assistant', isUser: m.type === 'user',
       isConsent: m.type === 'consent', isViz: m.type === 'viz',
@@ -273,10 +292,10 @@ class Component extends DCLogic {
     }));
     return {
       assistant: key,
-      participants: fresh ? null : convo.participants,
-      hasParticipants: fresh ? false : !!convo.participants,
+      participants: (fresh || seed) ? null : convo.participants,
+      hasParticipants: (fresh || seed) ? false : !!convo.participants,
       messages,
-      showStarters: fresh && (this.state.extra || []).length === 0 && !this.state.thinking,
+      showStarters: fresh && !seed && (this.state.extra || []).length === 0 && !this.state.thinking,
       starters: sd.starters,
       onStarter: (s) => this.starterReply(s.label, s.id),
       onBack: this.props.onBack || (() => {}),
