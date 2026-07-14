@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<style>
+  * { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body { margin: 0; }
+  a { color: #0F766E; text-decoration: none; }
+  a:hover { color: #0b5a54; }
+  @keyframes capsulePulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.06); opacity: 0.85; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .capsule-motion-demo { animation: none !important; }
+  }
+</style>
+</helmet>
+<div style="min-height:100vh;background:#F7F7F8;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display','Segoe UI',system-ui,sans-serif;color:#17171A;padding:48px 24px 96px;box-sizing:border-box;">
+  <div style="max-width:760px;margin:0 auto;">
+
+    <!-- Masthead -->
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+      <div style="font-size:24px;line-height:1;font-weight:600;letter-spacing:-0.03em;color:#17171A;">(o)</div>
+      <div style="font-size:13px;line-height:16px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:#6E6E77;">Capsule AI</div>
+    </div>
+    <h1 style="font-size:34px;line-height:41px;font-weight:700;letter-spacing:-0.02em;margin:0 0 12px;">Visual language &amp; tokens</h1>
+    <p style="font-size:17px;line-height:26px;color:#3A3A40;margin:0 0 8px;max-width:56ch;">Calm, minimal, subdued. Whites and greys carry the interface; a single accent does the pointing. Hierarchy comes from type weight, size, and hairlines — never from fills, shadows, or color blocks.</p>
+    <p style="font-size:15px;line-height:22px;color:#6E6E77;margin:0;">Foundational style layer (v0.6). Not a screen — the reference every module copies literal values from.</p>
+
+    <div style="height:1px;background:#D9D9DD;margin:40px 0;"></div>
+
+    <!-- Grey ramp -->
+    <h2 style="font-size:22px;line-height:28px;font-weight:600;letter-spacing:-0.01em;margin:0 0 6px;">Grey ramp</h2>
+    <p style="font-size:15px;line-height:22px;color:#6E6E77;margin:0 0 24px;">Near-monochrome base. Contrast ratios measured on white (#FFFFFF).</p>
+    <sc-for list="{{ greys }}" as="g" hint-placeholder-count="8">
+      <div style="display:flex;align-items:center;gap:20px;padding:14px 0;border-bottom:1px solid #ECECEE;">
+        <div style="width:56px;height:56px;border-radius:10px;flex:none;box-sizing:border-box;border:1px solid #D9D9DD;background:{{ g.hexBg }}"></div>
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;">
+            <span style="font-size:17px;line-height:22px;font-weight:600;">{{ g.name }}</span>
+            <span style="font-size:13px;line-height:18px;font-family:ui-monospace,'SF Mono',Menlo,monospace;color:#6E6E77;">{{ g.hex }}</span>
+          </div>
+          <div style="font-size:15px;line-height:20px;color:#6E6E77;margin-top:2px;">{{ g.usage }}</div>
+        </div>
+        <div style="flex:none;text-align:right;">
+          <div style="font-size:15px;line-height:20px;font-weight:600;font-variant-numeric:tabular-nums;">{{ g.ratio }}</div>
+          <div style="font-size:12px;line-height:16px;color:#6E6E77;">{{ g.grade }}</div>
+        </div>
+      </div>
+    </sc-for>
+
+    <div style="height:1px;background:#D9D9DD;margin:40px 0;"></div>
+
+    <!-- Accent (swappable) -->
+    <h2 style="font-size:22px;line-height:28px;font-weight:600;letter-spacing:-0.01em;margin:0 0 6px;">Accent — single, swappable</h2>
+    <p style="font-size:15px;line-height:22px;color:#6E6E77;margin:0 0 20px;max-width:60ch;">Exactly one accent, used sparingly: primary actions, active nav, key affordances. Nothing decorative uses it. Hierarchy must survive with the accent removed — active states co-signal with weight or fill. Swap the hue below; the whole interface stays coherent because nothing structural depends on it.</p>
+    <div style="display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap;">
+      <sc-for list="{{ accentOptions }}" as="opt" hint-placeholder-count="3">
+        <button type="button" onClick="{{ opt.select }}" aria-pressed="{{ opt.active }}" style="{{ opt.chipStyle }}">
+          <span style="width:18px;height:18px;border-radius:50%;background:{{ opt.hexBg }};flex:none;"></span>
+          <span>{{ opt.label }}</span>
+          <span style="font-size:12px;color:#6E6E77;font-variant-numeric:tabular-nums;">{{ opt.ratio }}</span>
+        </button>
+      </sc-for>
+    </div>
+    <!-- live accent demo strip -->
+    <div style="border:1px solid #D9D9DD;border-radius:14px;padding:20px;display:flex;flex-wrap:wrap;align-items:center;gap:20px;">
+      <button type="button" style="{{ demoButtonStyle }}">Primary action</button>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="width:36px;height:22px;border-radius:11px;background:{{ accent }};position:relative;flex:none;"><span style="position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;background:#FFFFFF;"></span></span>
+        <span style="font-size:15px;color:#3A3A40;">Active toggle</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:15px;font-weight:600;color:{{ accent }};">Active tab</span>
+        <span style="width:22px;height:3px;border-radius:2px;background:{{ accent }};"></span>
+      </div>
+      <span style="font-size:13px;color:#6E6E77;">Grey fallback proves hierarchy survives without color →</span>
+      <button type="button" style="appearance:none;border:1.5px solid #17171A;background:#17171A;color:#FFFFFF;font:600 15px/1 inherit;padding:12px 18px;border-radius:10px;min-height:44px;cursor:pointer;">Same button, no accent</button>
+    </div>
+
+    <div style="height:1px;background:#D9D9DD;margin:40px 0;"></div>
+
+    <!-- Consent treatment -->
+    <h2 style="font-size:22px;line-height:28px;font-weight:600;letter-spacing:-0.01em;margin:0 0 6px;">Consent — distinct without a hue</h2>
+    <p style="font-size:15px;line-height:22px;color:#6E6E77;margin:0 0 20px;max-width:60ch;">A permission ask must stand apart, but Capsule stays near-monochrome: consent is signalled by the uppercase "Permission needed" heading, a ringed "!" glyph, and grey-900 emphasis — never by color alone (so it holds for every kind of colorblindness by construction). Text and controls stay at grey-900 (17.9:1, exceeding AAA 7:1).</p>
+    <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:stretch;">
+      <div style="flex:1;min-width:220px;border:1px solid #D9D9DD;background:#F7F7F8;border-radius:14px;padding:18px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span aria-hidden="true" style="width:18px;height:18px;border-radius:50%;border:2px solid #17171A;box-sizing:border-box;display:flex;align-items:center;justify-content:center;color:#17171A;font-size:12px;font-weight:700;line-height:1;">!</span>
+          <span style="font-size:13px;line-height:16px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:#17171A;">Permission needed</span>
+        </div>
+        <div style="font-size:17px;line-height:24px;color:#17171A;font-weight:600;">Consent surface</div>
+        <div style="font-size:14px;line-height:20px;color:#3A3A40;margin-top:4px;">grey-50 fill, grey-900 heading + glyph, grey-900 primary action (AAA)</div>
+      </div>
+      <div style="flex:none;display:flex;flex-direction:column;gap:10px;justify-content:center;">
+        <div style="display:flex;align-items:center;gap:12px;"><span style="width:40px;height:40px;border-radius:9px;background:#17171A;flex:none;"></span><span style="font-size:14px;color:#6E6E77;font-family:ui-monospace,monospace;">#17171A action</span></div>
+        <div style="display:flex;align-items:center;gap:12px;"><span style="width:40px;height:40px;border-radius:9px;background:#F7F7F8;border:1px solid #D9D9DD;flex:none;"></span><span style="font-size:14px;color:#6E6E77;font-family:ui-monospace,monospace;">#F7F7F8 fill</span></div>
+      </div>
+    </div>
+
+    <div style="height:1px;background:#D9D9DD;margin:40px 0;"></div>
+
+    <!-- Type ramp -->
+    <h2 style="font-size:22px;line-height:28px;font-weight:600;letter-spacing:-0.01em;margin:0 0 6px;">Type ramp</h2>
+    <p style="font-size:15px;line-height:22px;color:#6E6E77;margin:0 0 24px;">SF Pro / system font. Body is 17pt (HIG baseline). All type honors Dynamic Type — no size blocks scaling to 200%.</p>
+    <sc-for list="{{ typeRamp }}" as="t" hint-placeholder-count="8">
+      <div style="display:flex;align-items:baseline;gap:24px;padding:12px 0;border-bottom:1px solid #ECECEE;">
+        <div style="flex:none;width:150px;">
+          <div style="font-size:13px;line-height:18px;font-weight:600;color:#3A3A40;">{{ t.name }}</div>
+          <div style="font-size:12px;line-height:16px;color:#6E6E77;font-variant-numeric:tabular-nums;">{{ t.spec }}</div>
+        </div>
+        <div style="flex:1;min-width:0;color:#17171A;{{ t.style }}">The essential, at a glance</div>
+      </div>
+    </sc-for>
+
+    <div style="height:1px;background:#D9D9DD;margin:40px 0;"></div>
+
+    <!-- Spacing -->
+    <h2 style="font-size:22px;line-height:28px;font-weight:600;letter-spacing:-0.01em;margin:0 0 6px;">Spacing — 4pt grid</h2>
+    <p style="font-size:15px;line-height:22px;color:#6E6E77;margin:0 0 24px;">Default module padding 16 (space-4); default gap between modules 12 (space-3).</p>
+    <sc-for list="{{ spacing }}" as="s" hint-placeholder-count="9">
+      <div style="display:flex;align-items:center;gap:20px;padding:7px 0;">
+        <div style="flex:none;width:130px;font-size:14px;color:#3A3A40;"><span style="font-weight:600;">{{ s.name }}</span> <span style="color:#6E6E77;">{{ s.px }}</span></div>
+        <div style="height:14px;border-radius:3px;background:#0F766E;{{ s.barStyle }}"></div>
+      </div>
+    </sc-for>
+
+    <div style="height:1px;background:#D9D9DD;margin:40px 0;"></div>
+
+    <!-- Touch targets + hairline + motion -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:28px;">
+      <div>
+        <h2 style="font-size:22px;line-height:28px;font-weight:600;letter-spacing:-0.01em;margin:0 0 6px;">Touch target</h2>
+        <p style="font-size:15px;line-height:22px;color:#6E6E77;margin:0 0 16px;">44×44pt minimum hit area, even when the glyph is smaller.</p>
+        <div style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border:1px dashed #B8B8BF;border-radius:10px;">
+          <span aria-hidden="true" style="width:20px;height:20px;border-radius:50%;border:2px solid #17171A;box-sizing:border-box;"></span>
+        </div>
+        <div style="font-size:12px;line-height:16px;color:#6E6E77;margin-top:8px;">20pt glyph · 44pt target</div>
+      </div>
+      <div>
+        <h2 style="font-size:22px;line-height:28px;font-weight:600;letter-spacing:-0.01em;margin:0 0 6px;">Hairline separator</h2>
+        <p style="font-size:15px;line-height:22px;color:#6E6E77;margin:0 0 16px;">0.5–1pt, grey-200. Divide with lines and whitespace before fills or shadows.</p>
+        <div style="height:1px;background:#D9D9DD;margin:6px 0;"></div>
+        <div style="font-size:15px;line-height:22px;color:#3A3A40;padding:6px 0;">Section A</div>
+        <div style="height:1px;background:#D9D9DD;"></div>
+        <div style="font-size:15px;line-height:22px;color:#3A3A40;padding:6px 0;">Section B</div>
+      </div>
+      <div>
+        <h2 style="font-size:22px;line-height:28px;font-weight:600;letter-spacing:-0.01em;margin:0 0 6px;">Motion</h2>
+        <p style="font-size:15px;line-height:22px;color:#6E6E77;margin:0 0 16px;">Streaming and transitions respect prefers-reduced-motion; status is never conveyed by motion alone.</p>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="capsule-motion-demo" style="width:16px;height:16px;border-radius:50%;background:#0F766E;animation:capsulePulse 1.6s ease-in-out infinite;flex:none;"></span>
+          <span style="font-size:15px;color:#3A3A40;">Analysing your data…</span>
+        </div>
+        <div style="font-size:12px;line-height:16px;color:#6E6E77;margin-top:8px;">Reduce-motion: pulse stops, text remains.</div>
+      </div>
+    </div>
+
+    <div style="height:1px;background:#D9D9DD;margin:40px 0;"></div>
+
+    <!-- Rules -->
+    <h2 style="font-size:22px;line-height:28px;font-weight:600;letter-spacing:-0.01em;margin:0 0 16px;">Enforced rules</h2>
+    <sc-for list="{{ rules }}" as="r" hint-placeholder-count="6">
+      <div style="display:flex;gap:14px;padding:10px 0;border-bottom:1px solid #ECECEE;">
+        <span aria-hidden="true" style="flex:none;width:6px;height:6px;border-radius:50%;background:#17171A;margin-top:8px;"></span>
+        <span style="font-size:16px;line-height:23px;color:#3A3A40;">{{ r }}</span>
+      </div>
+    </sc-for>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:840,&quot;height&quot;:1400},&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#2563C9&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#0F766E&quot;,&quot;#C2410C&quot;,&quot;#2563C9&quot;]}}">
+class Component extends DCLogic {
+  state = { accent: null };
+
+  renderVals() {
+    const accentOpts = [
+      { id: 'teal', label: 'Teal', hex: '#0F766E', ratio: '5.47:1' },
+      { id: 'orange', label: 'Orange', hex: '#C2410C', ratio: '5.18:1' },
+      { id: 'blue', label: 'Blue', hex: '#2563C9', ratio: '5.67:1' },
+    ];
+    const accent = this.state.accent || this.props.accent || '#0F766E';
+
+    const greys = [
+      { name: 'grey-0', hex: '#FFFFFF', usage: 'App background, raised surfaces', ratio: '1.00:1', grade: 'surface' },
+      { name: 'grey-50', hex: '#F7F7F8', usage: 'Subtle raised / hover surface', ratio: '1.07:1', grade: 'surface' },
+      { name: 'grey-100', hex: '#ECECEE', usage: 'Filled chips, inactive track', ratio: '1.18:1', grade: 'surface' },
+      { name: 'grey-200', hex: '#D9D9DD', usage: 'Hairline separators, borders', ratio: '1.41:1', grade: 'decorative' },
+      { name: 'grey-300', hex: '#B8B8BF', usage: 'Disabled text / icons', ratio: '1.97:1', grade: 'disabled only' },
+      { name: 'grey-500', hex: '#6E6E77', usage: 'Secondary text', ratio: '5.05:1', grade: 'AA body' },
+      { name: 'grey-700', hex: '#3A3A40', usage: 'Primary-adjacent text', ratio: '11.30:1', grade: 'AAA' },
+      { name: 'grey-900', hex: '#17171A', usage: 'Primary text', ratio: '17.89:1', grade: 'AAA' },
+    ].map(g => ({ ...g, hexBg: g.hex }));
+
+    const typeRamp = [
+      { name: 'display', spec: '34 / 41 · bold', style: 'font-size:34px;line-height:41px;font-weight:700;letter-spacing:-0.02em;' },
+      { name: 'title', spec: '28 / 34 · bold', style: 'font-size:28px;line-height:34px;font-weight:700;letter-spacing:-0.015em;' },
+      { name: 'heading', spec: '22 / 28 · semibold', style: 'font-size:22px;line-height:28px;font-weight:600;letter-spacing:-0.01em;' },
+      { name: 'body', spec: '17 / 22 · regular', style: 'font-size:17px;line-height:22px;font-weight:400;' },
+      { name: 'callout', spec: '16 / 21 · regular', style: 'font-size:16px;line-height:21px;font-weight:400;' },
+      { name: 'subhead', spec: '15 / 20 · regular', style: 'font-size:15px;line-height:20px;font-weight:400;' },
+      { name: 'footnote', spec: '13 / 18 · regular', style: 'font-size:13px;line-height:18px;font-weight:400;color:#3A3A40;' },
+      { name: 'caption', spec: '12 / 16 · regular', style: 'font-size:12px;line-height:16px;font-weight:400;color:#6E6E77;' },
+    ];
+
+    const spaceVals = [
+      { name: 'space-0', n: 0 }, { name: 'space-1', n: 4 }, { name: 'space-2', n: 8 },
+      { name: 'space-3', n: 12 }, { name: 'space-4', n: 16 }, { name: 'space-5', n: 24 },
+      { name: 'space-6', n: 32 }, { name: 'space-7', n: 48 }, { name: 'space-8', n: 64 },
+    ];
+    const spacing = spaceVals.map(s => ({
+      name: s.name, px: s.n + 'px',
+      barStyle: 'width:' + Math.max(s.n, 2) + 'px;' + (s.n === 0 ? 'background:#D9D9DD;' : ''),
+    }));
+
+    const accentOptions = accentOpts.map(o => ({
+      label: o.label, hexBg: o.hex, ratio: o.ratio,
+      active: accent === o.hex ? 'true' : 'false',
+      select: () => this.setState({ accent: o.hex }),
+      chipStyle: 'display:inline-flex;align-items:center;gap:8px;appearance:none;cursor:pointer;'
+        + 'font:500 15px/1 inherit;padding:10px 14px;min-height:44px;border-radius:10px;box-sizing:border-box;'
+        + 'background:#FFFFFF;color:#17171A;'
+        + (accent === o.hex ? 'border:1.5px solid ' + o.hex + ';box-shadow:inset 0 0 0 1px ' + o.hex + ';' : 'border:1px solid #D9D9DD;'),
+    }));
+
+    const demoButtonStyle = 'appearance:none;border:none;background:' + accent + ';color:#FFFFFF;'
+      + 'font:600 15px/1 inherit;padding:12px 18px;border-radius:10px;min-height:44px;cursor:pointer;';
+
+    const rules = [
+      'Group and separate with whitespace and hairline rules first. Use a bordered or filled container only when a line and spacing cannot carry the grouping.',
+      'No drop shadows. If elevation is needed, use a hairline border, not a shadow.',
+      'Greyscale plus the single accent only — no gradients, no decorative color. A chart must read in greyscale alone.',
+      'Never let the accent be the sole carrier of an active or selected state; co-signal with weight or fill (also required for colorblind users).',
+      'Navigation follows Apple iOS form: nav bar (back left, title centered, actions right, hairline bottom) and tab bar (three tabs, icon over label, active in accent + weight/fill, 44pt targets).',
+      'Body/UI text ≥ 4.5:1 (grey-500 or darker on white); consent-critical text targets 7:1; non-text UI carrying meaning uses grey-500+/accent, never grey-200.',
+    ];
+
+    return { greys, accentOptions, accent, demoButtonStyle, typeRamp, spacing, rules };
+  }
+}
+</script>
+</body>
+</html>

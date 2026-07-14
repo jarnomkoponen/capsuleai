@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+  * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  body { margin: 0; }
+  .oas-btn:focus-visible { outline: 2px solid #0F766E; outline-offset: 2px; }
+</style>
+</helmet>
+<dc-import name="UniversalCanvasModule" hint-size="100%,100%">
+  <div style="flex:1;display:flex;flex-direction:column;padding:12px 20px 24px;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display','Segoe UI',system-ui,sans-serif;">
+    <div style="display:flex;align-items:center;justify-content:center;gap:10px;padding:8px 0 18px;border-bottom:1px solid #ECECEE;margin-bottom:18px;">
+      <dc-import name="LogoModule" size="header" hint-size="26px,26px"></dc-import>
+      <span style="font-size:17px;line-height:22px;font-weight:600;color:#17171A;">Set up {{ assistant }}</span>
+    </div>
+
+    <dc-import name="AssistantSetupModule" assistant="{{ assistant }}" topic="{{ topic }}" efficiency="{{ efficiency }}" vizKind="{{ vizKind }}" caption="{{ caption }}" hint-size="100%,300px"></dc-import>
+
+    <div style="margin-top:22px;">
+      <sc-if value="{{ showConsent }}" hint-placeholder-val="{{ false }}">
+        <dc-import name="ChatCanvasModule" variant="consent" requester="{{ assistant }}" purpose="{{ consentPurpose }}" scopes="{{ consentScopes }}" on-grant="{{ onGrant }}" on-decline="{{ onDecline }}" hint-size="100%,460px"></dc-import>
+      </sc-if>
+
+      <sc-if value="{{ showOptions }}" hint-placeholder-val="{{ true }}">
+        <dc-import name="PersonalizeAssistantModule" placement="setup" assistant="{{ assistant }}" heading="{{ personalizeHeading }}" options="{{ personalizeOptions }}" connected-ids="{{ connectedIds }}" on-option="{{ onOption }}" hint-size="100%,200px"></dc-import>
+
+        <sc-if value="{{ hasConnected }}" hint-placeholder-val="{{ false }}">
+          <button type="button" class="oas-btn" onClick="{{ onContinue }}" style="margin-top:16px;appearance:none;border:none;background:#0F766E;color:#FFFFFF;font:600 16px/1.2 inherit;min-height:48px;padding:0 24px;border-radius:24px;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;">{{ continueLabel }}</button>
+        </sc-if>
+        <sc-if value="{{ notConnected }}" hint-placeholder-val="{{ true }}">
+          <button type="button" class="oas-btn" onClick="{{ onContinue }}" style="margin-top:16px;appearance:none;border:1px solid #D9D9DD;background:#F7F7F8;color:#17171A;font:600 16px/1.2 inherit;min-height:48px;padding:0 24px;border-radius:24px;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;">Skip for now</button>
+        </sc-if>
+        <p style="margin:10px 0 0;font-size:13px;line-height:18px;color:#6E6E77;text-align:center;">{{ helperLine }}</p>
+      </sc-if>
+    </div>
+
+    <div style="flex:1;min-height:20px;"></div>
+    <dc-import name="ProgressIndicatorModule" current="{{ step }}" total="{{ total }}" label="{{ stepLabel }}" hint-size="100%,60px"></dc-import>
+  </div>
+</dc-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:420,&quot;height&quot;:880}}">
+class Component extends DCLogic {
+  configs() {
+    return {
+      'Home helper': {
+        topic: 'Home', efficiency: 35, vizKind: 'trend',
+        caption: 'How Home helper coordinates your week — calendar, meals and errands.',
+        options: [
+          { id: 'bank', kind: 'connect-app', label: 'Connect with my bank app', accessLabel: 'so Home helper can track subscriptions and flag spending', purpose: 'connect to your bank app to track subscriptions and spending', scopes: [ { id: 'subs', label: 'Recurring charges', accessLabel: 'read subscriptions and regular payments' }, { id: 'bal', label: 'Balances', accessLabel: 'see account balances to plan ahead' } ] },
+          { id: 'grocery', kind: 'connect-app', label: 'Connect a grocery account', accessLabel: 'so it can build and reorder your shopping list', purpose: 'connect to your grocery account to build and place orders', scopes: [ { id: 'orders', label: 'Order history', accessLabel: 'read what you usually buy' }, { id: 'place', label: 'Place orders', accessLabel: 'reorder your weekly shop for you' } ] },
+        ],
+      },
+      'Health coach': {
+        topic: 'Health', efficiency: 35, vizKind: 'trend',
+        caption: 'How Health coach supports your recovery and training load.',
+        options: [
+          { id: 'health', kind: 'grant-data', label: 'Give access to Apple Health', accessLabel: 'let Health coach read activity, sleep and recovery data', purpose: 'read your Apple Health activity, sleep and recovery data', scopes: [ { id: 'activity', label: 'Activity & workouts', accessLabel: 'steps, workouts and movement' }, { id: 'sleep', label: 'Sleep & recovery', accessLabel: 'sleep and resting heart rate' } ] },
+          { id: 'clinic', kind: 'connect-app', label: 'Connect your clinic portal', accessLabel: 'so it can follow your care team\u2019s plan and flag symptoms', purpose: 'connect to your clinic portal to follow your care plan', scopes: [ { id: 'plan', label: 'Care plan', accessLabel: 'read the plan your clinicians set' }, { id: 'appts', label: 'Appointments', accessLabel: 'see upcoming appointments' } ] },
+        ],
+      },
+      'Training buddy': {
+        topic: 'Training', efficiency: 35, vizKind: 'bars',
+        caption: 'How Training buddy coordinates shared sessions — your health context never crosses over.',
+        options: [
+          { id: 'strava', kind: 'connect-app', label: 'Connect Strava', accessLabel: 'so it can plan around your logged sessions', purpose: 'connect to Strava to plan around your logged sessions', scopes: [ { id: 'workouts', label: 'Logged workouts', accessLabel: 'read your recent sessions' } ] },
+          { id: 'partners', kind: 'grant-data', label: 'Share your training partners', accessLabel: 'so it can match calendars with Marko and others', purpose: 'access your training partners to match calendars for joint sessions', scopes: [ { id: 'contacts', label: 'Training partners', accessLabel: 'names and shared availability only' } ] },
+        ],
+      },
+      'Companion': {
+        topic: 'Relationships', efficiency: 35, vizKind: 'rings',
+        caption: 'A private space to think things through. Nothing is shared unless you choose to.',
+        options: [
+          { id: 'journal', kind: 'connect-app', label: 'Connect your journal', accessLabel: 'so reflections carry across, staying private to you', purpose: 'connect your journal so reflections carry across — private to you', scopes: [ { id: 'entries', label: 'Private entries', accessLabel: 'read and add entries, kept to you alone' } ] },
+        ],
+      },
+      'Financial coach': {
+        topic: 'Finance', efficiency: 35, vizKind: 'bars',
+        caption: 'How Financial coach keeps spending aligned with the life you actually live.',
+        options: [
+          { id: 'bank', kind: 'connect-app', label: 'Connect with my bank app', accessLabel: 'so it can review subscriptions and spending', purpose: 'connect to your bank app to review subscriptions and spending', scopes: [ { id: 'subs', label: 'Subscriptions', accessLabel: 'read recurring charges' }, { id: 'txns', label: 'Transactions', accessLabel: 'see spending to spot what no longer fits' } ] },
+          { id: 'cards', kind: 'connect-app', label: 'Connect a credit card', accessLabel: 'so it can spot recurring charges that no longer fit', purpose: 'connect a credit card to spot recurring charges that no longer fit', scopes: [ { id: 'statements', label: 'Statements', accessLabel: 'read statements and recurring charges' } ] },
+        ],
+      },
+    };
+  }
+  topicAssistants() {
+    return {
+      family: ['Home helper'], health: ['Health coach', 'Training buddy'],
+      relationships: ['Companion'], career: ['Companion'],
+      finance: ['Financial coach'], recovery: ['Health coach', 'Home helper'],
+    };
+  }
+  selectedAssistants() {
+    let sel = [];
+    try { sel = JSON.parse(window.localStorage.getItem('capsule.helpTopics') || '[]'); } catch (e) {}
+    const map = this.topicAssistants();
+    const names = [];
+    sel.forEach((t) => (map[t] || []).forEach((n) => { if (!names.includes(n)) names.push(n); }));
+    const order = ['Home helper', 'Health coach', 'Training buddy', 'Companion', 'Financial coach'];
+    const ordered = order.filter((n) => names.includes(n));
+    return ordered.length ? ordered : ['Home helper'];
+  }
+  state = { index: 0, connected: {}, pending: null };
+  advance() {
+    const list = this.selectedAssistants();
+    if (this.state.index >= list.length - 1) { (this.props.onFinish || (() => {}))(); }
+    else { this.setState((s) => ({ index: s.index + 1, pending: null })); }
+  }
+  renderVals() {
+    const list = this.selectedAssistants();
+    const idx = Math.min(this.state.index, list.length - 1);
+    const key = list[idx];
+    const cfg = this.configs()[key] || this.configs()['Home helper'];
+    const connectedIds = this.state.connected[key] || [];
+    const pending = this.state.pending;
+    const isLast = idx >= list.length - 1;
+    return {
+      assistant: key, topic: cfg.topic, efficiency: cfg.efficiency, vizKind: cfg.vizKind, caption: cfg.caption,
+      personalizeHeading: 'Personalize ' + key,
+      personalizeOptions: cfg.options,
+      connectedIds,
+      hasConnected: connectedIds.length > 0,
+      notConnected: connectedIds.length === 0,
+      continueLabel: isLast ? 'Finish setup' : 'Continue',
+      helperLine: connectedIds.length > 0
+        ? 'Connect more, or continue — you can change this anytime.'
+        : 'You can skip connecting for now and set it up later.',
+      showOptions: !pending,
+      showConsent: !!pending,
+      consentPurpose: pending ? pending.purpose : '',
+      consentScopes: pending ? pending.scopes : [],
+      step: idx + 1, total: list.length,
+      stepLabel: 'Assistant ' + (idx + 1) + ' of ' + list.length,
+      onOption: (o) => this.setState({ pending: o }),
+      onGrant: () => this.setState((s) => {
+        const cur = s.connected[key] || [];
+        return { connected: { ...s.connected, [key]: cur.indexOf(pending.id) === -1 ? [...cur, pending.id] : cur }, pending: null };
+      }),
+      onDecline: () => this.setState({ pending: null }),
+      onContinue: () => this.advance(),
+    };
+  }
+}
+</script>
+</body>
+</html>

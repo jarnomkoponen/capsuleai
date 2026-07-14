@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+  * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  body { margin: 0; }
+  .si-trouble:focus-visible { outline: 2px solid #0F766E; outline-offset: 2px; }
+</style>
+</helmet>
+<dc-import name="UniversalCanvasModule" hint-size="100%,100%">
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;padding:24px 28px 34px;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display','Segoe UI',system-ui,sans-serif;">
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;">
+      <dc-import name="LogoModule" size="sign-in" hint-size="84px,84px"></dc-import>
+      <p style="margin:0;text-align:center;font-style:italic;font-size:19px;line-height:27px;color:#3A3A40;">Live all life,<br/>focus on the essential</p>
+    </div>
+    <dc-import name="SignInModule" on-method="{{ onNext }}" on-continue="{{ onNext }}" hint-size="100%,220px"></dc-import>
+    <button type="button" class="si-trouble" style="margin-top:24px;appearance:none;border:none;background:transparent;color:#3A3A40;font:400 15px/1 inherit;cursor:pointer;min-height:44px;">Problems signing in?</button>
+  </div>
+</dc-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:420,&quot;height&quot;:880}}"></script>
+</body>
+</html>

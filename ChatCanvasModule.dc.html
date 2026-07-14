@@ -9,392 +9,204 @@
 <x-dc>
 <helmet>
 <style>
-*{box-sizing:border-box}html,body{margin:0}
-body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display",system-ui,sans-serif;background:#EAEAE6;color:#1A1A1A;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
-a{color:#2E5AAC;text-decoration:none}a:hover{color:#22447f;text-decoration:underline}
-@keyframes capsuleReveal{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-@media (prefers-reduced-motion: reduce){.capsule-reveal{animation:none !important}}
+  * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  body { margin: 0; }
+  .cc2:focus-visible, .cc2-sw:focus-visible { outline: 3px solid #0F766E; outline-offset: 2px; }
+  .cc2-btn:focus-visible { outline: 2px solid #0F766E; outline-offset: 2px; }
 </style>
 </helmet>
-<div style="max-width:460px;margin:0 auto;padding:12px 14px">
+<section role="group" aria-label="{{ regionLabel }}" tabindex="-1" ref="{{ regionRef }}" class="cc2" style="font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display','Segoe UI',system-ui,sans-serif;border:1px solid {{ frameBorder }};background:{{ frameBg }};border-radius:16px;padding:18px;">
 
-  <!-- ===================== CONSENT VARIANT (AAA) ===================== -->
-  <sc-if value="{{ isConsent }}" hint-placeholder-val="{{ false }}">
-  <section
-    ref="{{ regionRef }}"
-    tabindex="-1"
-    role="group"
-    aria-label="{{ regionLabel }}"
-    class="capsule-reveal"
-    style="animation:capsuleReveal .22s ease-out;outline:none;border-radius:18px;background:#FBF9FE;border:1.5px solid rgba(75,46,131,0.32);padding:18px;box-shadow:0 1px 3px rgba(26,26,26,0.06)">
-
-    <div aria-live="polite" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0">{{ announce }}</div>
-
-    <sc-if value="{{ showRequest }}" hint-placeholder-val="{{ true }}">
-      <div>
-        <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4B2E83" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-          <span style="font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#4B2E83">Permission needed</span>
-        </div>
-        <h2 style="font-size:22px;line-height:28px;font-weight:600;letter-spacing:-0.01em;color:#1A1A1A;margin:0 0 6px">{{ headline }}</h2>
-        <p style="font-size:17px;line-height:23px;color:#3A3A36;margin:0 0 16px">{{ subhead }}</p>
-        <div style="font-size:12px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:#6E6A62;margin:0 0 4px">Choose what to allow</div>
-        <div style="border-radius:14px;background:#FFFFFF;border:1px solid rgba(75,46,131,0.20);overflow:hidden">
-          <sc-for list="{{ scopeVMs }}" as="s" hint-placeholder-count="3">
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:60px;padding:12px 14px;border-top:1px solid #F0EEF5">
-              <div style="min-width:0">
-                <div style="font-size:17px;line-height:22px;font-weight:600;color:#1A1A1A">{{ s.label }}</div>
-                <div style="font-size:14px;line-height:19px;color:#3A3A36;margin-top:2px">{{ s.stateText }}</div>
-              </div>
-              <button role="switch" aria-checked="{{ s.on }}" aria-label="{{ s.ariaLabel }}" onClick="{{ s.toggle }}" style="width:52px;height:32px;flex:none;border-radius:16px;padding:3px;cursor:pointer;display:flex;transition:background .15s;background:{{ s.trackBg }};border:{{ s.trackBorder }}">
-                <span style="width:26px;height:26px;border-radius:50%;background:#FFFFFF;box-shadow:0 1px 3px rgba(0,0,0,0.35);transition:transform .15s;transform:translateX({{ s.knobShift }})"></span>
-              </button>
-            </div>
-          </sc-for>
-        </div>
-        <div style="display:flex;align-items:center;gap:6px;margin:14px 0 4px">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4B2E83" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 3v4h4"></path></svg>
-          <span style="font-size:15px;line-height:20px;color:#3A3A36;font-weight:500">You can turn this off anytime.</span>
-        </div>
-        <sc-if value="{{ grantDisabled }}" hint-placeholder-val="{{ false }}">
-          <p style="font-size:14px;line-height:19px;color:#6E6A62;margin:8px 0 0">Turn on at least one permission to grant access.</p>
-        </sc-if>
-        <div style="display:flex;gap:12px;margin-top:14px">
-          <button onClick="{{ onGrant }}" aria-disabled="{{ grantDisabled }}" aria-label="{{ grantAria }}" style="flex:1;min-height:52px;border-radius:14px;font-size:17px;font-weight:600;cursor:pointer;font-family:inherit;border:none;background:{{ grantBg }};color:{{ grantColor }}">{{ grantLabel }}</button>
-          <button onClick="{{ onDecline }}" style="flex:1;min-height:52px;border-radius:14px;font-size:17px;font-weight:600;cursor:pointer;font-family:inherit;background:#FFFFFF;color:#1A1A1A;border:2px solid #1A1A1A">Decline</button>
-        </div>
+  <!-- CONSENT: ask -->
+  <sc-if value="{{ showConsentAsk }}" hint-placeholder-val="{{ true }}">
+    <div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+        <span aria-hidden="true" style="width:22px;height:22px;border-radius:50%;border:2px solid #17171A;display:flex;align-items:center;justify-content:center;color:#17171A;font-size:13px;font-weight:800;line-height:1;flex:none;">!</span>
+        <span style="font-size:13px;line-height:16px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#17171A;">Permission needed</span>
       </div>
-    </sc-if>
+      <p style="margin:0 0 16px;font-size:17px;line-height:24px;color:#17171A;"><strong style="font-weight:600;">{{ requester }}</strong> wants to {{ purpose }}. Choose what to share.</p>
 
-    <sc-if value="{{ showGranted }}" hint-placeholder-val="{{ false }}">
-      <div>
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-          <span style="width:26px;height:26px;border-radius:50%;flex:none;background:#4B2E83;display:flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"></path></svg></span>
-          <span style="font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#4B2E83">{{ grantedEyebrow }}</span>
-        </div>
-        <h2 style="font-size:22px;line-height:28px;font-weight:600;letter-spacing:-0.01em;color:#1A1A1A;margin:0 0 10px">{{ requester }} can now help in this chat.</h2>
-        <div style="border-radius:14px;background:#FFFFFF;border:1px solid rgba(75,46,131,0.20);overflow:hidden">
-          <sc-for list="{{ statusVMs }}" as="g" hint-placeholder-count="3">
-            <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;border-top:1px solid #F0EEF5">
-              <sc-if value="{{ g.on }}" hint-placeholder-val="{{ true }}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#4B2E83" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" style="flex:none"><path d="M20 6L9 17l-5-5"></path></svg></sc-if>
-              <sc-if value="{{ g.off }}" hint-placeholder-val="{{ false }}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#767066" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" style="flex:none"><path d="M5 12h14"></path></svg></sc-if>
-              <span style="font-size:17px;line-height:22px;color:{{ g.color }}">{{ g.label }} <span style="font-size:14px;color:#6E6A62">· {{ g.tag }}</span></span>
-            </div>
-          </sc-for>
-        </div>
-        <div style="display:flex;align-items:center;gap:6px;margin:14px 0 0">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4B2E83" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 3v4h4"></path></svg>
-          <span style="font-size:15px;line-height:20px;color:#3A3A36;font-weight:500">You can turn any of these off anytime.</span>
-        </div>
-        <button onClick="{{ onManage }}" style="margin-top:14px;width:100%;min-height:52px;border-radius:14px;font-size:17px;font-weight:600;cursor:pointer;font-family:inherit;background:#FFFFFF;color:#1A1A1A;border:2px solid #1A1A1A">Manage permissions</button>
-      </div>
-    </sc-if>
-
-    <sc-if value="{{ showDeclined }}" hint-placeholder-val="{{ false }}">
-      <div>
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-          <span style="width:26px;height:26px;border-radius:50%;flex:none;background:#1A1A1A;display:flex;align-items:center;justify-content:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6L6 18"></path><path d="M6 6l12 12"></path></svg></span>
-          <span style="font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#1A1A1A">Declined</span>
-        </div>
-        <h2 style="font-size:22px;line-height:28px;font-weight:600;letter-spacing:-0.01em;color:#1A1A1A;margin:0 0 6px">No access granted.</h2>
-        <p style="font-size:17px;line-height:23px;color:#3A3A36;margin:0 0 14px">{{ requester }} won't read your data or act on your behalf. You can allow this later.</p>
-        <button onClick="{{ onReview }}" style="width:100%;min-height:52px;border-radius:14px;font-size:17px;font-weight:600;cursor:pointer;font-family:inherit;background:#FFFFFF;color:#1A1A1A;border:2px solid #1A1A1A">Review again</button>
-      </div>
-    </sc-if>
-
-  </section>
-  </sc-if>
-
-  <!-- ===================== PROGRESS VARIANT (health-sensitive, AAA text) ===================== -->
-  <sc-if value="{{ isProgress }}" hint-placeholder-val="{{ true }}">
-  <section role="group" aria-label="{{ progressLabel }}" class="capsule-reveal" style="animation:capsuleReveal .22s ease-out;border-radius:18px;background:#FFFFFF;border:1px solid #E4E3DF;padding:18px;box-shadow:0 1px 3px rgba(26,26,26,0.06)">
-
-    <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2E5AAC" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12h4l3 8 4-16 3 8h4"></path></svg>
-      <span style="font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#2E5AAC">Recovery day</span>
-    </div>
-    <h2 style="font-size:22px;line-height:28px;font-weight:600;letter-spacing:-0.01em;color:#1A1A1A;margin:0 0 14px">{{ progressTitle }}</h2>
-
-    <!-- Medication schedule visualization -->
-    <div style="border-radius:14px;background:#F7F7F4;border:1px solid #ECECE6;padding:14px;margin-bottom:14px">
-      <div style="font-size:13px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:#454541;margin-bottom:8px">Medication schedule</div>
-      <span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">{{ medAlt }}</span>
-      <div aria-hidden="false" style="display:flex;flex-direction:column;gap:2px">
-        <sc-for list="{{ medItems }}" as="m" hint-placeholder-count="3">
-          <div style="display:flex;align-items:center;gap:12px;min-height:44px;padding:6px 0;border-top:1px solid #ECECE6">
-            <span style="font-size:17px;font-weight:700;color:#1A1A1A;font-variant-numeric:tabular-nums;width:60px;flex:none">{{ m.time }}</span>
-            <span style="width:9px;height:9px;border-radius:50%;flex:none;background:{{ m.dot }}"></span>
-            <span style="font-size:17px;line-height:22px;color:#1A1A1A;font-weight:600">{{ m.name }}</span>
-            <span style="font-size:15px;line-height:20px;color:#454541">· {{ m.note }}</span>
-          </div>
+      <ul style="list-style:none;margin:0 0 16px;padding:0;display:flex;flex-direction:column;gap:2px;">
+        <sc-for list="{{ scopes }}" as="s" hint-placeholder-count="2">
+          <li style="display:flex;align-items:center;gap:14px;padding:12px 0;border-top:1px solid #D9D9DD;">
+            <span style="flex:1;min-width:0;">
+              <span style="display:block;font-size:16px;line-height:22px;color:#17171A;">{{ s.label }}</span>
+              <span id="{{ s.descId }}" style="display:block;font-size:13px;line-height:18px;color:#3A3A40;margin-top:2px;">{{ s.accessLabel }}</span>
+            </span>
+            <button type="button" role="switch" class="cc2-sw" aria-checked="{{ s.checked }}" aria-label="{{ s.label }}" aria-describedby="{{ s.descId }}" onClick="{{ s.onToggle }}" style="flex:none;position:relative;width:52px;height:32px;border-radius:16px;border:1px solid {{ s.trackBorder }};background:{{ s.trackBg }};cursor:pointer;padding:0;">
+              <span aria-hidden="true" style="position:absolute;top:3px;left:{{ s.knobLeft }};width:24px;height:24px;border-radius:50%;background:#FFFFFF;border:1px solid #D9D9DD;transition:left .15s;"></span>
+            </button>
+          </li>
         </sc-for>
+      </ul>
+
+      <p style="margin:0 0 18px;font-size:14px;line-height:20px;color:#3A3A40;">Encrypted and used only to help you. You can revoke any part at any time.</p>
+
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <button type="button" class="cc2-btn" onClick="{{ onGrant }}" aria-disabled="{{ grantDisabledStr }}" style="appearance:none;border:none;font:600 17px/1 inherit;height:52px;border-radius:14px;cursor:{{ grantCursor }};width:100%;background:{{ grantBg }};color:{{ grantFg }};">Grant access</button>
+        <button type="button" class="cc2-btn" onClick="{{ onDecline }}" style="appearance:none;border:1.5px solid #17171A;background:#FFFFFF;color:#17171A;font:600 17px/1 inherit;height:52px;border-radius:14px;cursor:pointer;width:100%;">Decline</button>
       </div>
     </div>
-
-    <!-- Hosted ProgressModule (milestones + tasks) -->
-    <dc-import name="ProgressModule" variant="in-canvas" milestones="{{ milestones }}" tasks="{{ tasks }}" hint-size="100%,380px"></dc-import>
-
-    <!-- Care-team boundary line -->
-    <div style="display:flex;gap:10px;align-items:flex-start;margin-top:14px;border-radius:14px;background:#F4F1FA;border:1px solid rgba(75,46,131,0.28);padding:12px 14px">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4B2E83" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style="flex:none;margin-top:2px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-      <div>
-        <div style="font-size:12px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:#4B2E83;margin-bottom:2px">Care-team boundary</div>
-        <div style="font-size:16px;line-height:22px;color:#1A1A1A;font-weight:500">{{ careTeamLine }}</div>
-      </div>
-    </div>
-
-  </section>
   </sc-if>
 
-  <!-- ===================== CONFIRMATION VARIANT ===================== -->
+  <!-- CONSENT: granted -->
+  <sc-if value="{{ showGranted }}" hint-placeholder-val="{{ false }}">
+    <div aria-live="polite">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+        <span aria-hidden="true" style="width:22px;height:22px;border-radius:50%;background:#17171A;display:flex;align-items:center;justify-content:center;color:#FFFFFF;font-size:12px;font-weight:800;flex:none;">✓</span>
+        <span style="font-size:13px;line-height:16px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#17171A;">{{ grantedTag }}</span>
+      </div>
+      <p style="margin:0 0 14px;font-size:16px;line-height:23px;color:#17171A;">{{ requester }} now has access to what you granted. Turn any part off below.</p>
+      <ul style="list-style:none;margin:0;padding:0;">
+        <sc-for list="{{ scopes }}" as="s" hint-placeholder-count="2">
+          <li style="display:flex;align-items:center;gap:14px;padding:12px 0;border-top:1px solid #ECECEE;">
+            <span style="flex:1;min-width:0;font-size:16px;line-height:22px;color:{{ s.grantedColor }};">{{ s.label }}</span>
+            <button type="button" role="switch" class="cc2-sw" aria-checked="{{ s.checked }}" aria-label="{{ s.label }}" onClick="{{ s.onToggle }}" style="flex:none;position:relative;width:52px;height:32px;border-radius:16px;border:1px solid {{ s.trackBorder }};background:{{ s.trackBg }};cursor:pointer;padding:0;">
+              <span aria-hidden="true" style="position:absolute;top:3px;left:{{ s.knobLeft }};width:24px;height:24px;border-radius:50%;background:#FFFFFF;border:1px solid #D9D9DD;"></span>
+            </button>
+          </li>
+        </sc-for>
+      </ul>
+    </div>
+  </sc-if>
+
+  <!-- CONSENT: declined -->
+  <sc-if value="{{ showDeclined }}" hint-placeholder-val="{{ false }}">
+    <div aria-live="polite">
+      <p style="margin:0 0 16px;font-size:17px;line-height:24px;color:#17171A;">No access granted. {{ requester }} continues without it — you can review this whenever you like.</p>
+      <button type="button" class="cc2-btn" onClick="{{ onReview }}" style="appearance:none;border:1.5px solid #17171A;background:#FFFFFF;color:#17171A;font:600 17px/1 inherit;height:52px;border-radius:14px;cursor:pointer;width:100%;">Review again</button>
+    </div>
+  </sc-if>
+
+  <!-- CONFIRMATION -->
   <sc-if value="{{ isConfirmation }}" hint-placeholder-val="{{ false }}">
-  <section role="group" aria-label="{{ cSummary }}" class="capsule-reveal" style="animation:capsuleReveal .22s ease-out;border-radius:18px;background:#FFFFFF;border:1px solid #E4E3DF;padding:18px;box-shadow:0 1px 3px rgba(26,26,26,0.06)">
-    <div aria-live="polite" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0">{{ announce }}</div>
-
-    <sc-if value="{{ showConfirmRequest }}" hint-placeholder-val="{{ true }}">
-      <div>
-        <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2E5AAC" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 12l2 2 4-4"></path><circle cx="12" cy="12" r="9"></circle></svg>
-          <span style="font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#2E5AAC">Confirm action</span>
+    <div>
+      <sc-if value="{{ confActed }}" hint-placeholder-val="{{ false }}">
+        <div aria-live="polite" style="display:flex;align-items:center;gap:10px;">
+          <span aria-hidden="true" style="width:24px;height:24px;border-radius:50%;background:#17171A;display:flex;align-items:center;justify-content:center;color:#FFFFFF;font-size:13px;font-weight:800;flex:none;">✓</span>
+          <span style="font-size:17px;line-height:24px;font-weight:600;color:#17171A;">{{ confActedText }}</span>
         </div>
-        <h2 style="font-size:22px;line-height:28px;font-weight:600;letter-spacing:-0.01em;color:#1A1A1A;margin:0 0 12px">{{ cSummary }}</h2>
-
-        <dl style="margin:0 0 14px;border-radius:14px;background:#F7F7F4;border:1px solid #ECECE6;overflow:hidden">
-          <sc-for list="{{ cDetails }}" as="d" hint-placeholder-count="3">
-            <div style="display:flex;justify-content:space-between;gap:12px;padding:11px 14px;border-top:1px solid #ECECE6">
-              <dt style="font-size:15px;line-height:20px;color:#454541">{{ d.label }}</dt>
-              <dd style="font-size:15px;line-height:20px;color:#1A1A1A;font-weight:600;margin:0;text-align:right">{{ d.value }}</dd>
-            </div>
-          </sc-for>
-        </dl>
-
-        <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:14px">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2E5AAC" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style="flex:none;margin-top:2px"><rect x="5" y="11" width="14" height="9" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
-          <span style="font-size:15px;line-height:20px;color:#3A3A36">{{ cScopeLine }}</span>
-        </div>
-
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:52px;border-radius:14px;background:#F7F7F4;border:1px solid #ECECE6;padding:10px 14px;margin-bottom:14px">
-          <span style="font-size:16px;line-height:21px;color:#1A1A1A;min-width:0">{{ cReminderLabel }}</span>
-          <button role="switch" aria-checked="{{ cReminderOn }}" aria-label="{{ cReminderAria }}" onClick="{{ onToggleReminder }}" style="width:52px;height:32px;flex:none;border-radius:16px;padding:3px;cursor:pointer;display:flex;transition:background .15s;background:{{ cReminderTrack }};border:{{ cReminderBorder }}">
-            <span style="width:26px;height:26px;border-radius:50%;background:#FFFFFF;box-shadow:0 1px 3px rgba(0,0,0,0.35);transition:transform .15s;transform:translateX({{ cReminderKnob }})"></span>
-          </button>
-        </div>
-
-        <div style="display:flex;gap:12px">
-          <button onClick="{{ onConfirm }}" style="flex:1;min-height:52px;border-radius:14px;font-size:17px;font-weight:600;cursor:pointer;font-family:inherit;border:none;background:#2E5AAC;color:#FFFFFF">{{ confirmLabel }}</button>
-          <button onClick="{{ onKeep }}" style="flex:1;min-height:52px;border-radius:14px;font-size:17px;font-weight:600;cursor:pointer;font-family:inherit;background:#FFFFFF;color:#1A1A1A;border:2px solid #1A1A1A">{{ keepLabel }}</button>
-        </div>
-      </div>
-    </sc-if>
-
-    <sc-if value="{{ showConfirmed }}" hint-placeholder-val="{{ false }}">
-      <div>
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-          <span style="width:26px;height:26px;border-radius:50%;flex:none;background:#1E7A46;display:flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"></path></svg></span>
-          <span style="font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#1E7A46">Done</span>
-        </div>
-        <h2 style="font-size:22px;line-height:28px;font-weight:600;letter-spacing:-0.01em;color:#1A1A1A;margin:0 0 6px">StreamMax cancelled.</h2>
-        <p style="font-size:16px;line-height:22px;color:#3A3A36;margin:0 0 14px">{{ cReminderStatus }}</p>
-        <button onClick="{{ onUndoC }}" style="width:100%;min-height:52px;border-radius:14px;font-size:17px;font-weight:600;cursor:pointer;font-family:inherit;background:#FFFFFF;color:#1A1A1A;border:2px solid #1A1A1A">Undo</button>
-      </div>
-    </sc-if>
-
-    <sc-if value="{{ showKept }}" hint-placeholder-val="{{ false }}">
-      <div>
-        <div style="font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#6E6A62;margin-bottom:8px">No change</div>
-        <h2 style="font-size:22px;line-height:28px;font-weight:600;letter-spacing:-0.01em;color:#1A1A1A;margin:0 0 6px">Kept StreamMax.</h2>
-        <p style="font-size:16px;line-height:22px;color:#3A3A36;margin:0 0 14px">Nothing changed. You can revisit this anytime.</p>
-        <button onClick="{{ onUndoC }}" style="width:100%;min-height:52px;border-radius:14px;font-size:17px;font-weight:600;cursor:pointer;font-family:inherit;background:#FFFFFF;color:#1A1A1A;border:2px solid #1A1A1A">Review again</button>
-      </div>
-    </sc-if>
-
-  </section>
-  </sc-if>
-
-  <!-- ===================== VISUALIZATION VARIANT (read-only, portable asset) ===================== -->
-  <sc-if value="{{ isVisualization }}" hint-placeholder-val="{{ false }}">
-  <section role="group" aria-label="{{ vizTitle }}" class="capsule-reveal" style="animation:capsuleReveal .22s ease-out;border-radius:18px;background:#FFFFFF;border:1px solid #E4E3DF;padding:18px;box-shadow:0 1px 3px rgba(26,26,26,0.06)">
-    <span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">{{ vizAlt }}</span>
-    <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2E5AAC" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5V6a2 2 0 0 1 2-2h9l5 5v10.5a1.5 1.5 0 0 1-1.5 1.5H5.5A1.5 1.5 0 0 1 4 19.5z"></path><path d="M14 4v5h5"></path></svg>
-      <span style="font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#2E5AAC">Career profile</span>
-    </div>
-    <h2 style="font-size:22px;line-height:28px;font-weight:600;letter-spacing:-0.01em;color:#1A1A1A;margin:0 0 14px">{{ vizTitle }}</h2>
-    <div style="display:flex;flex-direction:column;gap:12px">
-      <sc-for list="{{ vizSections }}" as="sec" hint-placeholder-count="3">
-        <div style="border-radius:14px;background:#F7F7F4;border:1px solid #ECECE6;padding:14px">
-          <div style="font-size:13px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:#454541;margin-bottom:8px">{{ sec.heading }}</div>
-          <div style="display:flex;flex-direction:column;gap:6px">
-            <sc-for list="{{ sec.items }}" as="it" hint-placeholder-count="3">
-              <div style="display:flex;gap:9px;align-items:flex-start">
-                <span style="width:6px;height:6px;border-radius:50%;background:#2E5AAC;flex:none;margin-top:8px"></span>
-                <span style="font-size:16px;line-height:22px;color:#1A1A1A">{{ it }}</span>
-              </div>
-            </sc-for>
+      </sc-if>
+      <sc-if value="{{ confPending }}" hint-placeholder-val="{{ true }}">
+        <div>
+          <p style="margin:0 0 14px;font-size:19px;line-height:26px;font-weight:600;color:#17171A;">{{ confSummary }}</p>
+          <sc-if value="{{ hasDetails }}" hint-placeholder-val="{{ false }}">
+            <dl style="margin:0 0 18px;padding:14px 0;border-top:1px solid #ECECEE;border-bottom:1px solid #ECECEE;display:flex;flex-direction:column;gap:8px;">
+              <sc-for list="{{ details }}" as="d" hint-placeholder-count="2">
+                <div style="display:flex;justify-content:space-between;gap:16px;">
+                  <dt style="font-size:15px;line-height:20px;color:#6E6E77;">{{ d.label }}</dt>
+                  <dd style="margin:0;font-size:15px;line-height:20px;color:#17171A;font-weight:500;text-align:right;">{{ d.value }}</dd>
+                </div>
+              </sc-for>
+            </dl>
+          </sc-if>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <button type="button" class="cc2-btn" onClick="{{ onConfirm }}" style="appearance:none;border:none;background:{{ accent }};color:#FFFFFF;font:600 17px/1 inherit;height:52px;border-radius:14px;cursor:pointer;width:100%;">{{ confirmLabel }}</button>
+            <button type="button" class="cc2-btn" onClick="{{ onCancel }}" style="appearance:none;border:1.5px solid #17171A;background:#FFFFFF;color:#17171A;font:600 17px/1 inherit;height:52px;border-radius:14px;cursor:pointer;width:100%;">{{ cancelLabel }}</button>
           </div>
         </div>
-      </sc-for>
+      </sc-if>
     </div>
-    <button onClick="{{ onExport }}" style="margin-top:14px;width:100%;min-height:52px;border-radius:14px;font-size:17px;font-weight:600;cursor:pointer;font-family:inherit;background:#FFFFFF;color:#2E5AAC;border:2px solid #2E5AAC;display:flex;align-items:center;justify-content:center;gap:8px">
-      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v12"></path><path d="M7 10l5 5 5-5"></path><path d="M5 21h14"></path></svg>
-      {{ exportLabel }}
-    </button>
-  </section>
   </sc-if>
 
-</div>
+  <!-- PROGRESS -->
+  <sc-if value="{{ isProgress }}" hint-placeholder-val="{{ false }}">
+    <dc-import name="ProgressModule" accent="{{ accent }}" hint-size="100%,360px"></dc-import>
+  </sc-if>
+
+  <!-- VISUALIZATION -->
+  <sc-if value="{{ isVisualization }}" hint-placeholder-val="{{ false }}">
+    <div>
+      <sc-if value="{{ hasTitle }}" hint-placeholder-val="{{ false }}">
+        <h3 style="margin:0 0 12px;font-size:16px;line-height:21px;font-weight:600;color:#17171A;">{{ title }}</h3>
+      </sc-if>
+      <dc-import name="TopicVisualizationModule" variant="hero" kind="{{ vizKind }}" caption="{{ vizCaption }}" text-alt="{{ vizTextAlt }}" accent="{{ accent }}" hint-size="100%,220px"></dc-import>
+    </div>
+  </sc-if>
+
+</section>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{
-  &quot;$preview&quot;: { &quot;width&quot;: 488, &quot;height&quot;: 760 },
-  &quot;variant&quot;: { &quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;consent&quot;, &quot;progress&quot;, &quot;confirmation&quot;, &quot;visualization&quot;], &quot;default&quot;: &quot;consent&quot;, &quot;tsType&quot;: &quot;'visualization'|'progress'|'consent'|'confirmation'&quot; },
-  &quot;title&quot;: { &quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Your plan for today&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Progress&quot; },
-  &quot;summary&quot;: { &quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Cancel StreamMax now?&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Confirmation&quot; },
-  &quot;confirmLabel&quot;: { &quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Cancel subscription&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Confirmation&quot; },
-  &quot;keepLabel&quot;: { &quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Keep it&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Confirmation&quot; },
-  &quot;reminderLabel&quot;: { &quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Remind me before the next charge on my other subscriptions&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Confirmation&quot; },
-  &quot;details&quot;: { &quot;editor&quot;: null, &quot;default&quot;: [{&quot;label&quot;: &quot;Plan&quot;, &quot;value&quot;: &quot;StreamMax Premium&quot;}, {&quot;label&quot;: &quot;Monthly cost&quot;, &quot;value&quot;: &quot;$17.99&quot;}, {&quot;label&quot;: &quot;Last used&quot;, &quot;value&quot;: &quot;3 months ago&quot;}], &quot;tsType&quot;: &quot;{ label: string; value: string }[]&quot; },
-  &quot;vizTitle&quot;: { &quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Your career profile&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Visualization&quot; },
-  &quot;exportLabel&quot;: { &quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Export profile&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Visualization&quot; },
-  &quot;vizSections&quot;: { &quot;editor&quot;: null, &quot;default&quot;: [{&quot;heading&quot;: &quot;Strengths&quot;, &quot;items&quot;: [&quot;Systems thinking&quot;, &quot;Mentoring engineers&quot;, &quot;Turning ambiguity into plans&quot;]}, {&quot;heading&quot;: &quot;Direction&quot;, &quot;items&quot;: [&quot;Toward staff-level product work&quot;, &quot;Less firefighting, more architecture&quot;]}, {&quot;heading&quot;: &quot;Recent highlights&quot;, &quot;items&quot;: [&quot;Led the billing rebuild&quot;, &quot;Grew two engineers to senior&quot;]}], &quot;tsType&quot;: &quot;{ heading: string; items: string[] }[]&quot; },
-  &quot;requester&quot;: { &quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Home Helper&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Consent request&quot; },
-  &quot;purpose&quot;: { &quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;join this Health chat and give tailored suggestions&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Consent request&quot; },
-  &quot;allowEmptyGrant&quot;: { &quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Consent request&quot; },
-  &quot;scopes&quot;: { &quot;editor&quot;: null, &quot;default&quot;: [{&quot;id&quot;: &quot;activity&quot;, &quot;label&quot;: &quot;Read activity and nutrition data&quot;, &quot;accessLabel&quot;: &quot;can read your activity and nutrition data&quot;}, {&quot;id&quot;: &quot;grocery&quot;, &quot;label&quot;: &quot;Suggest and place grocery orders&quot;, &quot;accessLabel&quot;: &quot;can suggest and place grocery orders&quot;}, {&quot;id&quot;: &quot;reminders&quot;, &quot;label&quot;: &quot;Send reminders via messenger&quot;, &quot;accessLabel&quot;: &quot;can send reminders via messenger&quot;}], &quot;tsType&quot;: &quot;{ id: string; label: string; accessLabel: string; granted?: boolean }[]&quot; }
-}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:460},&quot;variant&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;consent&quot;,&quot;options&quot;:[&quot;consent&quot;,&quot;confirmation&quot;,&quot;progress&quot;,&quot;visualization&quot;],&quot;tsType&quot;:&quot;string&quot;},&quot;requester&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Home Helper&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;purpose&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;join this Health chat and give tailored suggestions&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;summary&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Cancel StreamMax now?&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;title&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;allowEmptyGrant&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#0F766E&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#0F766E&quot;,&quot;#2563C9&quot;,&quot;#C2410C&quot;]}}">
 class Component extends DCLogic {
   constructor(props) {
     super(props);
+    const scopes = (this.props.scopes || this.defaultScopes()).map((s) => ({ ...s, granted: false }));
+    this.state = { scopes, decision: null, confActed: false };
     this.regionRef = React.createRef();
-    const scopes = this.getScopes();
-    this.state = { on: scopes.map(() => false), decision: null, announce: '', reminderOn: false, confirmedC: null };
   }
-  getScopes() {
-    const fallback = [
+  defaultScopes() {
+    return [
       { id: 'activity', label: 'Read activity and nutrition data', accessLabel: 'can read your activity and nutrition data' },
-      { id: 'grocery', label: 'Suggest and place grocery orders', accessLabel: 'can suggest and place grocery orders' },
-      { id: 'reminders', label: 'Send reminders via messenger', accessLabel: 'can send reminders via messenger' },
+      { id: 'schedule', label: 'Read your training schedule', accessLabel: 'can see when you train' },
     ];
-    const s = this.props.scopes;
-    return (Array.isArray(s) && s.length) ? s.map((x, i) => ({ id: x.id || ('scope-' + i), label: x.label, accessLabel: x.accessLabel || ('access: ' + x.label) })) : fallback;
   }
   componentDidMount() {
-    if ((this.props.variant ?? 'consent') === 'consent' && this.regionRef.current) this.regionRef.current.focus({ preventScroll: true });
+    if ((this.props.variant || 'consent') === 'consent') {
+      requestAnimationFrame(() => this.regionRef.current && this.regionRef.current.focus());
+    }
   }
+  toggleScope(id) { this.setState((s) => ({ scopes: s.scopes.map((x) => x.id === id ? { ...x, granted: !x.granted } : x) })); }
   renderVals() {
-    const variant = this.props.variant ?? 'consent';
-    const isConsent = variant === 'consent';
-    const isProgress = variant === 'progress';
-    const isConfirmation = variant === 'confirmation';
-    const isVisualization = variant === 'visualization';
-
-    // ---- consent ----
-    const requester = this.props.requester ?? 'Home Helper';
-    const purpose = this.props.purpose ?? 'join this Health chat and give tailored suggestions';
+    const variant = this.props.variant || 'consent';
+    const accent = this.props.accent || '#0F766E';
+    const requester = this.props.requester || 'Home Helper';
+    const purpose = this.props.purpose || 'join this Health chat and give tailored suggestions';
     const allowEmptyGrant = this.props.allowEmptyGrant ?? false;
-    const scopes = this.getScopes();
-    const on = this.state.on;
     const decision = this.state.decision;
-    const count = on.filter(Boolean).length;
-    const grantDisabled = count === 0 && !allowEmptyGrant;
-    const toggle = (i) => () => this.setState(st => {
-      const next = st.on.slice(); next[i] = !next[i]; const s = scopes[i];
-      const revoking = st.decision === 'granted';
-      return { on: next, announce: next[i] ? (s.label + '. On, ' + s.accessLabel + '.') : (s.label + '. Off. ' + (revoking ? 'Access removed: ' + s.accessLabel + '.' : 'Not shared.')) };
-    });
-    const scopeVMs = scopes.map((s, i) => ({
-      label: s.label, on: on[i],
-      stateText: on[i] ? ('On \u00b7 ' + s.accessLabel) : 'Off \u00b7 not shared',
-      ariaLabel: s.label + '. ' + (on[i] ? 'On, ' + s.accessLabel : 'Off, not shared') + '. Toggle to change.',
-      toggle: toggle(i),
-      trackBg: on[i] ? '#4B2E83' : '#767066', trackBorder: on[i] ? '1px solid #4B2E83' : '1px solid #5F5A51',
-      knobShift: on[i] ? '20px' : '0px',
+
+    const anyOn = this.state.scopes.some((s) => s.granted);
+    const grantDisabled = !allowEmptyGrant && !anyOn;
+
+    const scopes = this.state.scopes.map((s) => ({
+      label: s.label, accessLabel: s.accessLabel, descId: 'cc-scope-' + s.id,
+      checked: s.granted ? 'true' : 'false',
+      trackBg: s.granted ? accent : '#ECECEE',
+      trackBorder: s.granted ? accent : '#D9D9DD',
+      knobLeft: s.granted ? '25px' : '3px',
+      grantedColor: s.granted ? '#17171A' : '#B8B8BF',
+      onToggle: () => this.toggleScope(s.id),
     }));
-    const statusVMs = scopes.map((s, i) => ({ label: s.label, on: on[i], off: !on[i], tag: on[i] ? 'allowed' : 'off', color: on[i] ? '#1A1A1A' : '#6E6A62' }));
-    const allOn = count === scopes.length;
 
-    // ---- progress (Becca defaults) ----
-    const medItems = Array.isArray(this.props.medItems) && this.props.medItems.length ? this.props.medItems : [
-      { time: '08:00', name: 'Antibiotic', note: 'with food', dot: '#2E5AAC' },
-      { time: '12:00', name: 'Pain relief', note: 'optional', dot: '#8A5A00' },
-      { time: '20:00', name: 'Antibiotic', note: 'with food', dot: '#2E5AAC' },
-    ];
-    const medAlt = 'Medication schedule: ' + medItems.map(m => m.name + ' at ' + m.time + ', ' + m.note).join('; ') + '.';
-    const milestones = Array.isArray(this.props.milestones) && this.props.milestones.length ? this.props.milestones : [
-      { label: 'Surgery complete', description: 'Discharged with a recovery plan', state: 'done' },
-      { label: 'Recovery day 1', description: 'Rest, hydration, short walks', state: 'current' },
-      { label: 'Follow-up call', description: 'With your care team on day 4', state: 'upcoming' },
-    ];
-    const tasks = Array.isArray(this.props.tasks) ? this.props.tasks : [
-      { label: 'Take your 08:00 antibiotic with food' },
-      { label: 'Log your pain level this evening' },
-    ];
-    const careTeamLine = this.props.careTeamLine ?? 'Anything off or medical goes to your care team, not me.';
-
-    // ---- confirmation (Maya defaults) ----
-    const cSummary = this.props.summary ?? 'Cancel StreamMax now?';
-    const cDetails = Array.isArray(this.props.details) && this.props.details.length ? this.props.details : [
-      { label: 'Plan', value: 'StreamMax Premium' },
-      { label: 'Monthly cost', value: '$17.99' },
-      { label: 'Last used', value: '3 months ago' },
-    ];
-    const cScopeLine = this.props.scopeLine ?? 'This cancels StreamMax only \u2014 no other subscriptions change.';
-    const cReminderLabel = this.props.reminderLabel ?? 'Remind me before the next charge on my other subscriptions';
-    const confirmLabel = this.props.confirmLabel ?? 'Cancel subscription';
-    const keepLabel = this.props.keepLabel ?? 'Keep it';
-    const reminderOn = this.state.reminderOn;
-    const decisionC = this.state.confirmedC;
-
-    // ---- visualization (Hetta defaults) ----
-    const vizTitle = this.props.vizTitle ?? 'Your career profile';
-    const vizSections = Array.isArray(this.props.vizSections) && this.props.vizSections.length ? this.props.vizSections : [
-      { heading: 'Strengths', items: ['Systems thinking', 'Mentoring engineers', 'Turning ambiguity into plans'] },
-      { heading: 'Direction', items: ['Toward staff-level product work', 'Less firefighting, more architecture'] },
-      { heading: 'Recent highlights', items: ['Led the billing rebuild', 'Grew two engineers to senior'] },
-    ];
-    const exportLabel = this.props.exportLabel ?? 'Export profile';
-    const vizAlt = 'Career profile. ' + vizSections.map(s => s.heading + ': ' + s.items.join(', ')).join('. ') + '.';
+    const isConsent = variant === 'consent';
+    const consentTint = isConsent && decision == null;
 
     return {
-      isConsent, isProgress, isConfirmation, isVisualization,
-      // consent
+      accent, requester, purpose, scopes,
       regionRef: this.regionRef,
-      regionLabel: 'Permission needed. ' + requester + ' wants to ' + purpose + '. Each permission is separate and revocable anytime.',
-      requester,
-      headline: requester + ' wants to ' + purpose + '.',
-      subhead: 'You control exactly what it can see and do. Each permission is separate and reversible.',
-      scopeVMs, statusVMs,
-      grantedEyebrow: allOn ? 'Permission granted' : 'Partially granted',
-      grantDisabled, grantLabel: 'Grant access',
-      grantBg: grantDisabled ? '#B9AFCB' : '#4B2E83', grantColor: grantDisabled ? '#3D3547' : '#FFFFFF',
-      grantAria: grantDisabled ? 'Grant access. Disabled until at least one permission is on.' : 'Grant access to ' + count + ' of ' + scopes.length + ' permissions. Revocable anytime.',
-      showRequest: decision === null, showGranted: decision === 'granted', showDeclined: decision === 'declined',
-      announce: this.state.announce,
-      onGrant: () => { if (grantDisabled) return; this.setState({ decision: 'granted', announce: 'Granted ' + count + ' of ' + scopes.length + ' permissions to ' + requester + '. You can turn any of these off anytime.' }); },
-      onDecline: () => this.setState({ decision: 'declined', announce: 'Declined. No access granted to ' + requester + '.' }),
-      onManage: () => this.setState({ decision: null, announce: 'Managing permissions. Turn any switch off to revoke that access.' }),
-      onReview: () => this.setState({ decision: null, announce: 'Reviewing the permission request.' }),
-      // progress
-      progressLabel: this.props.title ?? 'Your recovery day plan',
-      progressTitle: this.props.title ?? 'Your plan for today',
-      medItems, medAlt, milestones, tasks, careTeamLine,
-      // confirmation
-      cSummary, cDetails, cScopeLine, cReminderLabel, confirmLabel, keepLabel,
-      cReminderOn: reminderOn,
-      cReminderTrack: reminderOn ? '#2E5AAC' : '#767066',
-      cReminderBorder: reminderOn ? '1px solid #2E5AAC' : '1px solid #5F5A51',
-      cReminderKnob: reminderOn ? '20px' : '0px',
-      cReminderAria: cReminderLabel + '. ' + (reminderOn ? 'On.' : 'Off.') + ' Toggle to change.',
-      cReminderStatus: reminderOn ? 'Reminders on for your other subscriptions.' : 'No reminders set.',
-      showConfirmRequest: decisionC === null,
-      showConfirmed: decisionC === 'confirmed',
-      showKept: decisionC === 'kept',
-      onToggleReminder: () => this.setState(s => ({ reminderOn: !s.reminderOn, announce: 'Reminder ' + (!s.reminderOn ? 'on' : 'off') + '.' })),
-      onConfirm: () => this.setState(s => ({ confirmedC: 'confirmed', announce: 'StreamMax cancelled. ' + (s.reminderOn ? 'Reminders on for your other subscriptions.' : 'No reminders set.') })),
-      onKeep: () => this.setState({ confirmedC: 'kept', announce: 'Kept StreamMax. Nothing changed.' }),
-      onUndoC: () => this.setState({ confirmedC: null, announce: 'Reviewing the action.' }),
-      // visualization
-      vizTitle, vizSections, exportLabel, vizAlt,
-      onExport: this.props.onExport || (() => {}),
+      regionLabel: this.props.title || (isConsent ? ('Permission request from ' + requester) : (this.props.title || 'Chat canvas')),
+      frameBorder: consentTint ? '#D9D9DD' : '#D9D9DD',
+      frameBg: consentTint ? '#F7F7F8' : '#FFFFFF',
+      showConsentAsk: isConsent && decision == null,
+      showGranted: isConsent && decision === 'granted',
+      showDeclined: isConsent && decision === 'declined',
+      grantedTag: this.state.scopes.every((s) => s.granted) ? 'Access granted' : 'Partial access granted',
+      grantDisabledStr: grantDisabled ? 'true' : 'false',
+      grantBg: grantDisabled ? '#ECECEE' : '#17171A',
+      grantFg: grantDisabled ? '#B8B8BF' : '#FFFFFF',
+      grantCursor: grantDisabled ? 'not-allowed' : 'pointer',
+      onGrant: () => { if (!grantDisabled) { this.setState({ decision: 'granted' }); (this.props.onGrant || (() => {}))(); } },
+      onDecline: () => { this.setState({ decision: 'declined' }); (this.props.onDecline || (() => {}))(); },
+      onReview: () => this.setState({ decision: null }),
+
+      isConfirmation: variant === 'confirmation',
+      confPending: !this.state.confActed,
+      confActed: this.state.confActed,
+      confSummary: this.props.summary || 'Cancel StreamMax now?',
+      confActedText: this.props.actedText || 'Done',
+      confirmLabel: this.props.confirmLabel || 'Confirm',
+      cancelLabel: this.props.cancelLabel || 'Keep it',
+      details: this.props.details || [],
+      hasDetails: (this.props.details || []).length > 0,
+      onConfirm: () => this.setState({ confActed: true }),
+      onCancel: () => (this.props.onCancel || (() => {}))(),
+
+      isProgress: variant === 'progress',
+      isVisualization: variant === 'visualization',
+      title: this.props.title || '',
+      hasTitle: !!this.props.title,
+      vizKind: this.props.vizKind || 'bars',
+      vizCaption: this.props.vizCaption || '',
+      vizTextAlt: this.props.vizTextAlt || '',
     };
   }
 }

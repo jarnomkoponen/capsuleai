@@ -1,66 +1,25 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="./support.js"></script>
+<title>Capsule AI — Prototype</title>
+<meta http-equiv="refresh" content="0; url=./Capsule.dc.html">
+<link rel="canonical" href="./Capsule.dc.html">
+<style>
+  html, body { margin: 0; height: 100%; background: #ECECEE;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', system-ui, sans-serif; }
+  .wrap { min-height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; color: #17171A; }
+  .mark { font-size: 40px; font-weight: 600; letter-spacing: -0.03em; }
+  a { color: #0F766E; font-weight: 600; font-size: 17px; text-decoration: none; }
+</style>
 </head>
 <body>
-<x-dc>
-<helmet>
-<style>
-*{box-sizing:border-box}html,body{margin:0}
-body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display",system-ui,sans-serif;background:#D8D8D3;color:#1A1A1A;-webkit-font-smoothing:antialiased}
-</style>
-</helmet>
-<div style="min-height:100vh;background:#D8D8D3">
-  <sc-if value="{{ isSignin }}" hint-placeholder-val="{{ false }}"><dc-import name="SignInScreen" on-navigate="{{ nav }}" hint-size="100%,100%"></dc-import></sc-if>
-  <sc-if value="{{ isOnboarding }}" hint-placeholder-val="{{ false }}"><dc-import name="OnboardingScreen" on-navigate="{{ nav }}" hint-size="100%,100%"></dc-import></sc-if>
-
-  <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}"><dc-import name="HomeScreen" on-navigate="{{ nav }}" hint-size="100%,100%"></dc-import></sc-if>
-  <sc-if value="{{ isAssistants }}" hint-placeholder-val="{{ false }}"><dc-import name="AssistantsScreen" on-navigate="{{ nav }}" hint-size="100%,100%"></dc-import></sc-if>
-  <sc-if value="{{ isYou }}" hint-placeholder-val="{{ false }}"><dc-import name="YouScreen" on-navigate="{{ nav }}" hint-size="100%,100%"></dc-import></sc-if>
-
-  <sc-if value="{{ isAlison }}" hint-placeholder-val="{{ false }}"><dc-import name="AlisonChat" on-back="{{ back }}" on-navigate="{{ nav }}" hint-size="100%,100%"></dc-import></sc-if>
-  <sc-if value="{{ isJo }}" hint-placeholder-val="{{ false }}"><dc-import name="JoChat" on-back="{{ back }}" on-navigate="{{ nav }}" hint-size="100%,100%"></dc-import></sc-if>
-  <sc-if value="{{ isAxel }}" hint-placeholder-val="{{ false }}"><dc-import name="AxelChat" on-back="{{ back }}" on-navigate="{{ nav }}" hint-size="100%,100%"></dc-import></sc-if>
-  <sc-if value="{{ isHetta }}" hint-placeholder-val="{{ false }}"><dc-import name="HettaChat" on-back="{{ back }}" on-navigate="{{ nav }}" hint-size="100%,100%"></dc-import></sc-if>
-  <sc-if value="{{ isMaya }}" hint-placeholder-val="{{ false }}"><dc-import name="MayaChat" on-back="{{ back }}" on-navigate="{{ nav }}" hint-size="100%,100%"></dc-import></sc-if>
-  <sc-if value="{{ isBecca }}" hint-placeholder-val="{{ false }}"><dc-import name="BeccaChat" on-back="{{ back }}" on-navigate="{{ nav }}" hint-size="100%,100%"></dc-import></sc-if>
-</div>
-</x-dc>
-<script type="text/x-dc" data-dc-script data-props="{ &quot;$preview&quot;: { &quot;width&quot;: 440, &quot;height&quot;: 940 } }">
-class Component extends DCLogic {
-  // In-memory navigation state: a history stack + the active tab. No deps, no URLs.
-  state = { stack: ['home'], tab: 'home' };
-
-  renderVals() {
-    const tabRoots = ['home', 'assistants', 'you'];
-    const stack = this.state.stack;
-    const cur = stack[stack.length - 1];
-
-    const nav = (route) => {
-      if (!route) return;
-      if (tabRoots.includes(route)) {
-        // switching tabs resets that tab to its root
-        this.setState({ stack: [route], tab: route });
-      } else {
-        // drill-in: push onto history
-        this.setState(s => ({ stack: s.stack.concat([route]) }));
-      }
-    };
-    const back = () => this.setState(s => ({ stack: s.stack.length > 1 ? s.stack.slice(0, -1) : s.stack }));
-    const is = (r) => cur === r;
-
-    return {
-      nav, back,
-      isSignin: is('signin'), isOnboarding: is('onboarding'),
-      isHome: is('home'), isAssistants: is('assistants'), isYou: is('you'),
-      isAlison: is('alison'), isJo: is('jo'), isAxel: is('axel'),
-      isHetta: is('hetta'), isMaya: is('maya'), isBecca: is('becca'),
-    };
-  }
-}
-</script>
+  <div class="wrap">
+    <div class="mark">(o)</div>
+    <div style="font-size:15px;color:#6E6E77;">Loading the Capsule AI prototype…</div>
+    <a href="./Capsule.dc.html">Open the prototype</a>
+  </div>
+  <script>window.location.replace('./Capsule.dc.html');</script>
 </body>
 </html>

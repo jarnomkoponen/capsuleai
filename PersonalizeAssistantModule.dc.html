@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+  * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  body { margin: 0; }
+  .pa-opt:focus-visible, .pa-x:focus-visible { outline: 2px solid #0F766E; outline-offset: 2px; }
+</style>
+</helmet>
+<sc-if value="{{ visible }}" hint-placeholder-val="{{ true }}">
+<section aria-label="{{ regionLabel }}" style="font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display','Segoe UI',system-ui,sans-serif;{{ wrapStyle }}">
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
+    <div>
+      <div style="font-size:{{ headFont }};line-height:1.2;font-weight:700;letter-spacing:0.01em;color:#3A3A40;">{{ heading }}</div>
+      <sc-if value="{{ hasHint }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:13px;line-height:18px;color:#6E6E77;margin-top:3px;">{{ efficiencyHint }}</div>
+      </sc-if>
+    </div>
+    <sc-if value="{{ dismissible }}" hint-placeholder-val="{{ false }}">
+      <button type="button" class="pa-x" onClick="{{ onDismiss }}" aria-label="Dismiss suggestion" style="flex:none;width:32px;height:32px;border:none;background:transparent;color:#6E6E77;cursor:pointer;font-size:18px;line-height:1;border-radius:8px;">×</button>
+    </sc-if>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:10px;margin-top:14px;">
+    <sc-for list="{{ options }}" as="opt" hint-placeholder-count="2">
+      <button type="button" class="pa-opt" onClick="{{ opt.action }}" aria-label="{{ opt.aria }}" aria-disabled="{{ opt.connectedStr }}" style="appearance:none;border:{{ opt.border }};background:{{ opt.bg }};color:{{ opt.fg }};text-align:left;border-radius:12px;padding:12px 16px;min-height:48px;cursor:{{ opt.cursor }};width:100%;display:flex;align-items:center;gap:12px;">
+        <span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;">
+          <span style="font-size:16px;line-height:21px;font-weight:600;">{{ opt.label }}</span>
+          <sc-if value="{{ opt.showSub }}" hint-placeholder-val="{{ false }}">
+            <span style="font-size:13px;line-height:18px;color:{{ opt.subColor }};font-weight:400;">{{ opt.accessLabel }}</span>
+          </sc-if>
+        </span>
+        <sc-if value="{{ opt.connected }}" hint-placeholder-val="{{ false }}">
+          <span aria-hidden="true" style="flex:none;width:22px;height:22px;border-radius:50%;background:#17171A;color:#FFFFFF;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;">✓</span>
+        </sc-if>
+      </button>
+    </sc-for>
+  </div>
+</section>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:360,&quot;height&quot;:220},&quot;placement&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;setup&quot;,&quot;options&quot;:[&quot;setup&quot;,&quot;chat&quot;,&quot;moment&quot;],&quot;tsType&quot;:&quot;string&quot;},&quot;assistant&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Home helper&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;efficiencyHint&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = { dismissed: false };
+  renderVals() {
+    const placement = this.props.placement || 'setup';
+    const assistant = this.props.assistant || 'Home helper';
+    const opts = this.props.options || [
+      { id: 'gcal', kind: 'connect-app', label: 'Connect with Google Calendar', accessLabel: 'so ' + assistant + ' can see and add events' },
+      { id: 'activity', kind: 'grant-data', label: 'Give access to activity data', accessLabel: 'let ' + assistant + ' read your activity and nutrition data' },
+    ];
+    const onOption = this.props.onOption || (() => {});
+    const showSub = placement !== 'chat';
+    const connectedIds = this.props.connectedIds || [];
+    const options = opts.map((o) => {
+      const done = connectedIds.indexOf(o.id) !== -1;
+      return {
+        label: done ? ('Connected · ' + o.label.replace(/^Connect (with )?|^Give access to /i, '')) : o.label,
+        accessLabel: o.accessLabel, showSub,
+        connected: done, connectedStr: done ? 'true' : 'false',
+        aria: done ? (o.label + ' — connected') : (o.label + ' — ' + o.accessLabel + '. Opens a permission request.'),
+        bg: done ? '#F7F7F8' : '#17171A',
+        fg: done ? '#17171A' : '#FFFFFF',
+        subColor: done ? '#6E6E77' : '#D9D9DD',
+        border: done ? '1px solid #D9D9DD' : 'none',
+        cursor: done ? 'default' : 'pointer',
+        action: () => { if (!done) onOption(o); },
+      };
+    });
+    const wrapByPlacement = {
+      setup: 'padding:4px 0;',
+      moment: 'padding:14px 0 2px;border-top:1px solid #ECECEE;margin-top:14px;',
+      chat: 'padding:14px;border:1px solid #D9D9DD;background:#F7F7F8;border-radius:14px;',
+    };
+    return {
+      visible: !this.state.dismissed,
+      options,
+      heading: this.props.heading || 'Improve assistant efficiency',
+      regionLabel: 'Improve ' + assistant + ' efficiency by connecting apps or granting data access',
+      efficiencyHint: this.props.efficiencyHint || '',
+      hasHint: !!this.props.efficiencyHint,
+      dismissible: placement === 'chat',
+      headFont: placement === 'setup' ? '15px' : '14px',
+      wrapStyle: wrapByPlacement[placement] || wrapByPlacement.setup,
+      onDismiss: () => this.setState({ dismissed: true }),
+    };
+  }
+}
+</script>
+</body>
+</html>

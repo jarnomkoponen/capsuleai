@@ -9,40 +9,27 @@
 <x-dc>
 <helmet>
 <style>
-*{box-sizing:border-box}html,body{margin:0}
-body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display",system-ui,sans-serif;background:#EAEAE6;color:#1A1A1A;-webkit-font-smoothing:antialiased}
+  * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  body { margin: 0; }
+  .fu-btn:focus-visible { outline: 2px solid #0F766E; outline-offset: 2px; }
 </style>
 </helmet>
-<div style="max-width:460px;margin:0 auto;padding:16px">
-  <div role="group" aria-label="Suggested replies" style="display:flex;flex-wrap:wrap;gap:10px">
-    <sc-for list="{{ prompts }}" as="p" hint-placeholder-count="3">
-      <button onClick="{{ p.action }}" aria-disabled="{{ disabled }}" style="min-height:44px;padding:10px 16px;border:1.5px solid {{ borderColor }};background:{{ bgColor }};color:{{ textColor }};border-radius:22px;font-size:16px;line-height:20px;font-weight:500;cursor:{{ cursor }};font-family:inherit;text-align:left;max-width:100%;white-space:normal">{{ p.label }}</button>
-    </sc-for>
-  </div>
+<div role="group" aria-label="Suggested replies" style="font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display','Segoe UI',system-ui,sans-serif;display:flex;flex-wrap:wrap;gap:8px;">
+  <sc-for list="{{ prompts }}" as="p" hint-placeholder-count="3">
+    <button type="button" class="fu-btn" onClick="{{ p.action }}" style="appearance:none;border:none;background:#17171A;color:#FFFFFF;font:600 15px/1.3 inherit;min-height:44px;padding:10px 18px;border-radius:22px;cursor:pointer;text-align:left;max-width:100%;">{{ p.label }}</button>
+  </sc-for>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{
-  &quot;$preview&quot;: { &quot;width&quot;: 492, &quot;height&quot;: 180 },
-  &quot;disabled&quot;: { &quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot; },
-  &quot;prompts&quot;: { &quot;editor&quot;: null, &quot;default&quot;: [{&quot;label&quot;: &quot;Tell me more about the plan&quot;}, {&quot;label&quot;: &quot;What should I do first?&quot;}, {&quot;label&quot;: &quot;Adjust for my schedule&quot;}], &quot;tsType&quot;: &quot;{ label: string; action?: Action }[]&quot; }
-}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:360,&quot;height&quot;:120}}">
 class Component extends DCLogic {
   renderVals() {
-    const raw = Array.isArray(this.props.prompts) && this.props.prompts.length ? this.props.prompts : [
-      { label: 'Tell me more about the plan' },
-      { label: 'What should I do first?' },
-      { label: 'Adjust for my schedule' },
+    const raw = this.props.prompts || [
+      { id: 'a', label: 'Tell me more' },
+      { id: 'b', label: 'Hold the Thursday slot' },
+      { id: 'c', label: 'Not now' },
     ];
-    const disabled = this.props.disabled ?? false;
-    const noop = () => {};
-    const prompts = raw.map(p => ({ label: p.label, action: disabled ? noop : (p.action || noop) }));
-    return {
-      prompts, disabled,
-      borderColor: disabled ? '#D8D8D2' : '#2E5AAC',
-      bgColor: disabled ? '#F4F4F1' : '#FFFFFF',
-      textColor: disabled ? '#8A8A82' : '#2E5AAC',
-      cursor: disabled ? 'default' : 'pointer',
-    };
+    const onPrompt = this.props.onPrompt || (() => {});
+    return { prompts: raw.map((p) => ({ label: p.label, action: () => onPrompt(p) })) };
   }
 }
 </script>

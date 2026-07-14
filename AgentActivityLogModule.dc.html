@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+  * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  body { margin: 0; }
+  .al-int:focus-visible { outline: 2px solid #0F766E; outline-offset: 2px; }
+</style>
+</helmet>
+<section aria-label="{{ heading }}" style="font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display','Segoe UI',system-ui,sans-serif;">
+  <h2 style="margin:0 0 12px;font-size:15px;line-height:20px;font-weight:700;letter-spacing:0.01em;color:#17171A;">{{ heading }}</h2>
+  <ol role="{{ role }}" aria-live="{{ live }}" style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;">
+    <sc-for list="{{ entries }}" as="e" hint-placeholder-count="4">
+      <li style="border:1px solid #D9D9DD;border-radius:12px;padding:14px 16px;">
+        <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;">
+          <span style="font-size:13px;line-height:18px;color:#6E6E77;font-variant-numeric:tabular-nums;">{{ e.timestamp }}</span>
+          <sc-if value="{{ e.showAssistant }}" hint-placeholder-val="{{ true }}">
+            <span style="font-size:13px;line-height:18px;font-weight:600;color:#3A3A40;">{{ e.assistant }}</span>
+          </sc-if>
+        </div>
+        <p style="margin:4px 0 0;font-size:16px;line-height:22px;color:#17171A;">{{ e.description }}</p>
+        <sc-if value="{{ e.hasInteractions }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
+            <sc-for list="{{ e.interactions }}" as="it" hint-placeholder-count="2">
+              <button type="button" class="al-int" onClick="{{ it.action }}" style="appearance:none;border:1px solid #D9D9DD;background:#FFFFFF;color:#17171A;font:600 14px/1 inherit;min-height:40px;padding:0 14px;border-radius:20px;cursor:pointer;">{{ it.label }}</button>
+            </sc-for>
+          </div>
+        </sc-if>
+      </li>
+    </sc-for>
+  </ol>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:360,&quot;height&quot;:420},&quot;scope&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;all&quot;,&quot;options&quot;:[&quot;all&quot;,&quot;assistant&quot;],&quot;tsType&quot;:&quot;string&quot;},&quot;assistant&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Financial coach&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;live&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const scope = this.props.scope || 'all';
+    const assistant = this.props.assistant || 'Financial coach';
+    const live = this.props.live ?? false;
+    const defaults = [
+      { timestamp: 'Today, 09:12', assistant: 'Home helper', description: 'Checked your calendar for conflicts this week.' },
+      { timestamp: 'Today, 08:40', assistant: 'Health coach', description: 'Reviewed your recovery log and updated the plan.', interactions: [{ label: 'Review' }, { label: 'Undo' }] },
+      { timestamp: 'Yesterday, 18:05', assistant: 'Financial coach', description: 'Flagged a subscription you may want to cancel.' },
+      { timestamp: 'Yesterday, 14:22', assistant: 'Companion', description: 'Prepared notes for your school conversation.' },
+    ];
+    const raw = this.props.entries || defaults;
+    const onInteraction = this.props.onInteraction || (() => {});
+    const entries = raw.map((e) => ({
+      timestamp: e.timestamp,
+      assistant: e.assistant,
+      showAssistant: scope === 'all',
+      description: e.description,
+      hasInteractions: Array.isArray(e.interactions) && e.interactions.length > 0,
+      interactions: (e.interactions || []).map((it) => ({ label: it.label, action: () => onInteraction(e, it) })),
+    }));
+    return {
+      entries,
+      heading: scope === 'assistant' ? (assistant + ': Activity log / history') : 'All assistant/agent activity',
+      role: live ? 'log' : 'list',
+      live: live ? 'polite' : 'off',
+    };
+  }
+}
+</script>
+</body>
+</html>

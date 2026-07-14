@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+  * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  body { margin: 0; }
+  .cp-toggle:focus-visible, .cp-manage:focus-visible { outline: 2px solid #0F766E; outline-offset: 2px; }
+</style>
+</helmet>
+<section aria-label="Chat participants" style="font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display','Segoe UI',system-ui,sans-serif;border:1px solid #ECECEE;border-radius:14px;background:#FFFFFF;">
+  <button type="button" class="cp-toggle" onClick="{{ onToggle }}" aria-expanded="{{ expandedStr }}" aria-label="{{ collapsedLabel }}" style="width:100%;display:flex;align-items:center;gap:10px;padding:12px 14px;border:none;background:transparent;cursor:pointer;text-align:left;min-height:52px;">
+    <span aria-hidden="true" style="display:flex;">
+      <sc-for list="{{ avatars }}" as="a" hint-placeholder-count="3">
+        <span style="width:28px;height:28px;border-radius:50%;background:{{ a.bg }};border:2px solid #FFFFFF;margin-left:{{ a.ml }};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:{{ a.fg }};">{{ a.initial }}</span>
+      </sc-for>
+    </span>
+    <span style="flex:1;min-width:0;font-size:15px;line-height:20px;color:#3A3A40;">{{ summary }}</span>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="flex:none;transform:{{ chevronRot }};"><path d="M6 9l6 6 6-6" stroke="#6E6E77" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+
+  <sc-if value="{{ expanded }}" hint-placeholder-val="{{ false }}">
+    <div style="border-top:1px solid #ECECEE;padding:6px 14px 12px;">
+      <ul style="list-style:none;margin:0;padding:0;">
+        <sc-for list="{{ participants }}" as="p" hint-placeholder-count="3">
+          <li style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid #F7F7F8;">
+            <span aria-hidden="true" style="width:24px;height:24px;border-radius:50%;background:{{ p.bg }};flex:none;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:{{ p.fg }};margin-top:1px;">{{ p.initial }}</span>
+            <span style="flex:1;min-width:0;">
+              <span style="display:block;font-size:15px;line-height:20px;font-weight:600;color:#17171A;">{{ p.label }} <span style="font-weight:400;color:#6E6E77;">· {{ p.kindLabel }}</span></span>
+              <sc-if value="{{ p.hasScope }}" hint-placeholder-val="{{ true }}">
+                <span style="display:block;font-size:13px;line-height:18px;color:#6E6E77;margin-top:1px;">Sees: {{ p.scope }}</span>
+              </sc-if>
+            </span>
+          </li>
+        </sc-for>
+      </ul>
+      <button type="button" class="cp-manage" onClick="{{ onManage }}" style="margin-top:10px;appearance:none;border:1px solid #17171A;background:#FFFFFF;color:#17171A;font:600 15px/1 inherit;min-height:44px;padding:0 16px;border-radius:22px;cursor:pointer;">Manage participants</button>
+    </div>
+  </sc-if>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:360,&quot;height&quot;:220},&quot;expanded&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  state = { expanded: null };
+  renderVals() {
+    const raw = this.props.participants || [
+      { id: 'p1', label: 'Training buddy', kind: 'agent', scope: 'joint sessions only' },
+      { id: 'p2', label: 'You', kind: 'human' },
+      { id: 'p3', label: 'Marko', kind: 'human', scope: 'joint sessions only' },
+    ];
+    const expanded = this.state.expanded != null ? this.state.expanded : (this.props.expanded ?? false);
+    const palette = { agent: { bg: '#17171A', fg: '#FFFFFF' }, human: { bg: '#ECECEE', fg: '#3A3A40' } };
+    const participants = raw.map((p) => ({
+      label: p.label, kindLabel: p.kind === 'agent' ? 'assistant' : 'person',
+      scope: p.scope, hasScope: !!p.scope,
+      initial: p.label.charAt(0), bg: palette[p.kind].bg, fg: palette[p.kind].fg,
+    }));
+    const avatars = participants.slice(0, 3).map((p, i) => ({ initial: p.initial, bg: p.bg, fg: p.fg, ml: i === 0 ? '0' : '-8px' }));
+    const agents = raw.filter((p) => p.kind === 'agent').length;
+    const humans = raw.filter((p) => p.kind === 'human').length;
+    const summary = raw.length + ' participants · ' + humans + ' ' + (humans === 1 ? 'person' : 'people') + ', ' + agents + ' ' + (agents === 1 ? 'assistant' : 'assistants');
+    return {
+      participants, avatars, summary,
+      expanded, expandedStr: expanded ? 'true' : 'false',
+      chevronRot: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
+      collapsedLabel: summary + ': ' + raw.map((p) => p.label).join(', '),
+      onToggle: () => this.setState({ expanded: !expanded }),
+      onManage: this.props.onManage || (() => {}),
+    };
+  }
+}
+</script>
+</body>
+</html>

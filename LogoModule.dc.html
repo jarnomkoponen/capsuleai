@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>* { box-sizing: border-box; } body { margin: 0; }</style>
+</helmet>
+<span role="img" aria-label="Capsule" style="display:inline-flex;align-items:center;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display','Segoe UI',system-ui,sans-serif;">
+  <span aria-hidden="true" style="font-size:{{ fs }};line-height:1;font-weight:600;color:#17171A;letter-spacing:-0.03em;">(o)</span>
+</span>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:120,&quot;height&quot;:90},&quot;size&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;sign-in&quot;,&quot;options&quot;:[&quot;sign-in&quot;,&quot;header&quot;],&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const size = this.props.size || 'header';
+    return { fs: (size === 'sign-in' ? '52px' : '20px') };
+  }
+}
+</script>
+</body>
+</html>

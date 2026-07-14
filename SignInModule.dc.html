@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+  * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  body { margin: 0; }
+  .si-btn:focus-visible, .si-link:focus-visible { outline: 2px solid #0F766E; outline-offset: 2px; }
+</style>
+</helmet>
+<section aria-label="Sign in" style="font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display','Segoe UI',system-ui,sans-serif;display:flex;flex-direction:column;gap:14px;width:100%;max-width:320px;margin:0 auto;">
+  <sc-for list="{{ methods }}" as="m" hint-placeholder-count="2">
+    <button type="button" class="si-btn" onClick="{{ m.action }}" style="appearance:none;border:1.5px solid #17171A;background:#FFFFFF;color:#17171A;font:600 17px/1.2 inherit;min-height:52px;border-radius:26px;cursor:pointer;width:100%;padding:0 24px;display:flex;align-items:center;justify-content:center;gap:8px;text-align:center;">{{ m.label }}</button>
+  </sc-for>
+  <sc-if value="{{ allowContinue }}" hint-placeholder-val="{{ true }}">
+    <button type="button" class="si-btn" onClick="{{ onContinue }}" style="appearance:none;border:1.5px solid #17171A;background:#FFFFFF;color:#17171A;font:600 17px/1.2 inherit;min-height:52px;border-radius:26px;cursor:pointer;width:100%;padding:0 24px;display:flex;align-items:center;justify-content:center;gap:8px;text-align:center;">Continue without signing in</button>
+  </sc-if>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:360,&quot;height&quot;:220},&quot;allowContinueWithoutSignIn&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const methods = this.props.methods || ['email', 'phone'];
+    const labels = { email: 'Sign in with email', phone: 'Sign in with phone number' };
+    const onMethod = this.props.onMethod || (() => {});
+    return {
+      methods: methods.map((m) => ({ label: labels[m] || m, action: () => onMethod(m) })),
+      allowContinue: this.props.allowContinueWithoutSignIn ?? true,
+      onContinue: this.props.onContinue || (() => {}),
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+  * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  body { margin: 0; }
+  .ch-scroll::-webkit-scrollbar { width: 0; }
+</style>
+</helmet>
+<div style="min-height:100vh;background:#ECECEE;display:flex;align-items:center;justify-content:center;padding:24px 12px;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display','Segoe UI',system-ui,sans-serif;">
+  <div style="width:390px;max-width:100%;height:812px;background:#FFFFFF;border-radius:44px;border:1px solid #D9D9DD;overflow:hidden;display:flex;flex-direction:column;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 26px 4px;flex:none;">
+      <span style="font-size:15px;font-weight:600;color:#17171A;">9:41</span>
+      <span aria-hidden="true" style="display:flex;gap:6px;align-items:center;"><svg width="18" height="12" viewBox="0 0 18 12" fill="#17171A"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="5" y="4.5" width="3" height="7.5" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 10.4a1.15 1.15 0 100-2.3 1.15 1.15 0 000 2.3z" fill="#17171A"/><path d="M3.6 6.4a6.2 6.2 0 018.8 0M1.2 4a9.7 9.7 0 0113.6 0" stroke="#17171A" stroke-width="1.4" stroke-linecap="round"/></svg><svg width="26" height="13" viewBox="0 0 26 13" fill="none"><rect x="0.6" y="0.6" width="22" height="11.8" rx="3" stroke="#17171A" stroke-width="1.2"/><rect x="2.6" y="2.6" width="14.5" height="7.8" rx="1.5" fill="#17171A"/><path d="M24.4 4.3c1 .5 1 3.9 0 4.4" stroke="#17171A" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+    </div>
+    <dc-import name="TopNavModule" variant="chat" title="{{ assistant }}" unread="2" on-back="{{ onHome }}" on-bell="{{ onBell }}" hint-size="100%,60px"></dc-import>
+
+    <sc-if value="{{ hasParticipants }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:none;padding:10px 12px 0;">
+        <dc-import name="ChatParticipantIndicatorModule" participants="{{ participants }}" hint-size="100%,56px"></dc-import>
+      </div>
+    </sc-if>
+
+    <main role="main" class="ch-scroll" style="flex:1;min-height:0;overflow-y:auto;">
+      <div role="log" aria-live="polite" aria-label="Conversation with {{ assistant }}" style="display:flex;flex-direction:column;gap:16px;padding:16px;">
+        <sc-for list="{{ messages }}" as="m" hint-placeholder-count="4">
+          <sc-if value="{{ m.isAssistant }}" hint-placeholder-val="{{ true }}"><dc-import name="AssistantMessageModule" assistant="{{ m.assistant }}" status="{{ m.status }}" body="{{ m.body }}" timestamp="{{ m.timestamp }}" hint-size="100%,140px"></dc-import></sc-if>
+          <sc-if value="{{ m.isUser }}" hint-placeholder-val="{{ false }}"><dc-import name="UserMessageModule" body="{{ m.body }}" timestamp="{{ m.timestamp }}" hint-size="100%,110px"></dc-import></sc-if>
+          <sc-if value="{{ m.isConsent }}" hint-placeholder-val="{{ false }}"><dc-import name="ChatCanvasModule" variant="consent" requester="{{ m.requester }}" purpose="{{ m.purpose }}" scopes="{{ m.scopes }}" allow-empty-grant="{{ m.allowEmptyGrant }}" hint-size="100%,460px"></dc-import></sc-if>
+          <sc-if value="{{ m.isViz }}" hint-placeholder-val="{{ false }}"><dc-import name="ChatCanvasModule" variant="visualization" title="{{ m.title }}" viz-kind="{{ m.vizKind }}" viz-caption="{{ m.vizCaption }}" viz-text-alt="{{ m.vizTextAlt }}" hint-size="100%,320px"></dc-import></sc-if>
+          <sc-if value="{{ m.isProgress }}" hint-placeholder-val="{{ false }}"><dc-import name="ChatCanvasModule" variant="progress" hint-size="100%,400px"></dc-import></sc-if>
+          <sc-if value="{{ m.isConfirm }}" hint-placeholder-val="{{ false }}"><dc-import name="ChatCanvasModule" variant="confirmation" summary="{{ m.summary }}" details="{{ m.details }}" confirm-label="{{ m.confirmLabel }}" cancel-label="{{ m.cancelLabel }}" acted-text="{{ m.actedText }}" hint-size="100%,320px"></dc-import></sc-if>
+          <sc-if value="{{ m.isFollowUps }}" hint-placeholder-val="{{ false }}"><dc-import name="FollowUpButtonsModule" prompts="{{ m.prompts }}" on-prompt="{{ onPrompt }}" hint-size="100%,120px"></dc-import></sc-if>
+          <sc-if value="{{ m.isNudge }}" hint-placeholder-val="{{ false }}"><dc-import name="PersonalizeAssistantModule" placement="chat" assistant="{{ assistant }}" efficiency-hint="{{ m.efficiencyHint }}" hint-size="100%,160px"></dc-import></sc-if>
+        </sc-for>
+        <sc-if value="{{ showStarters }}" hint-placeholder-val="{{ false }}">
+          <dc-import name="ConversationStartersModule" placement="chat" assistant="{{ assistant }}" starters="{{ starters }}" first-time="{{ true }}" on-starter="{{ onStarter }}" hint-size="100%,220px"></dc-import>
+        </sc-if>
+        <sc-if value="{{ thinking }}" hint-placeholder-val="{{ false }}">
+          <dc-import name="StreamingMessageModule" hint-size="100%,60px"></dc-import>
+        </sc-if>
+        <div ref="{{ endRef }}" style="height:1px;"></div>
+      </div>
+    </main>
+
+    <dc-import name="ChatBoxModule" context="assistant" assistant="{{ assistant }}" on-send="{{ onSend }}" hint-size="100%,80px"></dc-import>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:420,&quot;height&quot;:880},&quot;assistant&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;Health coach&quot;,&quot;options&quot;:[&quot;Home helper&quot;,&quot;Health coach&quot;,&quot;Training buddy&quot;,&quot;Companion&quot;,&quot;Financial coach&quot;],&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  conversations() {
+    return {
+      'Home helper': {
+        participants: [
+          { id: 'home', label: 'Home helper', kind: 'agent', scope: 'your calendar, meals and household' },
+          { id: 'you', label: 'You', kind: 'human' },
+          { id: 'health', label: 'Health coach', kind: 'agent', scope: 'your training plan only' },
+        ],
+        messages: [
+          { type: 'assistant', assistant: 'Home helper', body: 'Heads up about Thursday. Health coach has you down for an interval session at 6pm — that overlaps with Leo\u2019s football pickup.', timestamp: '07:45' },
+          { type: 'assistant', assistant: 'Home helper', status: 'Sorted three things', body: 'Thursday\u2019s dinner shifts to recovery-friendly food the kids will still eat, groceries are already adjusted, and I\u2019d swap the session with Friday\u2019s lighter run so pickup isn\u2019t a problem.' },
+          { type: 'confirm', summary: 'Swap Thursday\u2019s intervals with Friday\u2019s run?', details: [ { label: 'Thursday 6pm', value: 'Easy run' }, { label: 'Friday 6pm', value: 'Intervals' }, { label: 'Football pickup', value: 'No longer clashes' } ], confirmLabel: 'Make the swap', cancelLabel: 'Keep Thursday', actedText: 'Swapped — your week is clear.' },
+          { type: 'followups', prompts: [ { id: 'a', label: 'Show me the whole week' }, { id: 'b', label: 'What\u2019s for dinner Thursday?' }, { id: 'c', label: 'Move groceries earlier' } ] },
+        ],
+      },
+      'Health coach': {
+        participants: [
+          { id: 'health', label: 'Health coach', kind: 'agent', scope: 'your recovery plan and records' },
+          { id: 'you', label: 'You', kind: 'human' },
+          { id: 'home', label: 'Home helper', kind: 'agent', scope: 'your schedule only' },
+        ],
+        messages: [
+          { type: 'assistant', assistant: 'Health coach', body: 'Here\u2019s your recovery-day plan. I\u2019ve laid out the milestones and today\u2019s medication, and looped in Home helper to clear your schedule around it.', timestamp: '09:02' },
+          { type: 'progress' },
+          { type: 'viz', title: 'Today\u2019s medication', vizKind: 'bars', vizCaption: 'Antibiotic 08:00 with food \u00b7 pain relief 12:00 optional \u00b7 evening dose 20:00', vizTextAlt: 'Medication schedule: antibiotic at 08:00 with food, optional pain relief at 12:00, and an evening dose at 20:00.' },
+          { type: 'assistant', assistant: 'Health coach', body: 'If anything feels off or a question is genuinely medical, contact your care team — I\u2019ll help you follow their plan, not replace it.' },
+          { type: 'assistant', assistant: 'Home helper', status: 'Adjusted your schedule', body: 'I\u2019ve moved tomorrow morning\u2019s errands so you can rest after your 8am dose. Nothing on your calendar before 11.' },
+          { type: 'followups', prompts: [ { id: 'a', label: 'Did I take the 8am dose?' }, { id: 'b', label: 'Remind me at 8pm' }, { id: 'c', label: 'Share an update with my clinic' } ] },
+        ],
+      },
+      'Training buddy': {
+        participants: [
+          { id: 'training', label: 'Training buddy', kind: 'agent', scope: 'your joint sessions only' },
+          { id: 'you', label: 'You', kind: 'human' },
+          { id: 'marko', label: 'Marko', kind: 'human', scope: 'joint sessions only' },
+        ],
+        messages: [
+          { type: 'assistant', assistant: 'Training buddy', body: 'Marko wants to move Thursday\u2019s session. Here are two slots that work for both your calendars — no need for either of you to dig.' },
+          { type: 'confirm', summary: 'Move Thursday\u2019s gym session?', details: [ { label: 'Option 1', value: 'Wed 7:00am' }, { label: 'Option 2', value: 'Fri 6:30pm' }, { label: 'Both calendars', value: 'Free' } ], confirmLabel: 'Propose Friday 6:30', cancelLabel: 'Keep Thursday', actedText: 'Sent to Marko for a thumbs-up.' },
+          { type: 'assistant', assistant: 'Training buddy', body: 'This thread only ever sees your shared sessions. Your health context — weight trend, doctor\u2019s notes, the honest stuff — stays on your side of the wall. Marko sees a scheduling partner, not a medical file.' },
+          { type: 'followups', prompts: [ { id: 'a', label: 'Nudge Marko if he goes quiet' }, { id: 'b', label: 'Add a Sunday long session' }, { id: 'c', label: 'What can Marko see?' } ] },
+        ],
+      },
+      'Companion': {
+        participants: null,
+        messages: [
+          { type: 'assistant', assistant: 'Companion', body: 'You\u2019ve been turning this over for days. Everything we\u2019ve worked through stays here — it\u2019s yours alone.' },
+          { type: 'user', body: 'I think I\u2019m ready to talk to him. But I only want him to hear the part about what I need — not everything underneath it.' },
+          { type: 'assistant', assistant: 'Companion', body: 'Then let\u2019s open the door exactly as wide as you want. I can bring one scoped slice into that conversation — just what you need and why — and nothing of the raw processing behind it. You can close it again the moment you\u2019re done.' },
+          { type: 'consent', requester: 'Companion', purpose: 'share one scoped reflection with your partner — only what you need and why', scopes: [ { id: 'need', label: 'What I need and why', accessLabel: 'the single point you want understood' }, { id: 'raw', label: 'The raw processing behind it', accessLabel: 'everything else stays private' } ] },
+          { type: 'assistant', assistant: 'Companion', body: 'Shared, and scoped to just that. When the conversation\u2019s done, revoke it and the window closes — because you closed it.' },
+        ],
+      },
+      'Financial coach': {
+        participants: null,
+        messages: [
+          { type: 'assistant', assistant: 'Financial coach', body: 'One streaming service hasn\u2019t been touched in two months — while your film talk has all been about the retrospective season at your local cinema. A finance app sees a recurring charge; I see a subscription that no longer matches your life.' },
+          { type: 'viz', title: 'Your subscriptions', vizKind: 'bars', vizCaption: 'StreamMax unused 2 months \u00b7 music consolidated to one platform \u00b7 a learning plan overlapping a cheaper one you use daily', vizTextAlt: 'Subscription overview: StreamMax unused for two months, music consolidated onto one platform, and a learning subscription overlapping a cheaper daily-use one.' },
+          { type: 'confirm', summary: 'Cancel StreamMax now, and remind you before the learning platform renews in March?', details: [ { label: 'StreamMax', value: 'Cancel now' }, { label: 'Learning plan', value: 'Remind in March' }, { label: 'Est. saving', value: '\u00a318 / mo' } ], confirmLabel: 'Yes, do it', cancelLabel: 'Not now', actedText: 'Cancelled StreamMax — reminder set for March.' },
+          { type: 'followups', prompts: [ { id: 'a', label: 'Explain this month\u2019s rate move' }, { id: 'b', label: 'What else no longer fits?' }, { id: 'c', label: 'Keep the briefings light' } ] },
+        ],
+      },
+    };
+  }
+  starterData() {
+    return {
+      'Home helper': {
+        starters: [
+          { id: 'week', label: 'Plan my week around the kids and training' },
+          { id: 'dinner', label: 'What should we have for dinner this week?' },
+          { id: 'errands', label: 'Batch my errands so I have Saturday free' },
+          { id: 'grocery', label: 'Help me automate the weekly grocery run' },
+        ],
+        replies: {
+          week: 'Let\u2019s map it out. I can see your calendar, the kids\u2019 pickups and your training plan — I\u2019ll lay the week out and flag any clashes before they happen.',
+          dinner: 'I\u2019ll build a few options the kids will actually eat, balanced against your training load, and add anything missing to the grocery list.',
+          errands: 'I\u2019ll group your errands by location and slot them into gaps you already have, so Saturday stays yours.',
+          grocery: 'I can handle the weekly shop end to end — but I\u2019ll need access to a grocery account to place and reorder it for you.',
+        },
+      },
+      'Health coach': {
+        starters: [
+          { id: 'today', label: 'What should I focus on today?' },
+          { id: 'recovery', label: 'How is my recovery trending?' },
+          { id: 'progress', label: 'Show me my recovery progress' },
+          { id: 'meds', label: 'Help me stay on top of my medication' },
+        ],
+        replies: {
+          today: 'Today is a lighter day. Keep movement gentle, stay on your medication times, and I\u2019ll watch for anything that needs your care team.',
+          recovery: 'You\u2019re ahead of plan this week — sleep and resting heart rate are both trending the right way. Want to see the six-week view?',
+          progress: 'Here\u2019s where your recovery stands — milestones cleared and what\u2019s next.',
+          meds: 'I\u2019ll remind you at each dose and keep a simple log. If a genuinely medical question comes up, I\u2019ll point you to your clinic rather than guess.',
+        },
+      },
+      'Training buddy': {
+        starters: [
+          { id: 'plan', label: 'Set up a training plan with Marko' },
+          { id: 'slot', label: 'Find a session time that works for both of us' },
+          { id: 'confirm', label: 'Confirm this week\u2019s session with Marko' },
+          { id: 'privacy', label: 'What can my training partner see?' },
+        ],
+        replies: {
+          plan: 'I\u2019ll build a shared plan that fits both your calendars and keeps the load sensible. Only the joint sessions are visible to Marko.',
+          slot: 'Two slots work for both of you this week — I can propose one and wait for Marko\u2019s thumbs-up.',
+          confirm: 'Here\u2019s the session that fits both calendars — confirm and I\u2019ll lock it in with Marko.',
+          privacy: 'Marko only ever sees your shared sessions. Your health context — weight, notes, the honest stuff — stays on your side of the wall.',
+        },
+      },
+      'Companion': {
+        starters: [
+          { id: 'mind', label: 'Something\u2019s on my mind I want to talk through' },
+          { id: 'relationship', label: 'Help me understand a relationship better' },
+          { id: 'words', label: 'Help me put words to how I\u2019ve been feeling' },
+        ],
+        replies: {
+          mind: 'I\u2019m here. Take it at your pace — everything we work through stays here, yours alone.',
+          relationship: 'Let\u2019s look at it together, gently. Tell me what\u2019s been happening, and we\u2019ll untangle it a piece at a time.',
+          words: 'That\u2019s worth doing slowly. Start anywhere — even a fragment — and we\u2019ll shape it into words that feel true.',
+        },
+      },
+      'Financial coach': {
+        starters: [
+          { id: 'subs', label: 'Review my subscriptions for anything I don\u2019t use' },
+          { id: 'save', label: 'Where could I save without changing my life?' },
+          { id: 'brief', label: 'Give me a simple monthly money briefing' },
+        ],
+        replies: {
+          subs: 'I\u2019ll go through your recurring charges and flag anything that no longer matches how you actually live — like a service you haven\u2019t opened in months.',
+          save: 'I\u2019ll look for leaks, not sacrifices — overlapping plans, forgotten trials, better tiers for what you already use.',
+          brief: 'I\u2019ll keep it light: what came in, what went out, and one thing worth your attention. No jargon, no lectures.',
+        },
+      },
+    };
+  }
+  state = { extra: [], thinking: false };
+  constructor(props) { super(props); this.endRef = React.createRef(); }
+  scrollToEnd() {
+    const el = this.endRef.current;
+    if (el && el.parentElement) { const p = el.parentElement.parentElement; if (p) p.scrollTop = p.scrollHeight; }
+  }
+  componentDidUpdate() { this.scrollToEnd(); }
+  now() {
+    const d = new Date();
+    return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+  }
+  followUps() {
+    const key = this.props.assistant || 'Health coach';
+    const byAssistant = {
+      'Home helper': ['Show me the whole week', 'What\u2019s for dinner tonight?', 'Free up Saturday'],
+      'Health coach': ['Show my recovery progress', 'Remind me at 8pm', 'Share an update with my clinic'],
+      'Training buddy': ['Confirm this week\u2019s session', 'Add a Sunday long run', 'What can Marko see?'],
+      'Companion': ['Say more about that', 'Help me find the words', 'Just sit with it for now'],
+      'Financial coach': ['What else no longer fits?', 'Set a reminder for March', 'Keep briefings light'],
+    };
+    const labels = byAssistant[key] || ['Tell me more', 'Not now'];
+    return { type: 'followups', prompts: labels.map((l, i) => ({ id: 'f' + i, label: l })) };
+  }
+  send(text) {
+    const key = this.props.assistant || 'Health coach';
+    const ts = this.now();
+    const replies = {
+      'Home helper': 'On it — I\u2019ll sort that and keep your week clear.',
+      'Health coach': 'Got it. I\u2019ll factor that into your recovery plan.',
+      'Training buddy': 'Noted — I\u2019ll line that up with the shared sessions.',
+      'Companion': 'Thank you for sharing that. Take your time — this stays with us.',
+      'Financial coach': 'Understood. I\u2019ll keep an eye on that and flag anything relevant.',
+    };
+    this.setState((s) => ({ extra: [...(s.extra || []), { type: 'user', body: text, timestamp: ts }], thinking: true }));
+    clearTimeout(this._t);
+    this._t = setTimeout(() => {
+      this.setState((s) => ({ extra: [...s.extra, { type: 'assistant', assistant: key, body: replies[key] || 'Got it.', timestamp: this.now() }, this.followUps()], thinking: false }));
+    }, 1400);
+  }
+  starterReply(text, id) {
+    const key = this.props.assistant || 'Health coach';
+    const data = this.starterData()[key] || {};
+    const reply = (data.replies && data.replies[id]) || 'Let\u2019s get into it.';
+    this.setState((s) => ({ extra: [...(s.extra || []), { type: 'user', body: text, timestamp: this.now() }], thinking: true }));
+    clearTimeout(this._t);
+    const canvas = {
+      progress: { type: 'progress' },
+      confirm: { type: 'confirm', summary: 'Confirm Friday 6:30pm gym session with Marko?', details: [ { label: 'When', value: 'Fri 6:30pm' }, { label: 'Both calendars', value: 'Free' }, { label: 'Marko', value: 'Awaiting thumbs-up' } ], confirmLabel: 'Confirm & send', cancelLabel: 'Pick another time', actedText: 'Locked in — sent to Marko.' },
+      grocery: { type: 'nudge', efficiencyHint: 'Connect a grocery account so I can place and reorder your weekly shop.' },
+    }[id];
+    this._t = setTimeout(() => {
+      this.setState((s) => {
+        const add = [{ type: 'assistant', assistant: key, body: reply, timestamp: this.now() }];
+        if (canvas) add.push(canvas);
+        add.push(this.followUps());
+        return { extra: [...s.extra, ...add], thinking: false };
+      });
+    }, 1400);
+  }
+  componentWillUnmount() { clearTimeout(this._t); }
+  renderVals() {
+    const key = this.props.assistant || 'Health coach';
+    const fresh = this.props.fresh === true || this.props.fresh === 'true';
+    const convos = this.conversations();
+    const convo = convos[key] || convos['Health coach'];
+    const sd = this.starterData()[key] || { starters: [] };
+    const all = fresh ? [...(this.state.extra || [])] : [...convo.messages, ...(this.state.extra || [])];
+    const messages = all.map((m) => ({
+      isAssistant: m.type === 'assistant', isUser: m.type === 'user',
+      isConsent: m.type === 'consent', isViz: m.type === 'viz',
+      isProgress: m.type === 'progress', isConfirm: m.type === 'confirm',
+      isFollowUps: m.type === 'followups', isNudge: m.type === 'nudge',
+      assistant: m.assistant || key, status: m.status || '', body: m.body || '', timestamp: m.timestamp || '',
+      requester: m.requester, purpose: m.purpose, scopes: m.scopes, allowEmptyGrant: !!m.allowEmptyGrant,
+      title: m.title, vizKind: m.vizKind, vizCaption: m.vizCaption, vizTextAlt: m.vizTextAlt,
+      summary: m.summary, details: m.details || [], confirmLabel: m.confirmLabel, cancelLabel: m.cancelLabel, actedText: m.actedText,
+      prompts: m.prompts || [], efficiencyHint: m.efficiencyHint || '',
+    }));
+    return {
+      assistant: key,
+      participants: fresh ? null : convo.participants,
+      hasParticipants: fresh ? false : !!convo.participants,
+      messages,
+      showStarters: fresh && (this.state.extra || []).length === 0 && !this.state.thinking,
+      starters: sd.starters,
+      onStarter: (s) => this.starterReply(s.label, s.id),
+      onBack: this.props.onBack || (() => {}),
+      onHome: this.props.onHome || this.props.onBack || (() => {}),
+      onBell: this.props.onBell || (() => {}),
+      onSend: (text) => this.send(text),
+      onPrompt: (p) => this.send(p.label),
+      thinking: this.state.thinking,
+      endRef: this.endRef,
+    };
+  }
+}
+</script>
+</body>
+</html>

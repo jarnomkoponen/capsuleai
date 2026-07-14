@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+  * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  body { margin: 0; }
+  @keyframes smPulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+  @media (prefers-reduced-motion: reduce) { .sm-dot { animation: none !important; } }
+</style>
+</helmet>
+<div role="status" aria-live="polite" style="font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display','Segoe UI',system-ui,sans-serif;display:inline-flex;align-items:center;gap:10px;padding:12px 16px;background:#F7F7F8;border:1px solid #ECECEE;border-radius:16px;">
+  <span class="sm-dot" style="width:12px;height:12px;border-radius:50%;background:{{ accent }};flex:none;animation:smPulse 1.3s ease-in-out infinite;"></span>
+  <span style="font-size:16px;line-height:22px;font-weight:500;color:#3A3A40;">{{ label }}</span>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:280,&quot;height&quot;:60},&quot;label&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#0F766E&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#0F766E&quot;,&quot;#2563C9&quot;,&quot;#C2410C&quot;]}}">
+class Component extends DCLogic {
+  state = { i: 0 };
+  componentDidMount() {
+    if (this.props.cycle === false) return;
+    this._t = setInterval(() => this.setState((s) => ({ i: s.i + 1 })), this.props.interval || 1400);
+  }
+  componentWillUnmount() { clearInterval(this._t); }
+  renderVals() {
+    const phases = this.props.phases || [
+      'Fetching your data…', 'Analysing…', 'Searching the web…', 'Preparing content…', 'Finalizing…',
+    ];
+    const label = this.props.label || phases[this.state.i % phases.length];
+    return { label, accent: this.props.accent || '#0F766E' };
+  }
+}
+</script>
+</body>
+</html>

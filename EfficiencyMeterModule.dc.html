@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+  * { -webkit-font-smoothing: antialiased; box-sizing: border-box; }
+  body { margin: 0; }
+  @keyframes emRingIn { from { stroke-dashoffset: var(--em-empty); } to { stroke-dashoffset: var(--em-offset); } }
+  @keyframes emDelta { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+  @media (prefers-reduced-motion: reduce) { .em-arc, .em-delta { animation: none !important; } }
+</style>
+</helmet>
+<div style="font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display','Segoe UI',system-ui,sans-serif;display:inline-flex;{{ wrapStyle }}">
+
+  <!-- ring -->
+  <span style="position:relative;flex:none;display:inline-flex;align-items:center;justify-content:center;width:{{ dPx }};height:{{ dPx }};">
+    <svg width="{{ d }}" height="{{ d }}" viewBox="0 0 {{ d }} {{ d }}" aria-hidden="true" style="transform:rotate(-90deg);">
+      <circle cx="{{ c }}" cy="{{ c }}" r="{{ r }}" fill="none" stroke="#ECECEE" stroke-width="{{ sw }}"></circle>
+      <circle class="em-arc" cx="{{ c }}" cy="{{ c }}" r="{{ r }}" fill="none" stroke="{{ arcColor }}" stroke-width="{{ sw }}" stroke-linecap="round" stroke-dasharray="{{ circ }}" stroke-dashoffset="{{ offset }}" style="--em-empty:{{ circ }};--em-offset:{{ offset }};animation:emRingIn 0.7s ease-out;"></circle>
+    </svg>
+    <sc-if value="{{ pctInside }}" hint-placeholder-val="{{ true }}">
+      <span style="font-weight:700;font-variant-numeric:tabular-nums;line-height:1;color:#17171A;font-size:{{ pctFont }};">{{ pct }}</span>
+    </sc-if>
+  </span>
+
+  <!-- label block -->
+  <sc-if value="{{ showText }}" hint-placeholder-val="{{ true }}">
+    <span style="display:inline-flex;flex-direction:column;{{ textStyle }}">
+      <sc-if value="{{ showName }}" hint-placeholder-val="{{ true }}">
+        <span style="font-weight:600;color:#17171A;letter-spacing:-0.01em;font-size:{{ nameFont }};line-height:1.2;">{{ assistant }}</span>
+      </sc-if>
+      <span style="display:inline-flex;align-items:baseline;gap:6px;">
+        <sc-if value="{{ pctBeside }}" hint-placeholder-val="{{ true }}">
+          <span style="font-weight:700;font-variant-numeric:tabular-nums;color:#17171A;font-size:{{ pctFont }};line-height:1.1;">{{ pct }}</span>
+        </sc-if>
+        <span style="color:#6E6E77;font-size:{{ labelFont }};line-height:1.2;">{{ caption }}</span>
+      </span>
+      <sc-if value="{{ hasDelta }}" hint-placeholder-val="{{ false }}">
+        <span class="em-delta" style="display:inline-flex;align-items:center;gap:4px;margin-top:4px;font-weight:600;font-variant-numeric:tabular-nums;color:{{ arcColor }};font-size:{{ labelFont }};line-height:1;animation:emDelta 1.2s ease-in-out 2;">
+          <span aria-hidden="true">▲</span><span>{{ deltaLabel }}</span>
+        </span>
+      </sc-if>
+    </span>
+  </sc-if>
+
+  <!-- screen-reader announcement -->
+  <span aria-live="polite" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;">{{ sr }}</span>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:220,&quot;height&quot;:200},&quot;assistant&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Home helper&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;value&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:55,&quot;min&quot;:0,&quot;max&quot;:100,&quot;step&quot;:1,&quot;unit&quot;:&quot;%&quot;,&quot;tsType&quot;:&quot;number&quot;},&quot;delta&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:0,&quot;tsType&quot;:&quot;number&quot;},&quot;variant&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;setup&quot;,&quot;options&quot;:[&quot;setup&quot;,&quot;inline&quot;,&quot;moment&quot;],&quot;tsType&quot;:&quot;string&quot;},&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#2563C9&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#2563C9&quot;,&quot;#0F766E&quot;,&quot;#C2410C&quot;]},&quot;ringThickness&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:1,&quot;min&quot;:0.5,&quot;max&quot;:2,&quot;step&quot;:0.1,&quot;tsType&quot;:&quot;number&quot;},&quot;fillTreatment&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;accent&quot;,&quot;options&quot;:[&quot;accent&quot;,&quot;grey&quot;],&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const variant = this.props.variant || 'setup';
+    const value = Math.max(0, Math.min(100, this.props.value ?? 0));
+    const delta = this.props.delta;
+    const assistant = this.props.assistant || '';
+    const accent = this.props.accent || '#2563C9';
+    const thick = this.props.ringThickness ?? 1;
+    const arcColor = (this.props.fillTreatment === 'grey') ? '#6E6E77' : accent;
+
+    // geometry per variant
+    const geo = {
+      setup:  { d: 140, sw: 9,  pctFont: 34, nameFont: 20, labelFont: 15, pctInside: true,  pctBeside: false, showName: true,  showText: true,  dir: 'column', gap: 12, align: 'center' },
+      inline: { d: 30,  sw: 3,  pctFont: 15, nameFont: 15, labelFont: 13, pctInside: false, pctBeside: true,  showName: true,  showText: true,  dir: 'row',    gap: 10, align: 'center' },
+      moment: { d: 48,  sw: 4,  pctFont: 13, nameFont: 13, labelFont: 12, pctInside: true,  pctBeside: false, showName: false, showText: false, dir: 'row',    gap: 8,  align: 'center' },
+    }[variant];
+
+    const sw = Math.max(1, geo.sw * thick);
+    const c = geo.d / 2;
+    const r = c - sw / 2 - 1;
+    const circ = 2 * Math.PI * r;
+    const offset = circ * (1 - value / 100);
+    const hasDelta = delta != null && delta !== 0;
+
+    return {
+      assistant, arcColor,
+      d: geo.d, dPx: geo.d + 'px', c: c.toFixed(1), r: r.toFixed(1),
+      sw: sw.toFixed(1), circ: circ.toFixed(1), offset: offset.toFixed(1),
+      pct: value + '%',
+      pctFont: geo.pctFont + 'px', nameFont: geo.nameFont + 'px', labelFont: geo.labelFont + 'px',
+      pctInside: geo.pctInside, pctBeside: geo.pctBeside,
+      showName: geo.showName, showText: geo.showText,
+      caption: 'Efficiency',
+      hasDelta,
+      deltaLabel: (delta > 0 ? '+' : '') + delta + '%',
+      wrapStyle: 'flex-direction:' + geo.dir + ';align-items:' + geo.align + ';gap:' + geo.gap + 'px;position:relative;',
+      textStyle: 'align-items:' + (variant === 'setup' ? 'center' : 'flex-start') + ';',
+      sr: assistant ? (assistant + ', efficiency ' + value + '%' + (hasDelta ? ', up ' + delta + '%' : '')) : ('Efficiency ' + value + '%'),
+    };
+  }
+}
+</script>
+</body>
+</html>

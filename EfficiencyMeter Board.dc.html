@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  * { -webkit-font-smoothing: antialiased; box-sizing: border-box; }
+  body { margin: 0; }
+</style>
+</helmet>
+<div style="min-height:100vh;background:#F7F7F8;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display','Segoe UI',system-ui,sans-serif;color:#17171A;padding:40px 32px 72px;">
+  <div style="max-width:1120px;margin:0 auto;">
+
+    <h1 style="font-size:28px;line-height:34px;font-weight:700;letter-spacing:-0.015em;margin:0 0 6px;">EfficiencyMeter — test board</h1>
+    <p style="font-size:16px;line-height:23px;color:#6E6E77;margin:0 0 8px;max-width:70ch;">One component, instantiated repeatedly. Fill is accent-or-grey (never a red-to-green spectrum), the percentage is always shown as text, and it reads in greyscale alone. Iterate ring thickness, fill, and accent from the Tweaks panel — changes apply to every instance.</p>
+    <p style="font-size:14px;line-height:20px;color:#6E6E77;margin:0 0 36px;">Values: 0 · 35 · 55 · 95 · 100. The 55 column carries a just-improved delta (+20) to show the emphasis treatment.</p>
+
+    <!-- SETUP variant -->
+    <div style="margin-bottom:44px;">
+      <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:4px;">
+        <h2 style="font-size:20px;line-height:25px;font-weight:600;margin:0;">Setup</h2>
+        <span style="font-size:14px;color:#6E6E77;">large hero ring, percentage inside, assistant name + label</span>
+      </div>
+      <div style="height:1px;background:#D9D9DD;margin-bottom:24px;"></div>
+      <div style="display:flex;gap:20px;flex-wrap:wrap;">
+        <sc-for list="{{ items }}" as="it" hint-placeholder-count="5">
+          <div style="flex:1;min-width:190px;background:#FFFFFF;border:1px solid #D9D9DD;border-radius:16px;padding:24px 16px;display:flex;flex-direction:column;align-items:center;gap:16px;">
+            <dc-import name="EfficiencyMeterModule" variant="setup" assistant="Home helper" value="{{ it.value }}" delta="{{ it.delta }}" accent="{{ accent }}" ring-thickness="{{ ringThickness }}" fill-treatment="{{ fillTreatment }}" hint-size="180px,190px"></dc-import>
+            <span style="font-size:13px;color:#6E6E77;font-variant-numeric:tabular-nums;">value = {{ it.value }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <!-- INLINE variant -->
+    <div style="margin-bottom:44px;">
+      <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:4px;">
+        <h2 style="font-size:20px;line-height:25px;font-weight:600;margin:0;">Inline</h2>
+        <span style="font-size:14px;color:#6E6E77;">small ring beside an assistant name (roster rows, headers)</span>
+      </div>
+      <div style="height:1px;background:#D9D9DD;margin-bottom:8px;"></div>
+      <div style="background:#FFFFFF;border:1px solid #D9D9DD;border-radius:16px;overflow:hidden;">
+        <sc-for list="{{ items }}" as="it" hint-placeholder-count="5">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 20px;border-bottom:1px solid #ECECEE;">
+            <dc-import name="EfficiencyMeterModule" variant="inline" assistant="Home helper" value="{{ it.value }}" delta="{{ it.delta }}" accent="{{ accent }}" ring-thickness="{{ ringThickness }}" fill-treatment="{{ fillTreatment }}" hint-size="180px,44px"></dc-import>
+            <span style="font-size:13px;color:#6E6E77;font-variant-numeric:tabular-nums;">value = {{ it.value }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <!-- MOMENT variant -->
+    <div>
+      <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:4px;">
+        <h2 style="font-size:20px;line-height:25px;font-weight:600;margin:0;">Moment</h2>
+        <span style="font-size:14px;color:#6E6E77;">compact ring inside a Home-feed card corner</span>
+      </div>
+      <div style="height:1px;background:#D9D9DD;margin-bottom:24px;"></div>
+      <div style="display:flex;gap:20px;flex-wrap:wrap;">
+        <sc-for list="{{ items }}" as="it" hint-placeholder-count="5">
+          <div style="flex:1;min-width:150px;background:#FFFFFF;border:1px solid #D9D9DD;border-radius:16px;padding:20px 16px;display:flex;flex-direction:column;align-items:center;gap:14px;">
+            <dc-import name="EfficiencyMeterModule" variant="moment" value="{{ it.value }}" delta="{{ it.delta }}" accent="{{ accent }}" ring-thickness="{{ ringThickness }}" fill-treatment="{{ fillTreatment }}" hint-size="48px,48px"></dc-import>
+            <span style="font-size:13px;color:#6E6E77;font-variant-numeric:tabular-nums;">value = {{ it.value }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1120,&quot;height&quot;:1000},&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#0F766E&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#2563C9&quot;,&quot;#0F766E&quot;,&quot;#C2410C&quot;]},&quot;ringThickness&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:1,&quot;min&quot;:0.5,&quot;max&quot;:2,&quot;step&quot;:0.1,&quot;tsType&quot;:&quot;number&quot;},&quot;fillTreatment&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;accent&quot;,&quot;options&quot;:[&quot;accent&quot;,&quot;grey&quot;],&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const items = [
+      { value: 0, delta: 0 },
+      { value: 35, delta: 0 },
+      { value: 55, delta: 20 },
+      { value: 95, delta: 0 },
+      { value: 100, delta: 0 },
+    ];
+    return {
+      items,
+      accent: this.props.accent || '#2563C9',
+      ringThickness: this.props.ringThickness ?? 1,
+      fillTreatment: this.props.fillTreatment || 'accent',
+    };
+  }
+}
+</script>
+</body>
+</html>

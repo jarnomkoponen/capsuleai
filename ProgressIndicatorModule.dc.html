@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>* { box-sizing: border-box; } body { margin: 0; }</style>
+</helmet>
+<div role="group" aria-label="{{ ariaLabel }}" style="font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display','Segoe UI',system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;gap:8px;padding:8px 0;">
+  <sc-if value="{{ isDots }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;gap:8px;" aria-hidden="true">
+      <sc-for list="{{ dots }}" as="d" hint-placeholder-count="4">
+        <span style="width:{{ d.w }};height:8px;border-radius:4px;background:{{ d.bg }};transition:background .2s;"></span>
+      </sc-for>
+    </div>
+  </sc-if>
+  <sc-if value="{{ isBar }}" hint-placeholder-val="{{ false }}">
+    <div aria-hidden="true" style="width:100%;height:6px;border-radius:3px;background:#ECECEE;overflow:hidden;">
+      <span style="display:block;height:100%;border-radius:3px;background:{{ accent }};width:{{ pct }};"></span>
+    </div>
+  </sc-if>
+  <span style="font-size:13px;line-height:18px;color:#6E6E77;">{{ label }}</span>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:260,&quot;height&quot;:60},&quot;current&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:2,&quot;tsType&quot;:&quot;number&quot;},&quot;total&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:4,&quot;tsType&quot;:&quot;number&quot;},&quot;variant&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;dots&quot;,&quot;options&quot;:[&quot;dots&quot;,&quot;bar&quot;],&quot;tsType&quot;:&quot;string&quot;},&quot;label&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#0F766E&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#0F766E&quot;,&quot;#2563C9&quot;,&quot;#C2410C&quot;]}}">
+class Component extends DCLogic {
+  renderVals() {
+    const current = this.props.current ?? 1;
+    const total = this.props.total ?? 4;
+    const accent = this.props.accent || '#0F766E';
+    const variant = this.props.variant || 'dots';
+    const dots = Array.from({ length: total }, (_, i) => {
+      const on = i < current;
+      const active = i === current - 1;
+      return { w: active ? '22px' : '8px', bg: on ? accent : '#D9D9DD' };
+    });
+    return {
+      accent, isDots: variant === 'dots', isBar: variant === 'bar',
+      dots, pct: Math.round((current / total) * 100) + '%',
+      label: this.props.label || ('Step ' + current + ' of ' + total),
+      ariaLabel: 'Progress: step ' + current + ' of ' + total,
+    };
+  }
+}
+</script>
+</body>
+</html>

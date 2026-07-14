@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>* { box-sizing: border-box; -webkit-font-smoothing: antialiased; } body { margin: 0; }</style>
+</helmet>
+<dc-import name="UniversalCanvasModule" hint-size="100%,100%">
+  <div style="flex:1;display:flex;flex-direction:column;padding:20px 24px 24px;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display','Segoe UI',system-ui,sans-serif;">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:16px;margin-bottom:26px;">
+      <dc-import name="LogoModule" size="sign-in" hint-size="84px,84px"></dc-import>
+      <h1 style="margin:0;font-size:22px;line-height:28px;font-weight:600;text-align:center;color:#17171A;">How you want Capsule to help</h1>
+    </div>
+    <dc-import name="HelpTopicsModule" on-toggle="{{ onToggle }}" hint-size="100%,420px"></dc-import>
+    <div style="flex:1;min-height:24px;"></div>
+    <button type="button" onClick="{{ onNext }}" style="appearance:none;border:none;background:#0F766E;color:#FFFFFF;font:600 17px/1.2 inherit;min-height:52px;border-radius:26px;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;margin-bottom:16px;">Continue</button>
+    <sc-if value="{{ hasSelection }}" hint-placeholder-val="{{ false }}">
+      <dc-import name="ProgressIndicatorModule" current="1" total="{{ total }}" label="{{ stepLabel }}" hint-size="100%,60px"></dc-import>
+    </sc-if>
+  </div>
+</dc-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:420,&quot;height&quot;:880}}">class Component extends DCLogic {
+  state = { tick: 0 };
+  topicAssistants() {
+    return {
+      family: ['Home helper'], health: ['Health coach', 'Training buddy'],
+      relationships: ['Companion'], career: ['Companion'],
+      finance: ['Financial coach'], recovery: ['Health coach', 'Home helper'],
+    };
+  }
+  assistantCount() {
+    let sel = [];
+    try { sel = JSON.parse(window.localStorage.getItem('capsule.helpTopics') || '[]'); } catch (e) {}
+    return sel.length;
+  }
+  renderVals() {
+    const n = this.assistantCount();
+    return {
+      onNext: this.props.onNext || (() => { try { window.location.href = 'OnboardingAssistantSetup.dc.html'; } catch (e) {} }),
+      onToggle: () => this.setState((s) => ({ tick: s.tick + 1 })),
+      hasSelection: n > 0,
+      total: n,
+      stepLabel: n === 1 ? '1 assistant to set up' : (n + ' assistants to set up'),
+    };
+  }
+}</script>
+</body>
+</html>

@@ -8,52 +8,39 @@
 <body>
 <x-dc>
 <helmet>
-<style>
-*{box-sizing:border-box}html,body{margin:0}
-body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display",system-ui,sans-serif;background:#EAEAE6;color:#1A1A1A;-webkit-font-smoothing:antialiased}
-</style>
+<style>* { box-sizing: border-box; -webkit-font-smoothing: antialiased; } body { margin: 0; }</style>
 </helmet>
-<div style="max-width:460px;margin:0 auto;padding:16px">
-  <div style="display:flex;justify-content:flex-end">
-    <div style="max-width:380px">
-      <div aria-label="{{ ariaName }}" style="background:#EAF0FA;border:1px solid #D3E0F3;border-radius:16px 16px 4px 16px;padding:12px 14px">
-        <div style="font-size:17px;line-height:23px;color:#1A1A1A">{{ body }}</div>
-      </div>
-      <div style="display:flex;justify-content:flex-end;align-items:center;gap:5px;margin-top:4px">
-        <sc-if value="{{ isFailed }}" hint-placeholder-val="{{ false }}">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C0342B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path></svg>
-          <button onClick="{{ retry }}" style="font-size:12px;line-height:16px;color:#C0342B;font-weight:600;background:none;border:none;padding:0;cursor:pointer;font-family:inherit">Not sent · Tap to retry</button>
-        </sc-if>
-        <sc-if value="{{ isSending }}" hint-placeholder-val="{{ false }}">
-          <span style="font-size:12px;line-height:16px;color:#6E6A62">Sending…</span>
-        </sc-if>
-        <sc-if value="{{ isSent }}" hint-placeholder-val="{{ true }}">
-          <span style="font-size:12px;line-height:16px;color:#6E6A62">{{ sentLabel }}</span>
-        </sc-if>
-      </div>
-    </div>
+<div style="font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display','Segoe UI',system-ui,sans-serif;display:flex;flex-direction:column;align-items:flex-end;gap:4px;max-width:88%;margin-left:auto;">
+  <span style="font-size:12px;line-height:16px;font-weight:600;color:#6E6E77;padding-right:4px;">You</span>
+  <div style="background:{{ bubbleBg }};border:1px solid {{ bubbleBorder }};border-radius:16px 4px 16px 16px;padding:12px 16px;">
+    <p style="margin:0;font-size:17px;line-height:24px;color:#17171A;">{{ body }}</p>
+  </div>
+  <div style="display:flex;align-items:center;gap:6px;padding-right:4px;">
+    <sc-if value="{{ isFailed }}" hint-placeholder-val="{{ false }}">
+      <span aria-hidden="true" style="width:15px;height:15px;border-radius:50%;background:#B3261E;color:#FFFFFF;font-size:10px;font-weight:800;line-height:15px;text-align:center;">!</span>
+      <span style="font-size:12px;line-height:16px;color:#B3261E;font-weight:600;">Not sent — tap to retry</span>
+    </sc-if>
+    <sc-if value="{{ isSending }}" hint-placeholder-val="{{ false }}">
+      <span style="font-size:12px;line-height:16px;color:#6E6E77;">Sending…</span>
+    </sc-if>
+    <sc-if value="{{ hasTime }}" hint-placeholder-val="{{ false }}">
+      <span style="font-size:12px;line-height:16px;color:#B8B8BF;">{{ timestamp }}</span>
+    </sc-if>
   </div>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{
-  &quot;$preview&quot;: { &quot;width&quot;: 492, &quot;height&quot;: 130 },
-  &quot;body&quot;: { &quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;How much walking is safe today?&quot;, &quot;tsType&quot;: &quot;string&quot; },
-  &quot;state&quot;: { &quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;sent&quot;, &quot;sending&quot;, &quot;failed&quot;], &quot;default&quot;: &quot;sent&quot;, &quot;tsType&quot;: &quot;'sent'|'sending'|'failed'&quot; },
-  &quot;timestamp&quot;: { &quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Sent&quot;, &quot;tsType&quot;: &quot;string&quot; }
-}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:360,&quot;height&quot;:120},&quot;body&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Sounds good, hold the Thursday slot.&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;status&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;sent&quot;,&quot;options&quot;:[&quot;sent&quot;,&quot;sending&quot;,&quot;failed&quot;],&quot;tsType&quot;:&quot;string&quot;},&quot;timestamp&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
 class Component extends DCLogic {
   renderVals() {
-    const body = this.props.body ?? 'How much walking is safe today?';
-    const state = this.props.state ?? 'sent';
-    const timestamp = this.props.timestamp ?? 'Sent';
+    const status = this.props.status || 'sent';
     return {
-      body,
-      ariaName: 'You: ' + body,
-      isFailed: state === 'failed',
-      isSending: state === 'sending',
-      isSent: state === 'sent',
-      sentLabel: timestamp,
-      retry: this.props.retry || (() => {}),
+      body: this.props.body || 'Sounds good, hold the Thursday slot.',
+      timestamp: this.props.timestamp || '',
+      hasTime: !!this.props.timestamp && status === 'sent',
+      isFailed: status === 'failed',
+      isSending: status === 'sending',
+      bubbleBg: '#ECECEE',
+      bubbleBorder: '#D9D9DD',
     };
   }
 }

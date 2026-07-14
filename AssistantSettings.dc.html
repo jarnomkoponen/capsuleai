@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+  * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  body { margin: 0; }
+  .st-scroll::-webkit-scrollbar { width: 0; }
+  .st-start:focus-visible { outline: 2px solid #0F766E; outline-offset: 2px; }
+</style>
+</helmet>
+<div style="min-height:100vh;background:#ECECEE;display:flex;align-items:center;justify-content:center;padding:24px 12px;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display','Segoe UI',system-ui,sans-serif;">
+  <div style="width:390px;max-width:100%;height:812px;background:#FFFFFF;border-radius:44px;border:1px solid #D9D9DD;overflow:hidden;display:flex;flex-direction:column;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 26px 4px;flex:none;">
+      <span style="font-size:15px;font-weight:600;color:#17171A;">9:41</span>
+      <span aria-hidden="true" style="display:flex;gap:6px;align-items:center;"><svg width="18" height="12" viewBox="0 0 18 12" fill="#17171A"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="5" y="4.5" width="3" height="7.5" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 10.4a1.15 1.15 0 100-2.3 1.15 1.15 0 000 2.3z" fill="#17171A"/><path d="M3.6 6.4a6.2 6.2 0 018.8 0M1.2 4a9.7 9.7 0 0113.6 0" stroke="#17171A" stroke-width="1.4" stroke-linecap="round"/></svg><svg width="26" height="13" viewBox="0 0 26 13" fill="none"><rect x="0.6" y="0.6" width="22" height="11.8" rx="3" stroke="#17171A" stroke-width="1.2"/><rect x="2.6" y="2.6" width="14.5" height="7.8" rx="1.5" fill="#17171A"/><path d="M24.4 4.3c1 .5 1 3.9 0 4.4" stroke="#17171A" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+    </div>
+    <dc-import name="TopNavModule" variant="back" title="{{ assistant }}" unread="2" on-back="{{ onBack }}" hint-size="100%,60px"></dc-import>
+    <main role="main" class="st-scroll" style="flex:1;min-height:0;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:24px;">
+      <dc-import name="AssistantSetupModule" variant="settings" assistant="{{ assistant }}" topic="{{ topic }}" efficiency="{{ efficiency }}" vizKind="{{ vizKind }}" caption="{{ caption }}" hint-size="100%,300px"></dc-import>
+      <div>
+        <dc-import name="PersonalizeAssistantModule" placement="setup" assistant="{{ assistant }}" options="{{ personalizeOptions }}" hint-size="100%,200px"></dc-import>
+        <button type="button" class="st-start" onClick="{{ onStartChat }}" style="margin-top:14px;appearance:none;border:1px solid #D9D9DD;background:#F7F7F8;color:#17171A;font:600 16px/1 inherit;min-height:48px;padding:0 20px;border-radius:24px;cursor:pointer;">Start a conversation</button>
+      </div>
+      <dc-import name="ConnectedAppsModule" connections="{{ connections }}" hint-size="100%,380px"></dc-import>
+    </main>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:420,&quot;height&quot;:880}}">class Component extends DCLogic {
+  configs() {
+    return {
+      'Home helper': {
+        topic: 'Home', efficiency: 55, vizKind: 'trend',
+        caption: 'How Home helper coordinates your week — calendar, meals and errands.',
+        personalize: [
+          { id: 'bank', kind: 'connect-app', label: 'Connect with my bank app', accessLabel: 'so Home helper can track subscriptions and flag spending' },
+          { id: 'grocery', kind: 'connect-app', label: 'Connect a grocery account', accessLabel: 'so it can build and reorder your shopping list' },
+        ],
+        connections: [
+          { id: 'gcal', name: 'Google Calendar', connected: true, scope: 'See and add events' },
+          { id: 'gmail', name: 'Google Mail', connected: true, scope: 'Read receipts and confirmations' },
+          { id: 'bank', name: 'My bank app', connected: false, scope: 'Read balances and subscriptions' },
+          { id: 'grocery', name: 'Grocery account', connected: false, scope: 'Build and place orders' },
+        ],
+      },
+      'Health coach': {
+        topic: 'Health', efficiency: 95, vizKind: 'trend',
+        caption: 'How Health coach supports your recovery and training load.',
+        personalize: [
+          { id: 'health', kind: 'grant-data', label: 'Give access to Apple Health', accessLabel: 'let Health coach read activity, sleep and recovery data' },
+          { id: 'clinic', kind: 'connect-app', label: 'Connect your clinic portal', accessLabel: 'so it can follow your care team\u2019s plan and flag symptoms' },
+        ],
+        connections: [
+          { id: 'health', name: 'Apple Health', connected: true, scope: 'Activity, sleep and recovery' },
+          { id: 'clinic', name: 'Clinic portal', connected: false, scope: 'Care plan and appointments' },
+          { id: 'pharmacy', name: 'Pharmacy app', connected: false, scope: 'Prescriptions and refills' },
+        ],
+      },
+      'Training buddy': {
+        topic: 'Training', efficiency: 70, vizKind: 'bars',
+        caption: 'How Training buddy coordinates shared sessions — nothing of your health context crosses over.',
+        personalize: [
+          { id: 'strava', kind: 'connect-app', label: 'Connect Strava', accessLabel: 'so it can plan around your logged sessions' },
+          { id: 'contacts', kind: 'grant-data', label: 'Share your training partners', accessLabel: 'so it can match calendars with Marko and others' },
+        ],
+        connections: [
+          { id: 'gcal', name: 'Google Calendar', connected: true, scope: 'See shared session times only' },
+          { id: 'strava', name: 'Strava', connected: false, scope: 'Read logged workouts' },
+          { id: 'contacts', name: 'Training partners', connected: false, scope: 'Match calendars for joint sessions' },
+        ],
+      },
+      'Companion': {
+        topic: 'Relationships', efficiency: 40, vizKind: 'rings',
+        caption: 'A private space to think things through. Nothing is shared unless you choose to, scope by scope.',
+        personalize: [
+          { id: 'journal', kind: 'connect-app', label: 'Connect your journal', accessLabel: 'so reflections carry across, staying private to you' },
+        ],
+        connections: [
+          { id: 'journal', name: 'Journal app', connected: false, scope: 'Read and add private entries' },
+          { id: 'notes', name: 'Notes', connected: false, scope: 'Reference notes you point it to' },
+        ],
+      },
+      'Financial coach': {
+        topic: 'Finance', efficiency: 60, vizKind: 'bars',
+        caption: 'How Financial coach keeps spending aligned with the life you actually live.',
+        personalize: [
+          { id: 'bank', kind: 'connect-app', label: 'Connect with my bank app', accessLabel: 'so it can review subscriptions and spending' },
+          { id: 'cards', kind: 'connect-app', label: 'Connect a credit card', accessLabel: 'so it can spot recurring charges that no longer fit' },
+        ],
+        connections: [
+          { id: 'bank', name: 'My bank app', connected: true, scope: 'Read balances and subscriptions' },
+          { id: 'cards', name: 'Credit card', connected: false, scope: 'Read statements and recurring charges' },
+          { id: 'ebay', name: 'eBay', connected: false, scope: 'List and manage items' },
+        ],
+      },
+    };
+  }
+  renderVals() {
+    const key = this.props.assistant || 'Home helper';
+    const cfg = this.configs()[key] || this.configs()['Home helper'];
+    return {
+      assistant: key,
+      topic: cfg.topic, efficiency: cfg.efficiency, vizKind: cfg.vizKind, caption: cfg.caption,
+      personalizeOptions: cfg.personalize,
+      connections: cfg.connections,
+      onBack: this.props.onBack || (() => {}),
+      onStartChat: this.props.onStartChat || (() => {}),
+    };
+  }
+}</script>
+</body>
+</html>

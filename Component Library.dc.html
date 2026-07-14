@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>* { box-sizing: border-box; -webkit-font-smoothing: antialiased; } body { margin: 0; }</style>
+</helmet>
+<div style="min-height:100vh;background:#F7F7F8;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display','Segoe UI',system-ui,sans-serif;color:#17171A;padding:40px 28px 80px;">
+  <div style="max-width:1200px;margin:0 auto;">
+    <h1 style="font-size:28px;line-height:34px;font-weight:700;letter-spacing:-0.015em;margin:0 0 6px;">Capsule component library</h1>
+    <p style="font-size:16px;line-height:23px;color:#6E6E77;margin:0 0 4px;max-width:74ch;">24 reusable modules built to their Layer 1 contracts — typed props, states, variants, and A11y (AA, AAA on consent). Screens in later steps are composed from these; no screen introduces a new component.</p>
+    <p style="font-size:14px;line-height:20px;color:#6E6E77;margin:0 0 36px;">Plus EfficiencyMeterModule (see its dedicated test board) and ConnectionConfirmModule (built in step 2).</p>
+
+    <sc-for list="{{ groups }}" as="g" hint-placeholder-count="4">
+      <div style="margin-bottom:44px;">
+        <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:4px;">
+          <h2 style="font-size:20px;line-height:25px;font-weight:600;margin:0;">{{ g.title }}</h2>
+          <span style="font-size:14px;color:#6E6E77;">{{ g.note }}</span>
+        </div>
+        <div style="height:1px;background:#D9D9DD;margin-bottom:20px;"></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px;align-items:start;">
+          <sc-for list="{{ g.cells }}" as="c" hint-placeholder-count="4">
+            <div style="background:#FFFFFF;border:1px solid #D9D9DD;border-radius:16px;overflow:hidden;">
+              <div style="padding:10px 14px;border-bottom:1px solid #ECECEE;font-size:13px;font-weight:600;color:#3A3A40;font-family:ui-monospace,'SF Mono',Menlo,monospace;">{{ c.name }}</div>
+              <div style="padding:16px;background:#F7F7F8;" data-cell="{{ c.name }}">
+                <sc-if value="{{ c.isTopNavHome }}" hint-placeholder-val="{{ true }}"><dc-import name="TopNavModule" variant="home" title="Home" unread="2" hint-size="100%,64px"></dc-import></sc-if>
+                <sc-if value="{{ c.isTopNavChat }}" hint-placeholder-val="{{ false }}"><dc-import name="TopNavModule" variant="chat" title="Health coach" unread="0" hint-size="100%,64px"></dc-import></sc-if>
+                <sc-if value="{{ c.isTopNavSection }}" hint-placeholder-val="{{ false }}"><dc-import name="TopNavModule" variant="section" title="Assistant setup" hint-size="100%,64px"></dc-import></sc-if>
+                <sc-if value="{{ c.isBottomNav }}" hint-placeholder-val="{{ false }}"><dc-import name="BottomNavModule" current="Home" hint-size="100%,88px"></dc-import></sc-if>
+                <sc-if value="{{ c.isProgInd }}" hint-placeholder-val="{{ false }}"><dc-import name="ProgressIndicatorModule" current="2" total="4" hint-size="100%,60px"></dc-import></sc-if>
+                <sc-if value="{{ c.isMoment }}" hint-placeholder-val="{{ false }}"><dc-import name="MomentModule" assistant="Health coach" topic="Health" efficiency="95" state="max" caption="Recovery trending up" hint-size="100%,420px"></dc-import></sc-if>
+                <sc-if value="{{ c.isMomentNudge }}" hint-placeholder-val="{{ false }}"><dc-import name="MomentModule" assistant="Home helper" topic="Home" efficiency="35" state="has-nudge" summary="Home is set up. Connect more to help it do more." caption="Home status at a glance" hint-size="100%,480px"></dc-import></sc-if>
+                <sc-if value="{{ c.isTopicViz }}" hint-placeholder-val="{{ false }}"><dc-import name="TopicVisualizationModule" variant="card" kind="trend" caption="Recovery trending up over six weeks" hint-size="100%,200px"></dc-import></sc-if>
+                <sc-if value="{{ c.isLifeTopics }}" hint-placeholder-val="{{ false }}"><dc-import name="LifeTopicsModule" variant="home" hint-size="100%,240px"></dc-import></sc-if>
+                <sc-if value="{{ c.isTasks }}" hint-placeholder-val="{{ false }}"><dc-import name="TasksModule" hint-size="100%,300px"></dc-import></sc-if>
+                <sc-if value="{{ c.isRecent }}" hint-placeholder-val="{{ false }}"><dc-import name="RecentChatsModule" hint-size="100%,320px"></dc-import></sc-if>
+                <sc-if value="{{ c.isActivityAll }}" hint-placeholder-val="{{ false }}"><dc-import name="AgentActivityLogModule" scope="all" hint-size="100%,420px"></dc-import></sc-if>
+                <sc-if value="{{ c.isAssistants }}" hint-placeholder-val="{{ false }}"><dc-import name="AssistantsModule" hint-size="100%,420px"></dc-import></sc-if>
+                <sc-if value="{{ c.isConnected }}" hint-placeholder-val="{{ false }}"><dc-import name="ConnectedAppsModule" hint-size="100%,380px"></dc-import></sc-if>
+                <sc-if value="{{ c.isProgress }}" hint-placeholder-val="{{ false }}"><dc-import name="ProgressModule" hint-size="100%,420px"></dc-import></sc-if>
+                <sc-if value="{{ c.isSetup }}" hint-placeholder-val="{{ false }}"><dc-import name="AssistantSetupModule" assistant="Home helper" topic="Home" efficiency="35" hint-size="100%,300px"></dc-import></sc-if>
+                <sc-if value="{{ c.isPersonalize }}" hint-placeholder-val="{{ false }}"><dc-import name="PersonalizeAssistantModule" placement="setup" assistant="Home helper" hint-size="100%,200px"></dc-import></sc-if>
+                <sc-if value="{{ c.isChatBox }}" hint-placeholder-val="{{ false }}"><dc-import name="ChatBoxModule" context="assistant" assistant="Home helper" hint-size="100%,80px"></dc-import></sc-if>
+                <sc-if value="{{ c.isStreaming }}" hint-placeholder-val="{{ false }}"><dc-import name="StreamingMessageModule" hint-size="100%,60px"></dc-import></sc-if>
+                <sc-if value="{{ c.isAsstMsg }}" hint-placeholder-val="{{ false }}"><dc-import name="AssistantMessageModule" assistant="Health coach" body="I checked your recovery log — you're ahead of plan this week." hint-size="100%,140px"></dc-import></sc-if>
+                <sc-if value="{{ c.isUserMsg }}" hint-placeholder-val="{{ false }}"><dc-import name="UserMessageModule" body="Great, what should I focus on next?" hint-size="100%,120px"></dc-import></sc-if>
+                <sc-if value="{{ c.isFollowUp }}" hint-placeholder-val="{{ false }}"><dc-import name="FollowUpButtonsModule" hint-size="100%,120px"></dc-import></sc-if>
+                <sc-if value="{{ c.isStarters }}" hint-placeholder-val="{{ false }}"><dc-import name="ConversationStartersModule" placement="chat" assistant="Companion" hint-size="100%,220px"></dc-import></sc-if>
+                <sc-if value="{{ c.isParticipants }}" hint-placeholder-val="{{ false }}"><dc-import name="ChatParticipantIndicatorModule" expanded="{{ true }}" hint-size="100%,240px"></dc-import></sc-if>
+                <sc-if value="{{ c.isCanvasConsent }}" hint-placeholder-val="{{ false }}"><dc-import name="ChatCanvasModule" variant="consent" hint-size="100%,460px"></dc-import></sc-if>
+                <sc-if value="{{ c.isCanvasConfirm }}" hint-placeholder-val="{{ false }}"><dc-import name="ChatCanvasModule" variant="confirmation" summary="Cancel StreamMax now?" hint-size="100%,280px"></dc-import></sc-if>
+                <sc-if value="{{ c.isCanvasProgress }}" hint-placeholder-val="{{ false }}"><dc-import name="ChatCanvasModule" variant="progress" hint-size="100%,420px"></dc-import></sc-if>
+                <sc-if value="{{ c.isCanvasViz }}" hint-placeholder-val="{{ false }}"><dc-import name="ChatCanvasModule" variant="visualization" title="Medication schedule" vizKind="bars" vizCaption="Antibiotic 08:00 with food · pain relief 12:00 optional" hint-size="100%,320px"></dc-import></sc-if>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1200,&quot;height&quot;:1400}}">
+class Component extends DCLogic {
+  renderVals() {
+    const cell = (name, flag) => ({ name, [flag]: true });
+    const groups = [
+      { title: 'Structural / navigation', note: 'iOS nav bar + tab bar, canvas shell, onboarding progress', cells: [
+        cell('TopNavModule · home', 'isTopNavHome'),
+        cell('TopNavModule · chat', 'isTopNavChat'),
+        cell('TopNavModule · section', 'isTopNavSection'),
+        cell('BottomNavModule', 'isBottomNav'),
+        cell('ProgressIndicatorModule', 'isProgInd'),
+      ]},
+      { title: 'Home & activity', note: 'moments feed, life topics, tasks, recent chats, trust log', cells: [
+        cell('MomentModule · max', 'isMoment'),
+        cell('MomentModule · has-nudge', 'isMomentNudge'),
+        cell('TopicVisualizationModule', 'isTopicViz'),
+        cell('LifeTopicsModule', 'isLifeTopics'),
+        cell('TasksModule', 'isTasks'),
+        cell('RecentChatsModule', 'isRecent'),
+        cell('AgentActivityLogModule', 'isActivityAll'),
+      ]},
+      { title: 'Assistants & consent', note: 'roster, connections (AAA), setup hero, personalize nudge', cells: [
+        cell('AssistantsModule', 'isAssistants'),
+        cell('ConnectedAppsModule · AAA', 'isConnected'),
+        cell('AssistantSetupModule', 'isSetup'),
+        cell('PersonalizeAssistantModule', 'isPersonalize'),
+        cell('ProgressModule', 'isProgress'),
+      ]},
+      { title: 'Chat', note: 'stream parts, participants, and the ChatCanvas variants', cells: [
+        cell('ChatBoxModule', 'isChatBox'),
+        cell('StreamingMessageModule', 'isStreaming'),
+        cell('AssistantMessageModule', 'isAsstMsg'),
+        cell('UserMessageModule', 'isUserMsg'),
+        cell('FollowUpButtonsModule', 'isFollowUp'),
+        cell('ConversationStartersModule', 'isStarters'),
+        cell('ChatParticipantIndicatorModule', 'isParticipants'),
+        cell('ChatCanvasModule · consent (AAA)', 'isCanvasConsent'),
+        cell('ChatCanvasModule · confirmation', 'isCanvasConfirm'),
+        cell('ChatCanvasModule · progress', 'isCanvasProgress'),
+        cell('ChatCanvasModule · visualization', 'isCanvasViz'),
+      ]},
+    ];
+    return { groups };
+  }
+}
+</script>
+</body>
+</html>

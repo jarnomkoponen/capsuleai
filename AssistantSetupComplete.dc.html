@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+  * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  body { margin: 0; }
+  .sc-start:focus-visible { outline: 2px solid #0F766E; outline-offset: 2px; }
+</style>
+</helmet>
+<dc-import name="UniversalCanvasModule" hint-size="100%,100%">
+  <div style="flex:1;display:flex;flex-direction:column;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display','Segoe UI',system-ui,sans-serif;">
+    <dc-import name="TopNavModule" variant="section" title="Assistant setup" unread="0" hint-size="100%,64px"></dc-import>
+    <div style="padding:20px 20px 28px;display:flex;flex-direction:column;gap:16px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+        <span style="font-size:20px;line-height:25px;font-weight:700;letter-spacing:-0.01em;color:#17171A;">Home helper</span>
+        <dc-import name="EfficiencyMeterModule" variant="inline" assistant="" value="55" delta="20" hint-size="130px,44px"></dc-import>
+      </div>
+      <div style="border:1px solid #D9D9DD;border-radius:16px;padding:18px;">
+        <p style="margin:0;font-size:17px;line-height:24px;color:#17171A;">Connected to Google apps successfully. Home helper is looking forward to helping you even more in scheduling and keeping your life in order without you needing to think about it.</p>
+      </div>
+      <p style="margin:0;font-size:16px;line-height:23px;font-weight:600;color:#17171A;">You have improved assistance efficiency. It's now 55%. You can improve by adding connections and sources.</p>
+      <button type="button" class="sc-start" style="align-self:flex-start;appearance:none;border:none;background:#0F766E;color:#FFFFFF;font:600 16px/1 inherit;min-height:48px;padding:0 22px;border-radius:24px;cursor:pointer;">Start a conversation</button>
+      <dc-import name="PersonalizeAssistantModule" placement="moment" assistant="Home helper" hint-size="100%,180px"></dc-import>
+    </div>
+  </div>
+</dc-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:420,&quot;height&quot;:880}}"></script>
+</body>
+</html>

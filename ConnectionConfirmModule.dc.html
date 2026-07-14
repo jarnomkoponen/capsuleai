@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+  * { -webkit-font-smoothing: antialiased; box-sizing: border-box; }
+  body { margin: 0; }
+  .cc-focusable:focus-visible { outline: 2px solid #0F766E; outline-offset: 3px; border-radius: 12px; }
+  @keyframes ccPulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+  @media (prefers-reduced-motion: reduce) { .cc-pulse { animation: none !important; } }
+</style>
+</helmet>
+<div style="font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display','Segoe UI',system-ui,sans-serif;">
+
+  <!-- assistant + efficiency row -->
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:16px;border-bottom:1px solid #ECECEE;">
+    <span style="font-size:20px;line-height:25px;font-weight:700;letter-spacing:-0.01em;color:#17171A;">{{ assistant }}</span>
+    <dc-import name="EfficiencyMeterModule" variant="inline" assistant="" value="{{ shownEff }}" accent="{{ accent }}" hint-size="120px,44px"></dc-import>
+  </div>
+
+  <!-- CONSENT REGION -->
+  <div role="group" aria-label="{{ regionLabel }}" tabindex="-1" ref="{{ regionRef }}" class="cc-focusable" style="margin-top:18px;">
+
+    <sc-if value="{{ isDefault }}" hint-placeholder-val="{{ true }}">
+      <div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+          <span aria-hidden="true" style="width:22px;height:22px;border-radius:50%;border:2px solid #17171A;display:flex;align-items:center;justify-content:center;color:#17171A;font-size:13px;font-weight:800;line-height:1;flex:none;">!</span>
+          <span style="font-size:13px;line-height:16px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#17171A;">Permission needed</span>
+        </div>
+        <div style="border:1px solid #D9D9DD;background:#F7F7F8;border-radius:16px;padding:18px 18px 20px;">
+          <p style="margin:0 0 14px;font-size:17px;line-height:24px;color:#17171A;">You're connecting your Capsule to <strong style="font-weight:600;">{{ targetName }}</strong> to give it rights to <strong style="font-weight:600;">{{ rights }}</strong>.</p>
+          <div style="height:1px;background:#D9D9DD;margin:0 0 14px;"></div>
+          <sc-for list="{{ assurance }}" as="para" hint-placeholder-count="2">
+            <p style="margin:0 0 12px;font-size:16px;line-height:23px;color:#3A3A40;">{{ para }}</p>
+          </sc-for>
+        </div>
+        <div style="margin-top:22px;">
+          <div style="font-size:13px;line-height:16px;font-weight:700;letter-spacing:0.02em;color:#3A3A40;padding-bottom:12px;border-bottom:1px solid #ECECEE;">Improve assistant efficiency</div>
+          <div style="display:flex;flex-direction:column;gap:12px;margin-top:16px;">
+            <button type="button" onClick="{{ onConfirm }}" class="cc-focusable" style="appearance:none;border:none;background:#17171A;color:#FFFFFF;font:600 17px/1 inherit;padding:0 20px;height:52px;border-radius:14px;cursor:pointer;width:100%;">Confirm access</button>
+            <button type="button" onClick="{{ onSkip }}" class="cc-focusable" style="appearance:none;border:1.5px solid #17171A;background:#FFFFFF;color:#17171A;font:600 17px/1 inherit;padding:0 20px;height:52px;border-radius:14px;cursor:pointer;width:100%;">Skip for later</button>
+          </div>
+          <p style="margin:14px 2px 0;font-size:13px;line-height:18px;color:#6E6E77;">Both choices are reversible. You can revoke access anytime from the assistant's settings.</p>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isConnecting }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:32px 4px;">
+        <div aria-live="polite" style="display:flex;align-items:center;gap:12px;">
+          <span class="cc-pulse" style="width:14px;height:14px;border-radius:50%;background:{{ accent }};flex:none;animation:ccPulse 1.4s ease-in-out infinite;"></span>
+          <span style="font-size:17px;line-height:24px;font-weight:600;color:#17171A;">{{ connectingLabel }}</span>
+        </div>
+        <p style="margin:14px 0 0;font-size:16px;line-height:23px;color:#3A3A40;">Securing an encrypted connection to {{ targetName }}. This only grants the rights you just confirmed.</p>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isConnected }}" hint-placeholder-val="{{ false }}">
+      <div aria-live="polite">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+          <span aria-hidden="true" style="width:22px;height:22px;border-radius:50%;background:#17171A;display:flex;align-items:center;justify-content:center;color:#FFFFFF;font-size:12px;font-weight:800;line-height:1;flex:none;">✓</span>
+          <span style="font-size:13px;line-height:16px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#17171A;">Connected</span>
+        </div>
+        <div style="border:1px solid #D9D9DD;background:#FFFFFF;border-radius:16px;padding:18px;">
+          <p style="margin:0 0 12px;font-size:17px;line-height:24px;color:#17171A;"><strong style="font-weight:600;">{{ targetName }}</strong> is connected. {{ assistant }} efficiency is now <strong style="font-weight:600;">{{ efficiencyAfter }}%</strong>.</p>
+          <p style="margin:0;font-size:16px;line-height:23px;color:#3A3A40;">Your data stays encrypted, is used only to improve {{ assistant }}, and you can revoke access at any time.</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px;margin-top:20px;">
+          <button type="button" onClick="{{ onStartChat }}" class="cc-focusable" style="appearance:none;border:none;background:{{ accent }};color:#FFFFFF;font:600 17px/1 inherit;height:52px;border-radius:14px;cursor:pointer;width:100%;">Start a conversation</button>
+          <button type="button" onClick="{{ onReset }}" class="cc-focusable" style="appearance:none;border:1.5px solid #17171A;background:#FFFFFF;color:#17171A;font:600 17px/1 inherit;height:52px;border-radius:14px;cursor:pointer;width:100%;">Manage access</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isSkipped }}" hint-placeholder-val="{{ false }}">
+      <div aria-live="polite">
+        <div style="border:1px solid #D9D9DD;background:#F7F7F8;border-radius:16px;padding:18px;">
+          <p style="margin:0;font-size:17px;line-height:24px;color:#17171A;">Skipped for now. {{ assistant }} works without {{ targetName }} — connect it anytime to raise efficiency to {{ efficiencyAfter }}%.</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px;margin-top:20px;">
+          <button type="button" onClick="{{ onStartChat }}" class="cc-focusable" style="appearance:none;border:none;background:{{ accent }};color:#FFFFFF;font:600 17px/1 inherit;height:52px;border-radius:14px;cursor:pointer;width:100%;">Start a conversation</button>
+          <button type="button" onClick="{{ onReset }}" class="cc-focusable" style="appearance:none;border:1.5px solid #17171A;background:#FFFFFF;color:#17171A;font:600 17px/1 inherit;height:52px;border-radius:14px;cursor:pointer;width:100%;">Review connection again</button>
+        </div>
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:600},&quot;assistant&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Home helper&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;targetName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Google Calendar&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;rights&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;see, edit and modify events&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;efficiencyBefore&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:35,&quot;tsType&quot;:&quot;number&quot;},&quot;efficiencyAfter&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:55,&quot;tsType&quot;:&quot;number&quot;},&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#0F766E&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#0F766E&quot;,&quot;#2563C9&quot;,&quot;#C2410C&quot;]},&quot;initialState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;default&quot;,&quot;options&quot;:[&quot;default&quot;,&quot;connecting&quot;,&quot;connected&quot;,&quot;skipped&quot;],&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = { status: null, connectingLabel: 'Connecting…', _timers: [] };
+  regionRef = React.createRef();
+
+  componentDidMount() {
+    const init = this.props.initialState || 'default';
+    this.setState({ status: init });
+    requestAnimationFrame(() => {
+      if (init === 'default' && this.regionRef.current) this.regionRef.current.focus();
+    });
+  }
+  componentWillUnmount() { (this.state._timers || []).forEach(clearTimeout); }
+  go(status) { this.setState({ status }); }
+  confirm() {
+    const target = this.props.targetName || 'Google Calendar';
+    this.setState({ status: 'connecting', connectingLabel: 'Connecting to ' + target + '…' });
+    const phases = ['Requesting access…', 'Securing encrypted connection…', 'Finalizing…'];
+    const timers = [];
+    phases.forEach((label, i) => timers.push(setTimeout(() => this.setState({ connectingLabel: label }), 700 * (i + 1))));
+    timers.push(setTimeout(() => this.setState({ status: 'connected' }), 700 * (phases.length + 1)));
+    this.setState({ _timers: timers });
+    if (this.props.onConfirm) this.props.onConfirm();
+  }
+  renderVals() {
+    const status = this.state.status || this.props.initialState || 'default';
+    const accent = this.props.accent || '#0F766E';
+    const assistant = this.props.assistant || 'Home helper';
+    const targetName = this.props.targetName || 'Google Calendar';
+    const rights = this.props.rights || 'see, edit and modify events';
+    const efficiencyBefore = this.props.efficiencyBefore ?? 35;
+    const efficiencyAfter = this.props.efficiencyAfter ?? 55;
+    const assurance = this.props.assurance || [
+      'We do this in a way that we do not use your data for any other purpose but to improve the efficiency of the assistant.',
+      'We keep your data encrypted and safe, and you can revoke the connection or access at any time.',
+    ];
+    return {
+      assistant, targetName, rights, efficiencyAfter, assurance, accent,
+      shownEff: status === 'connected' ? efficiencyAfter : efficiencyBefore,
+      regionLabel: 'Permission needed: ' + assistant + ' wants to connect ' + targetName + ' to ' + rights + '. Revocable at any time.',
+      connectingLabel: this.state.connectingLabel,
+      regionRef: this.regionRef,
+      isDefault: status === 'default',
+      isConnecting: status === 'connecting',
+      isConnected: status === 'connected',
+      isSkipped: status === 'skipped',
+      onConfirm: () => this.confirm(),
+      onSkip: () => this.go('skipped'),
+      onReset: () => this.go('default'),
+      onStartChat: this.props.onStartChat || (() => {}),
+    };
+  }
+}
+</script>
+</body>
+</html>

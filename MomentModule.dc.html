@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+  * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  body { margin: 0; }
+  .mo-primary:focus-visible, .mo-secondary:focus-visible { outline: 2px solid #0F766E; outline-offset: 2px; }
+</style>
+</helmet>
+<article aria-label="{{ ariaLabel }}" style="font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display','Segoe UI',system-ui,sans-serif;background:#FFFFFF;border:1px solid #D9D9DD;border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:14px;">
+
+  <!-- header: assistant + inline efficiency -->
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+    <span style="font-size:18px;line-height:23px;font-weight:700;letter-spacing:-0.01em;color:#17171A;">{{ assistant }}</span>
+    <dc-import name="EfficiencyMeterModule" variant="inline" value="{{ efficiency }}" delta="{{ delta }}" accent="{{ accent }}" hint-size="120px,44px"></dc-import>
+  </div>
+
+  <!-- visualization -->
+  <dc-import name="TopicVisualizationModule" variant="card" kind="{{ vizKind }}" topic="{{ topic }}" caption="{{ caption }}" accent="{{ accent }}" hint-size="100%,150px"></dc-import>
+
+  <!-- summary -->
+  <p style="margin:0;font-size:16px;line-height:23px;color:#17171A;{{ summaryWeight }}">{{ summary }}</p>
+
+  <!-- actions -->
+  <sc-if value="{{ isMax }}" hint-placeholder-val="{{ true }}">
+    <button type="button" class="mo-secondary" onClick="{{ onStartChat }}" style="align-self:flex-start;appearance:none;border:none;background:#17171A;color:#FFFFFF;font:600 16px/1 inherit;min-height:44px;padding:0 18px;border-radius:12px;cursor:pointer;">Continue conversation</button>
+  </sc-if>
+
+  <sc-if value="{{ isNudge }}" hint-placeholder-val="{{ false }}">
+    <button type="button" class="mo-secondary" onClick="{{ onStartChat }}" style="align-self:flex-start;appearance:none;border:none;background:#17171A;color:#FFFFFF;font:600 16px/1 inherit;min-height:44px;padding:0 18px;border-radius:12px;cursor:pointer;">Continue conversation</button>
+    <dc-import name="PersonalizeAssistantModule" placement="moment" assistant="{{ assistant }}" hint-size="100%,180px"></dc-import>
+  </sc-if>
+
+  <sc-if value="{{ isDefault }}" hint-placeholder-val="{{ false }}">
+    <button type="button" class="mo-primary" onClick="{{ onStartChat }}" style="align-self:flex-start;appearance:none;border:none;background:{{ accent }};color:#FFFFFF;font:600 16px/1 inherit;min-height:44px;padding:0 20px;border-radius:12px;cursor:pointer;">Start a conversation</button>
+  </sc-if>
+</article>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:360,&quot;height&quot;:420},&quot;assistant&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Health coach&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;topic&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Health&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;efficiency&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:95,&quot;min&quot;:0,&quot;max&quot;:100,&quot;step&quot;:1,&quot;unit&quot;:&quot;%&quot;,&quot;tsType&quot;:&quot;number&quot;},&quot;delta&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:0,&quot;tsType&quot;:&quot;number&quot;},&quot;vizKind&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;trend&quot;,&quot;options&quot;:[&quot;trend&quot;,&quot;rings&quot;,&quot;bars&quot;,&quot;image&quot;],&quot;tsType&quot;:&quot;string&quot;},&quot;summary&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;You have maximized assistant efficiency. We let you know if something else can be done.&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;caption&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;state&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;max&quot;,&quot;options&quot;:[&quot;default&quot;,&quot;has-nudge&quot;,&quot;max&quot;],&quot;tsType&quot;:&quot;string&quot;},&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#0F766E&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#0F766E&quot;,&quot;#2563C9&quot;,&quot;#C2410C&quot;]}}">
+class Component extends DCLogic {
+  renderVals() {
+    const state = this.props.state || 'default';
+    const assistant = this.props.assistant || 'Health coach';
+    const topic = this.props.topic || 'Health';
+    const summary = this.props.summary || 'A quick look at where things stand.';
+    return {
+      assistant, topic, summary,
+      accent: this.props.accent || '#0F766E',
+      efficiency: this.props.efficiency ?? 95,
+      delta: this.props.delta ?? 0,
+      vizKind: this.props.vizKind || 'trend',
+      caption: this.props.caption || '',
+      isMax: state === 'max', isNudge: state === 'has-nudge', isDefault: state === 'default',
+      summaryWeight: state === 'max' ? 'font-weight:600;' : 'font-weight:400;',
+      ariaLabel: topic + '. ' + summary,
+      onStartChat: () => (this.props.onStartChat || (() => {}))({ name: assistant }),
+    };
+  }
+}
+</script>
+</body>
+</html>

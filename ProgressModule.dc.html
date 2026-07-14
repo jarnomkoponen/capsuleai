@@ -9,91 +9,75 @@
 <x-dc>
 <helmet>
 <style>
-*{box-sizing:border-box}html,body{margin:0}
-body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display",system-ui,sans-serif;background:#EAEAE6;color:#1A1A1A;-webkit-font-smoothing:antialiased}
-ol{margin:0;padding:0;list-style:none}
+  * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  body { margin: 0; }
+  .pm-task:focus-visible { outline: 2px solid #0F766E; outline-offset: 2px; }
 </style>
 </helmet>
-<div style="max-width:460px;margin:0 auto;padding:16px">
-  <section aria-label="Progress" style="background:#FFFFFF;border:1px solid #E4E3DF;border-radius:16px;padding:{{ pad }}">
-    <ol>
-      <sc-for list="{{ milestones }}" as="m" hint-placeholder-count="3">
-        <li aria-current="{{ m.ariaCurrent }}" style="display:flex;gap:12px;align-items:flex-start;padding-bottom:{{ rowGap }}">
-          <div style="display:flex;flex-direction:column;align-items:center;flex:none">
-            <span style="width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:{{ m.dotBg }};border:{{ m.dotBorder }}">
-              <span dangerouslySetInnerHTML="{{ m.mark }}"></span>
-            </span>
-            <sc-if value="{{ m.showLine }}" hint-placeholder-val="{{ true }}">
-              <span aria-hidden="true" style="width:2px;flex:1;min-height:18px;background:#E4E3DF;margin:2px 0"></span>
-            </sc-if>
+<section aria-label="Your progress" style="font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display','Segoe UI',system-ui,sans-serif;">
+  <h2 style="margin:0 0 16px;font-size:15px;line-height:20px;font-weight:700;color:#17171A;">Your progress</h2>
+  <ol style="list-style:none;margin:0;padding:0;">
+    <sc-for list="{{ milestones }}" as="m" hint-placeholder-count="4">
+      <li style="display:flex;gap:14px;">
+        <!-- rail -->
+        <div style="display:flex;flex-direction:column;align-items:center;flex:none;width:26px;">
+          <span aria-hidden="true" style="width:24px;height:24px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;{{ m.dotStyle }}">{{ m.glyph }}</span>
+          <sc-if value="{{ m.showLine }}" hint-placeholder-val="{{ true }}">
+            <span aria-hidden="true" style="width:2px;flex:1;min-height:34px;background:{{ m.lineColor }};"></span>
+          </sc-if>
+        </div>
+        <!-- text -->
+        <div style="padding-bottom:20px;flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:16px;line-height:21px;font-weight:{{ m.weight }};color:#17171A;">{{ m.label }}</span>
+            <span style="font-size:11px;line-height:15px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:{{ m.tagColor }};">{{ m.stateLabel }}</span>
           </div>
-          <div style="padding-top:2px">
-            <div style="font-size:12px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:{{ m.tagColor }}">{{ m.tag }}</div>
-            <div style="font-size:17px;line-height:22px;font-weight:600;color:#1A1A1A;margin-top:1px">{{ m.label }}</div>
-            <sc-if value="{{ m.hasDesc }}" hint-placeholder-val="{{ false }}">
-              <div style="font-size:15px;line-height:20px;color:#454541;margin-top:2px">{{ m.description }}</div>
-            </sc-if>
-          </div>
-        </li>
-      </sc-for>
-    </ol>
+          <sc-if value="{{ m.hasDesc }}" hint-placeholder-val="{{ true }}">
+            <p style="margin:3px 0 0;font-size:14px;line-height:20px;color:#6E6E77;">{{ m.description }}</p>
+          </sc-if>
+        </div>
+      </li>
+    </sc-for>
+  </ol>
 
-    <sc-if value="{{ hasTasks }}" hint-placeholder-val="{{ false }}">
-      <div style="border-top:1px solid #E4E3DF;margin-top:6px;padding-top:12px;display:flex;flex-direction:column;gap:8px">
-        <sc-for list="{{ tasks }}" as="t" hint-placeholder-count="2">
-          <button onClick="{{ t.action }}" style="display:flex;align-items:center;gap:10px;min-height:44px;width:100%;text-align:left;background:#F7F7F4;border:1px solid #ECECE6;border-radius:12px;padding:10px 12px;cursor:pointer;font-family:inherit">
-            <span aria-hidden="true" style="width:18px;height:18px;border-radius:5px;border:2px solid #9A968D;flex:none"></span>
-            <span style="font-size:16px;line-height:21px;color:#1A1A1A">{{ t.label }}</span>
-          </button>
-        </sc-for>
-      </div>
-    </sc-if>
-  </section>
-</div>
+  <sc-if value="{{ hasTasks }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:4px;">
+      <sc-for list="{{ tasks }}" as="t" hint-placeholder-count="3">
+        <button type="button" class="pm-task" onClick="{{ t.action }}" style="appearance:none;border:1px solid #17171A;background:#FFFFFF;color:#17171A;font:500 15px/1 inherit;min-height:44px;padding:0 18px;border-radius:22px;cursor:pointer;">{{ t.label }}</button>
+      </sc-for>
+    </div>
+  </sc-if>
+</section>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{
-  &quot;$preview&quot;: { &quot;width&quot;: 492, &quot;height&quot;: 460 },
-  &quot;variant&quot;: { &quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;standalone&quot;, &quot;in-canvas&quot;], &quot;default&quot;: &quot;standalone&quot;, &quot;tsType&quot;: &quot;'in-canvas'|'standalone'&quot; },
-  &quot;milestones&quot;: { &quot;editor&quot;: null, &quot;default&quot;: [{&quot;label&quot;: &quot;Surgery complete&quot;, &quot;description&quot;: &quot;Discharged with a recovery plan&quot;, &quot;state&quot;: &quot;done&quot;}, {&quot;label&quot;: &quot;Recovery day 1&quot;, &quot;description&quot;: &quot;Rest, hydration, light walking&quot;, &quot;state&quot;: &quot;current&quot;}, {&quot;label&quot;: &quot;Follow-up call&quot;, &quot;description&quot;: &quot;With your care team on day 4&quot;, &quot;state&quot;: &quot;upcoming&quot;}], &quot;tsType&quot;: &quot;{ id?: string; label: string; description?: string; state: 'done'|'current'|'upcoming' }[]&quot; },
-  &quot;tasks&quot;: { &quot;editor&quot;: null, &quot;default&quot;: [{&quot;label&quot;: &quot;Take morning medication with food&quot;}, {&quot;label&quot;: &quot;Log how you\u2019re feeling this evening&quot;}], &quot;tsType&quot;: &quot;{ id?: string; label: string; action?: Action }[]&quot; }
-}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:360,&quot;height&quot;:420},&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#0F766E&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#0F766E&quot;,&quot;#2563C9&quot;,&quot;#C2410C&quot;]}}">
 class Component extends DCLogic {
-  mark(state) {
-    if (state === 'done') return { __html: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>' };
-    if (state === 'current') return { __html: '<span style="width:10px;height:10px;border-radius:50%;background:#2E5AAC;display:block"></span>' };
-    return { __html: '' };
-  }
   renderVals() {
-    const raw = Array.isArray(this.props.milestones) && this.props.milestones.length ? this.props.milestones : [
-      { label: 'Surgery complete', description: 'Discharged with a recovery plan', state: 'done' },
-      { label: 'Recovery day 1', description: 'Rest, hydration, light walking', state: 'current' },
-      { label: 'Follow-up call', description: 'With your care team on day 4', state: 'upcoming' },
+    const accent = this.props.accent || '#0F766E';
+    const raw = this.props.milestones || [
+      { id: 'm1', label: 'Milestone 1', description: 'Assessment complete', state: 'done' },
+      { id: 'm2', label: 'Milestone 2', description: 'First week of the plan', state: 'done' },
+      { id: 'm3', label: 'Milestone 3', description: 'Building consistency', state: 'current' },
+      { id: 'm4', label: 'Milestone 4', description: 'Sustained recovery', state: 'upcoming' },
     ];
-    const variant = this.props.variant ?? 'standalone';
-    const tasksRaw = Array.isArray(this.props.tasks) ? this.props.tasks : [
-      { label: 'Take morning medication with food' },
-      { label: 'Log how you\u2019re feeling this evening' },
-    ];
-    const noop = () => {};
-    const tag = { done: 'Done', current: 'Now', upcoming: 'Next' };
-    const tagColor = { done: '#1E7A46', current: '#2E5AAC', upcoming: '#6E6A62' };
-    const last = raw.length - 1;
-    const milestones = raw.map((m, i) => ({
-      label: m.label, description: m.description || '', hasDesc: !!m.description,
-      tag: tag[m.state] || 'Next', tagColor: tagColor[m.state] || '#6E6A62',
-      ariaCurrent: m.state === 'current' ? 'step' : undefined,
-      mark: this.mark(m.state),
-      dotBg: m.state === 'done' ? '#2E5AAC' : (m.state === 'current' ? '#EAF0FA' : '#F4F4F1'),
-      dotBorder: m.state === 'current' ? '2px solid #2E5AAC' : (m.state === 'done' ? 'none' : '2px solid #D8D8D2'),
-      showLine: i !== last,
-    }));
-    const tasks = tasksRaw.map(t => ({ label: t.label, action: t.action || noop }));
-    return {
-      milestones, tasks,
-      hasTasks: tasks.length > 0,
-      pad: variant === 'in-canvas' ? '14px' : '18px',
-      rowGap: variant === 'in-canvas' ? '10px' : '14px',
-    };
+    const n = raw.length;
+    const milestones = raw.map((m, i) => {
+      const done = m.state === 'done', current = m.state === 'current';
+      let dotStyle, glyph = '', stateLabel, tagColor;
+      if (done) { dotStyle = 'background:#17171A;border:2px solid #17171A;color:#FFFFFF;font-size:13px;font-weight:800;'; glyph = '✓'; stateLabel = 'Done'; tagColor = '#6E6E77'; }
+      else if (current) { dotStyle = 'background:#FFFFFF;border:3px solid ' + accent + ';'; stateLabel = 'In progress'; tagColor = accent; }
+      else { dotStyle = 'background:#FFFFFF;border:2px solid #D9D9DD;'; stateLabel = 'Upcoming'; tagColor = '#B8B8BF'; }
+      return {
+        label: m.label, description: m.description, hasDesc: !!m.description,
+        dotStyle, glyph, stateLabel, tagColor,
+        weight: current ? 700 : (done ? 600 : 500),
+        showLine: i < n - 1,
+        lineColor: done ? '#17171A' : '#D9D9DD',
+      };
+    });
+    const rawTasks = this.props.tasks || [{ label: 'Task 1' }, { label: 'Task 2' }, { label: 'Task 3' }];
+    const onTask = this.props.onTask || (() => {});
+    const tasks = rawTasks.map((t) => ({ label: t.label, action: () => onTask(t) }));
+    return { milestones, tasks, hasTasks: tasks.length > 0 };
   }
 }
 </script>

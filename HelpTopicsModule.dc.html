@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+  * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  body { margin: 0; }
+  .ht-opt:focus-visible { outline: 2px solid #0F766E; outline-offset: 2px; }
+</style>
+</helmet>
+<div role="group" aria-label="Choose how you want Capsule to help" style="font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display','Segoe UI',system-ui,sans-serif;display:flex;flex-direction:column;gap:10px;width:100%;">
+  <sc-for list="{{ options }}" as="o" hint-placeholder-count="6">
+    <button type="button" class="ht-opt" role="checkbox" aria-checked="{{ o.checked }}" onClick="{{ o.toggle }}" style="appearance:none;text-align:left;cursor:pointer;width:100%;min-height:52px;padding:14px 16px;border-radius:12px;font:{{ o.font }};background:{{ o.bg }};color:{{ o.fg }};border:1px solid {{ o.border }};display:flex;align-items:center;gap:12px;">
+      <span style="flex:1;min-width:0;font-size:16px;line-height:21px;">{{ o.label }}</span>
+    </button>
+  </sc-for>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:360,&quot;height&quot;:420}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { selected: props.selected || ['family'] };
+  }
+  persist(sel) { try { window.localStorage.setItem('capsule.helpTopics', JSON.stringify(sel)); } catch (e) {} }
+  componentDidMount() { this.persist(this.state.selected); }
+  toggle(id) {
+    this.setState((s) => {
+      const sel = s.selected.includes(id) ? s.selected.filter((x) => x !== id) : [...s.selected, id];
+      this.persist(sel);
+      return { selected: sel };
+    });
+    if (this.props.onToggle) this.props.onToggle(id);
+  }
+  renderVals() {
+    const opts = this.props.options || [
+      { id: 'family', label: 'Run family life without carrying every detail', journey: 'alison' },
+      { id: 'health', label: 'Get your health on track and keep it there', journey: 'axel' },
+      { id: 'relationships', label: 'Let people understand the real you', journey: 'jo' },
+      { id: 'career', label: 'Find your next direction, and own it', journey: 'hetta' },
+      { id: 'finance', label: 'Make your money fit your actual life', journey: 'maya' },
+      { id: 'recovery', label: 'Recover safely, with life adjusting around you', journey: 'becca' },
+    ];
+    const sel = this.state.selected;
+    const options = opts.map((o) => {
+      const on = sel.includes(o.id);
+      return {
+        label: o.label, checked: on ? 'true' : 'false', check: on ? '✓' : '',
+        toggle: () => this.toggle(o.id),
+        font: (on ? '600' : '400') + " 16px/21px inherit",
+        bg: on ? '#17171A' : '#FFFFFF',
+        fg: on ? '#FFFFFF' : '#17171A',
+        border: on ? '#17171A' : '#D9D9DD',
+        boxBorder: on ? '#FFFFFF' : '#B8B8BF',
+        boxBg: on ? '#0F766E' : 'transparent',
+      };
+    });
+    return { options };
+  }
+}
+</script>
+</body>
+</html>

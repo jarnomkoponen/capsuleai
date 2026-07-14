@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+  * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  body { margin: 0; }
+  .tk-row:focus-visible, .tk-more:focus-visible { outline: 2px solid #0F766E; outline-offset: 2px; }
+</style>
+</helmet>
+<section aria-label="Your tasks" style="font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display','Segoe UI',system-ui,sans-serif;">
+  <h2 style="margin:0 0 12px;font-size:15px;line-height:20px;font-weight:700;color:#17171A;">Your tasks</h2>
+  <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+    <p style="margin:0;font-size:16px;line-height:23px;color:#6E6E77;">Nothing needs your attention right now.</p>
+  </sc-if>
+  <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;">
+    <sc-for list="{{ tasks }}" as="t" hint-placeholder-count="3">
+      <li>
+        <button type="button" class="tk-row" onClick="{{ t.action }}" aria-label="{{ t.aria }}" style="width:100%;text-align:left;display:flex;align-items:center;gap:12px;min-height:52px;padding:12px 14px;border-radius:12px;cursor:pointer;background:{{ t.bg }};border:1px solid {{ t.border }};">
+          <sc-if value="{{ t.isConsent }}" hint-placeholder-val="{{ false }}">
+            <span aria-hidden="true" style="flex:none;width:22px;height:22px;border-radius:50%;border:2px solid #17171A;display:flex;align-items:center;justify-content:center;color:#17171A;font-size:13px;font-weight:800;line-height:1;">!</span>
+          </sc-if>
+          <span style="flex:1;min-width:0;">
+            <sc-if value="{{ t.isConsent }}" hint-placeholder-val="{{ false }}">
+              <span style="display:block;font-size:12px;line-height:15px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:#17171A;margin-bottom:2px;">Consent needed</span>
+            </sc-if>
+            <span style="display:block;font-size:16px;line-height:21px;color:#17171A;">{{ t.label }}</span>
+          </span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="flex:none;"><path d="M9 6l6 6-6 6" stroke="{{ t.chevron }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </li>
+    </sc-for>
+  </ul>
+  <sc-if value="{{ hasMore }}" hint-placeholder-val="{{ true }}">
+    <button type="button" class="tk-more" onClick="{{ onSeeMore }}" style="display:block;margin:14px auto 0;appearance:none;border:none;background:transparent;color:#6E6E77;font:400 15px/1 inherit;cursor:pointer;min-height:44px;">See more</button>
+  </sc-if>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:360,&quot;height&quot;:300},&quot;seeMore&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const raw = this.props.tasks || [
+      { id: 't1', label: 'Health coach: confirm task completion', kind: 'confirm' },
+      { id: 't2', label: 'Give consent for Home Helper', kind: 'consent' },
+      { id: 't3', label: 'Share medical data with Health coach', kind: 'consent' },
+    ];
+    const onTask = this.props.onTask || (() => {});
+    const tasks = raw.map((t) => {
+      const isConsent = t.kind === 'consent';
+      return {
+        label: t.label, isConsent,
+        bg: isConsent ? '#F7F7F8' : '#FFFFFF',
+        border: isConsent ? '#D9D9DD' : '#D9D9DD',
+        chevron: isConsent ? '#17171A' : '#B8B8BF',
+        aria: (isConsent ? 'Consent needed: ' : '') + t.label,
+        action: () => onTask(t),
+      };
+    });
+    return {
+      tasks,
+      isEmpty: tasks.length === 0,
+      hasMore: this.props.seeMore ?? true,
+      onSeeMore: this.props.onSeeMore || (() => {}),
+    };
+  }
+}
+</script>
+</body>
+</html>
