@@ -59,7 +59,7 @@ class Component extends DCLogic {
       vizKind: this.props.vizKind || 'trend',
       caption: this.props.caption || '',
       isMax: state === 'max', isNudge: state === 'has-nudge', isDefault: state === 'default',
-      summaryWeight: state === 'max' ? 'font-weight:600;' : 'font-weight:400;',
+      summaryWeight: 'font-weight:400;',
       ariaLabel: topic + '. ' + summary,
       onStartChat: () => (this.props.onStartChat || (() => {}))({ name: assistant }),
     };

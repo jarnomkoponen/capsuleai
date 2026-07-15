@@ -25,7 +25,7 @@
     </div>
     <div style="position:absolute;top:env(safe-area-inset-top,0);left:0;right:0;z-index:5;"><dc-import name="TopNavModule" variant="home" title="Home" unread="2" on-bell="{{ onBell }}" on-chat="{{ onChat }}" hint-size="100%,60px"></dc-import></div>
     <main role="main" class="hm-scroll" style="flex:1;min-height:0;overflow-y:auto;padding:72px 16px 112px;display:flex;flex-direction:column;gap:16px;">
-      <button type="button" onClick="{{ onOpenAssistants }}" aria-label="See your assistants" style="appearance:none;border:none;background:transparent;cursor:pointer;display:flex;justify-content:center;padding:0;width:100%;min-width:0;max-width:100%;overflow:hidden;flex:none;">
+      <button type="button" onClick="{{ onOpenAssistants }}" aria-label="See your assistants" style="appearance:none;border:none;background:transparent;cursor:pointer;display:flex;justify-content:center;padding:0;width:100%;min-width:0;max-width:100%;flex:none;">
         <dc-import name="StreamingMessageModule" phases="{{ workingPhases }}" bare="{{ true }}" hint-size="auto,40px"></dc-import>
       </button>
       <sc-for list="{{ moments }}" as="m" hint-placeholder-count="4">
