@@ -15,7 +15,7 @@
   @media (prefers-reduced-motion: reduce) { .sm-dot { animation: none !important; } }
 </style>
 </helmet>
-<div role="status" aria-live="polite" style="font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display','Segoe UI',system-ui,sans-serif;display:inline-flex;align-items:center;gap:10px;padding:12px 16px;background:#F7F7F8;border:1px solid #ECECEE;border-radius:16px;">
+<div role="status" aria-live="polite" style="font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display','Segoe UI',system-ui,sans-serif;display:inline-flex;align-items:center;gap:10px;padding:12px 16px;{{ chromeStyle }}">
   <span class="sm-dot" style="width:12px;height:12px;border-radius:50%;background:{{ accent }};flex:none;animation:smPulse 1.3s ease-in-out infinite;"></span>
   <span style="font-size:16px;line-height:22px;font-weight:500;color:#3A3A40;">{{ label }}</span>
 </div>
@@ -33,7 +33,9 @@ class Component extends DCLogic {
       'Fetching your data…', 'Analysing…', 'Searching the web…', 'Preparing content…', 'Finalizing…',
     ];
     const label = this.props.label || phases[this.state.i % phases.length];
-    return { label, accent: this.props.accent || '#0F766E' };
+    const bare = this.props.bare === true || this.props.bare === 'true';
+    const chromeStyle = bare ? '' : 'background:#F7F7F8;border:1px solid #ECECEE;border-radius:16px;';
+    return { label, accent: this.props.accent || '#0F766E', chromeStyle };
   }
 }
 </script>
