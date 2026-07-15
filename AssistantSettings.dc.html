@@ -90,6 +90,18 @@
           { id: 'notes', name: 'Notes', connected: false, scope: 'Reference notes you point it to' },
         ],
       },
+      'Career coach': {
+        topic: 'Career', efficiency: 45, vizKind: 'bars',
+        caption: 'How Career coach helps you grow — goals, skills and opportunities.',
+        personalize: [
+          { id: 'linkedin', kind: 'connect-app', label: 'Connect LinkedIn', accessLabel: 'so Career coach can see your experience and network' },
+          { id: 'portfolio', kind: 'connect-app', label: 'Add Portfolio', accessLabel: 'so it can reference your work and achievements' },
+        ],
+        connections: [
+          { id: 'linkedin', name: 'LinkedIn', connected: false, scope: 'Profile, experience and network' },
+          { id: 'portfolio', name: 'Portfolio', connected: false, scope: 'Work samples you add' },
+        ],
+      },
       'Financial coach': {
         topic: 'Finance', efficiency: 60, vizKind: 'bars',
         caption: 'How Financial coach keeps spending aligned with the life you actually live.',

@@ -25,14 +25,9 @@
     </div>
     <dc-import name="TopNavModule" variant="home" title="Home" unread="2" on-bell="{{ onBell }}" on-chat="{{ onChat }}" hint-size="100%,60px"></dc-import>
     <main role="main" class="hm-scroll" style="flex:1;min-height:0;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:16px;">
-      <dc-import name="MomentModule" assistant="Home helper" topic="Home" efficiency="55" state="max" vizKind="bars" summary="Sorted Thursday for you. Dinner shifted to recovery-friendly food, groceries adjusted, and the interval session swapped with Friday's run so football pickup no longer clashes." caption="This week's home coordination at a glance" on-start-chat="{{ onStartChat }}" hint-size="100%,460px"></dc-import>
-      <dc-import name="MomentModule" assistant="Health coach" topic="Health" efficiency="95" state="max" vizKind="trend" summary="Your recovery is on track. Efficiency is maxed — I'll let you know if anything else can help." caption="Recovery trending up over the last six weeks" on-start-chat="{{ onStartChat }}" hint-size="100%,420px"></dc-import>
-      <dc-import name="MomentModule" assistant="Training buddy" topic="Training" efficiency="70" state="default" vizKind="bars" summary="Your program is building up. I proposed two gym slots that fit both your and Marko's calendars — your health context stays private to you." caption="Shared sessions this week" on-start-chat="{{ onStartChat }}" hint-size="100%,420px"></dc-import>
-      <dc-import name="MomentModule" assistant="Companion" topic="Relationships" efficiency="40" state="has-nudge" vizKind="rings" summary="Held space for you to think it through. Share only what you choose, with whom you choose — and close it again when you're done." caption="Your reflections stay yours" on-start-chat="{{ onStartChat }}" hint-size="100%,500px"></dc-import>
-      <dc-import name="MomentModule" assistant="Financial coach" topic="Finance" efficiency="60" state="default" vizKind="bars" summary="Found two leaks to plug. A streaming service untouched for two months, and a learning plan overlapping a cheaper one — want me to fix them?" caption="Subscriptions that no longer fit" on-start-chat="{{ onStartChat }}" hint-size="100%,420px"></dc-import>
-
-      <div style="height:1px;background:#ECECEE;margin:4px 0;"></div>
-      <dc-import name="TasksModule" on-task="{{ onTask }}" hint-size="100%,300px"></dc-import>
+      <sc-for list="{{ moments }}" as="m" hint-placeholder-count="4">
+        <dc-import name="MomentModule" assistant="{{ m.assistant }}" topic="{{ m.topic }}" efficiency="{{ m.efficiency }}" state="{{ m.state }}" viz-kind="{{ m.vizKind }}" summary="{{ m.summary }}" caption="{{ m.caption }}" on-start-chat="{{ onStartChat }}" hint-size="100%,460px"></dc-import>
+      </sc-for>
 
       <div style="height:1px;background:#ECECEE;margin:4px 0;"></div>
       <dc-import name="AgentActivityLogModule" scope="all" hint-size="100%,420px"></dc-import>
@@ -41,6 +36,41 @@
   </div>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:420,&quot;height&quot;:880}}"></script>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:420,&quot;height&quot;:880}}">class Component extends DCLogic {
+  momentData() {
+    return {
+      'Home helper': { topic: 'Home', efficiency: 55, state: 'max', vizKind: 'bars', summary: "Sorted Thursday for you. Dinner shifted to recovery-friendly food, groceries adjusted, and the interval session swapped with Friday's run so football pickup no longer clashes.", caption: "This week's home coordination at a glance" },
+      'Health coach': { topic: 'Health', efficiency: 95, state: 'max', vizKind: 'trend', summary: "Your recovery is on track. Efficiency is maxed \u2014 I'll let you know if anything else can help.", caption: 'Recovery trending up over the last six weeks' },
+      'Training buddy': { topic: 'Training', efficiency: 70, state: 'default', vizKind: 'bars', summary: "Your program is building up. I proposed two gym slots that fit both your and Marko's calendars \u2014 your health context stays private to you.", caption: 'Shared sessions this week' },
+      'Companion': { topic: 'Relationships', efficiency: 40, state: 'has-nudge', vizKind: 'rings', summary: "Held space for you to think it through. Share only what you choose, with whom you choose \u2014 and close it again when you're done.", caption: 'Your reflections stay yours' },
+      'Career coach': { topic: 'Career', efficiency: 45, state: 'default', vizKind: 'bars', summary: 'Mapped your next move. I set three goals for the year and spotted two openings worth a look \u2014 want to review them?', caption: 'Your growth this quarter' },
+      'Financial coach': { topic: 'Finance', efficiency: 60, state: 'default', vizKind: 'bars', summary: 'Found two leaks to plug. A streaming service untouched for two months, and a learning plan overlapping a cheaper one \u2014 want me to fix them?', caption: 'Subscriptions that no longer fit' },
+    };
+  }
+  topicAssistants() {
+    return { family: ['Home helper'], health: ['Health coach', 'Training buddy'], relationships: ['Companion'], career: ['Career coach'], finance: ['Financial coach'], recovery: ['Health coach', 'Home helper'] };
+  }
+  readList(key) { try { return JSON.parse(window.localStorage.getItem(key) || '[]'); } catch (e) { return []; } }
+  activeNames() {
+    const map = this.topicAssistants();
+    const chosen = [];
+    this.readList('capsule.helpTopics').forEach((t) => (map[t] || []).forEach((n) => { if (!chosen.includes(n)) chosen.push(n); }));
+    const set = chosen.concat(this.readList('capsule.addedAssistants'));
+    const order = ['Home helper', 'Health coach', 'Training buddy', 'Companion', 'Career coach', 'Financial coach'];
+    const active = order.filter((n) => set.includes(n));
+    return active.length ? active : order;
+  }
+  renderVals() {
+    const data = this.momentData();
+    const moments = this.activeNames().map((n) => Object.assign({ assistant: n }, data[n]));
+    return {
+      moments,
+      onStartChat: this.props.onStartChat || (() => {}),
+      onBell: this.props.onBell || (() => {}),
+      onChat: this.props.onChat || (() => {}),
+      onNav: this.props.onNav || (() => {}),
+    };
+  }
+}</script>
 </body>
 </html>

@@ -94,6 +94,14 @@ class Component extends DCLogic {
           { id: 'journal', kind: 'connect-app', label: 'Connect your journal', accessLabel: 'so reflections carry across, staying private to you', purpose: 'connect your journal so reflections carry across — private to you', scopes: [ { id: 'entries', label: 'Private entries', accessLabel: 'read and add entries, kept to you alone' } ] },
         ],
       },
+      'Career coach': {
+        topic: 'Career', efficiency: 35, vizKind: 'bars',
+        caption: 'How Career coach helps you grow — tracking your goals, skills and opportunities.',
+        options: [
+          { id: 'linkedin', kind: 'connect-app', label: 'Connect LinkedIn', accessLabel: 'so Career coach can see your experience and network', purpose: 'connect to LinkedIn to understand your experience and opportunities', scopes: [ { id: 'profile', label: 'Profile & experience', accessLabel: 'read your roles, skills and history' }, { id: 'network', label: 'Network activity', accessLabel: 'see relevant openings and connections' } ] },
+          { id: 'portfolio', kind: 'connect-app', label: 'Add Portfolio', accessLabel: 'so it can reference your work and achievements', purpose: 'add your portfolio so it can reference your work and achievements', scopes: [ { id: 'work', label: 'Portfolio pieces', accessLabel: 'read the work samples you add' } ] },
+        ],
+      },
       'Financial coach': {
         topic: 'Finance', efficiency: 35, vizKind: 'bars',
         caption: 'How Financial coach keeps spending aligned with the life you actually live.',
@@ -107,7 +115,7 @@ class Component extends DCLogic {
   topicAssistants() {
     return {
       family: ['Home helper'], health: ['Health coach', 'Training buddy'],
-      relationships: ['Companion'], career: ['Companion'],
+      relationships: ['Companion'], career: ['Career coach'],
       finance: ['Financial coach'], recovery: ['Health coach', 'Home helper'],
     };
   }
@@ -117,7 +125,7 @@ class Component extends DCLogic {
     const map = this.topicAssistants();
     const names = [];
     sel.forEach((t) => (map[t] || []).forEach((n) => { if (!names.includes(n)) names.push(n); }));
-    const order = ['Home helper', 'Health coach', 'Training buddy', 'Companion', 'Financial coach'];
+    const order = ['Home helper', 'Health coach', 'Training buddy', 'Companion', 'Career coach', 'Financial coach'];
     const ordered = order.filter((n) => names.includes(n));
     return ordered.length ? ordered : ['Home helper'];
   }

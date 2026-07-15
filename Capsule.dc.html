@@ -12,16 +12,17 @@
 </helmet>
 <div style="min-height:100vh;">
   <sc-if value="{{ isSignin }}" hint-placeholder-val="{{ false }}"><dc-import name="SignIn" on-next="{{ toOnboarding }}" hint-size="100%,100vh"></dc-import></sc-if>
-  <sc-if value="{{ isOnboarding }}" hint-placeholder-val="{{ false }}"><dc-import name="Onboarding" on-next="{{ toOnboardingSetup }}" hint-size="100%,100vh"></dc-import></sc-if>
-  <sc-if value="{{ isOnboardingSetup }}" hint-placeholder-val="{{ false }}"><dc-import name="OnboardingAssistantSetup" on-finish="{{ toChatHubOnboarding }}" on-back="{{ toOnboarding }}" hint-size="100%,100vh"></dc-import></sc-if>
+  <sc-if value="{{ isOnboarding }}" hint-placeholder-val="{{ false }}"><dc-import name="Onboarding" on-next="{{ toMeetAssistants }}" hint-size="100%,100vh"></dc-import></sc-if>
+  <sc-if value="{{ isMeetAssistants }}" hint-placeholder-val="{{ false }}"><dc-import name="MeetAssistants" on-next="{{ toOnboardingSetup }}" on-back="{{ toOnboarding }}" hint-size="100%,100vh"></dc-import></sc-if>
+  <sc-if value="{{ isOnboardingSetup }}" hint-placeholder-val="{{ false }}"><dc-import name="OnboardingAssistantSetup" on-finish="{{ toChatHubOnboarding }}" on-back="{{ toMeetAssistants }}" hint-size="100%,100vh"></dc-import></sc-if>
   <sc-if value="{{ isSetupDetail }}" hint-placeholder-val="{{ false }}"><dc-import name="AssistantSetupDetail" on-start-chat="{{ toChatHubOnboarding }}" hint-size="100%,100vh"></dc-import></sc-if>
 
   <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}"><dc-import name="Home" on-nav="{{ onNav }}" on-bell="{{ toNotifications }}" on-chat="{{ toChatHub }}" on-start-chat="{{ toChatFresh }}" hint-size="100%,100vh"></dc-import></sc-if>
-  <sc-if value="{{ isAssistants }}" hint-placeholder-val="{{ false }}"><dc-import name="Assistants" on-nav="{{ onNav }}" on-bell="{{ toNotifications }}" on-chat="{{ toChatHub }}" on-open-chat="{{ toChat }}" on-open-settings="{{ toSettings }}" hint-size="100%,100vh"></dc-import></sc-if>
-  <sc-if value="{{ isYou }}" hint-placeholder-val="{{ false }}"><dc-import name="You" on-nav="{{ onNav }}" on-bell="{{ toNotifications }}" on-chat="{{ toChatHub }}" on-manage-access="{{ toAssistantsTab }}" on-log-out="{{ toSignin }}" on-delete-account="{{ toSignin }}" hint-size="100%,100vh"></dc-import></sc-if>
+  <sc-if value="{{ isAssistants }}" hint-placeholder-val="{{ false }}"><dc-import name="Assistants" on-nav="{{ onNav }}" on-bell="{{ toNotifications }}" on-chat="{{ toChatHub }}" on-open-chat="{{ toChatFresh }}" on-open-settings="{{ toSettings }}" hint-size="100%,100vh"></dc-import></sc-if>
+  <sc-if value="{{ isYou }}" hint-placeholder-val="{{ false }}"><dc-import name="You" on-nav="{{ onNav }}" on-bell="{{ toNotifications }}" on-chat="{{ toChatHub }}" on-open-life="{{ toChatFresh }}" on-manage-access="{{ toAssistantsTab }}" on-log-out="{{ toSignin }}" on-delete-account="{{ toSignin }}" hint-size="100%,100vh"></dc-import></sc-if>
   <sc-if value="{{ isChatHub }}" hint-placeholder-val="{{ false }}"><dc-import name="ChatHub" mode="{{ chatHubMode }}" on-back="{{ onBack }}" on-home="{{ toHome }}" on-bell="{{ toNotifications }}" on-nav="{{ onNav }}" on-open-chat="{{ toChat }}" on-open-settings="{{ toSettings }}" hint-size="100%,100vh"></dc-import></sc-if>
   <sc-if value="{{ isNotifications }}" hint-placeholder-val="{{ false }}"><dc-import name="Notifications" on-back="{{ onBack }}" on-home="{{ toHome }}" on-nav="{{ onNav }}" on-task="{{ toChatSeed }}" hint-size="100%,100vh"></dc-import></sc-if>
-  <sc-if value="{{ isChat }}" hint-placeholder-val="{{ false }}"><dc-import name="Chat" assistant="{{ chatAssistant }}" fresh="{{ chatFresh }}" seed="{{ chatSeed }}" on-back="{{ onBack }}" on-home="{{ toHome }}" on-bell="{{ toNotifications }}" hint-size="100%,100vh"></dc-import></sc-if>
+  <sc-if value="{{ isChat }}" hint-placeholder-val="{{ false }}"><dc-import name="Chat" assistant="{{ chatAssistant }}" fresh="{{ chatFresh }}" personalize="{{ chatPersonalize }}" seed="{{ chatSeed }}" on-back="{{ onBack }}" on-home="{{ toHome }}" on-bell="{{ toNotifications }}" hint-size="100%,100vh"></dc-import></sc-if>
   <sc-if value="{{ isAssistantIndividual }}" hint-placeholder-val="{{ false }}"><dc-import name="AssistantIndividual" on-back="{{ onBack }}" on-home="{{ toHome }}" hint-size="100%,100vh"></dc-import></sc-if>
   <sc-if value="{{ isAssistantSettings }}" hint-placeholder-val="{{ false }}"><dc-import name="AssistantSettings" assistant="{{ settingsAssistant }}" on-back="{{ onBack }}" on-home="{{ toHome }}" on-start-chat="{{ toChatFromSettings }}" hint-size="100%,100vh"></dc-import></sc-if>
 </div>
@@ -30,7 +31,7 @@
 class Component extends DCLogic {
   constructor(props) {
     super(props);
-    const valid = ['signin','onboarding','onboardingsetup','setupdetail','home','assistants','you','notifications','chathub','chat','assistantindividual','assistantsettings'];
+    const valid = ['signin','onboarding','meetassistants','onboardingsetup','setupdetail','home','assistants','you','notifications','chathub','chat','assistantindividual','assistantsettings'];
     let start = 'home';
     try {
       const h = (window.location.hash || '').replace('#','').toLowerCase();
@@ -45,12 +46,13 @@ class Component extends DCLogic {
     const tabMap = { home: 'home', assistants: 'assistants', you: 'you' };
     const rv = {
       isSignin: s === 'signin', isOnboarding: s === 'onboarding', isOnboardingSetup: s === 'onboardingsetup',
-      isSetupDetail: s === 'setupdetail', isHome: s === 'home', isAssistants: s === 'assistants', isYou: s === 'you',
+      isMeetAssistants: s === 'meetassistants', isSetupDetail: s === 'setupdetail', isHome: s === 'home', isAssistants: s === 'assistants', isYou: s === 'you',
       isNotifications: s === 'notifications', isChatHub: s === 'chathub', isChat: s === 'chat',
       isAssistantIndividual: s === 'assistantindividual', isAssistantSettings: s === 'assistantsettings',
       chatAssistant: this.state.chatAssistant,
       chatFresh: this.state.chatFresh,
       chatSeed: this.state.chatSeed,
+      chatPersonalize: this.state.chatPersonalize,
       chatHubMode: this.state.chatHubMode,
       settingsAssistant: this.state.settingsAssistant,
       onNav: (label) => this.go(tabMap[String(label).toLowerCase()] || 'home'),
@@ -61,7 +63,7 @@ class Component extends DCLogic {
       toChat: (a) => {
         const name = a && (a.name || a.label || a.assistant) ? (a.name || a.label || a.assistant) : null;
         const fresh = this.state.chatHubMode === 'onboarding';
-        this.setState((p) => ({ chatAssistant: name || p.chatAssistant, chatFresh: fresh, chatSeed: '' }));
+        this.setState((p) => ({ chatAssistant: name || p.chatAssistant, chatFresh: fresh, chatSeed: '', chatPersonalize: false }));
         this.go('chat');
       },
       onHubOpen: (a) => {
@@ -77,12 +79,12 @@ class Component extends DCLogic {
         this.go('assistantsettings');
       },
       toChatSeed: (t) => {
-        this.setState({ chatSeed: (t && t.id) || '', chatFresh: false });
+        this.setState({ chatSeed: (t && t.id) || '', chatFresh: false, chatPersonalize: false });
         this.go('chat');
       },
       toChatFresh: (a) => {
         const name = a && (a.name || a.label || a.assistant) ? (a.name || a.label || a.assistant) : null;
-        this.setState((p) => ({ chatAssistant: name || p.chatAssistant, chatFresh: true, chatSeed: '' }));
+        this.setState((p) => ({ chatAssistant: name || p.chatAssistant, chatFresh: true, chatSeed: '', chatPersonalize: !!(a && a.personalize) }));
         this.go('chat');
       },
       toChatFromSettings: () => {
@@ -90,6 +92,7 @@ class Component extends DCLogic {
         this.go('chat');
       },
       toOnboarding: () => this.go('onboarding'),
+      toMeetAssistants: () => this.go('meetassistants'),
       toOnboardingSetup: () => this.go('onboardingsetup'),
       toSetupDetail: () => this.go('setupdetail'),
     };

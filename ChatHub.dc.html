@@ -34,6 +34,9 @@
         <p style="margin:0;font-size:22px;line-height:28px;font-weight:700;letter-spacing:-0.01em;color:#17171A;">{{ heading }}</p>
       </sc-if>
       <dc-import name="AssistantsModule" assistants="{{ assistants }}" on-chat="{{ onOpenChat }}" on-settings="{{ onOpenSettings }}" hint-size="100%,420px"></dc-import>
+      <sc-if value="{{ hasAvailable }}" hint-placeholder-val="{{ false }}">
+        <dc-import name="AssistantsModule" mode="add" heading="Available assistants" assistants="{{ available }}" on-add="{{ onAdd }}" hint-size="100%,300px"></dc-import>
+      </sc-if>
       <sc-if value="{{ showRecents }}" hint-placeholder-val="{{ true }}">
         <dc-import name="RecentChatsModule" chats="{{ chats }}" see-more="{{ true }}" on-open="{{ onOpenChat }}" hint-size="100%,360px"></dc-import>
       </sc-if>
@@ -51,31 +54,55 @@ class Component extends DCLogic {
       family: ['Home helper'],
       health: ['Health coach', 'Training buddy'],
       relationships: ['Companion'],
-      career: ['Companion'],
+      career: ['Career coach'],
       finance: ['Financial coach'],
       recovery: ['Health coach', 'Home helper'],
     };
   }
-  selectedAssistants() {
-    let sel = [];
-    try { sel = JSON.parse(window.localStorage.getItem('capsule.helpTopics') || '[]'); } catch (e) {}
+  blurbs() {
+    return {
+      'Home helper': 'Keeps the week running without you connecting every dot.',
+      'Health coach': 'Keeps your health on track, and knows when it\u2019s a question for your doctor.',
+      'Training buddy': 'The accountability that actually makes you show up.',
+      'Companion': 'A private place to think, and the right words when you need them.',
+      'Career coach': 'Turns your own thinking into a direction, and an asset you keep.',
+      'Financial coach': 'Money that fits the life you actually live.',
+    };
+  }
+  order() { return ['Home helper', 'Health coach', 'Training buddy', 'Companion', 'Career coach', 'Financial coach']; }
+  readList(key) { try { return JSON.parse(window.localStorage.getItem(key) || '[]'); } catch (e) { return []; } }
+  chosenNames() {
     const map = this.topicAssistants();
     const names = [];
-    sel.forEach((t) => (map[t] || []).forEach((n) => { if (!names.includes(n)) names.push(n); }));
-    const order = ['Home helper', 'Health coach', 'Training buddy', 'Companion', 'Financial coach'];
-    const ordered = order.filter((n) => names.includes(n));
-    return ordered.length ? ordered.map((n) => ({ id: n.toLowerCase().replace(/\s+/g, '-'), name: n })) : null;
+    this.readList('capsule.helpTopics').forEach((t) => (map[t] || []).forEach((n) => { if (!names.includes(n)) names.push(n); }));
+    return names;
+  }
+  activeNames() {
+    const set = this.chosenNames().concat(this.readList('capsule.addedAssistants'));
+    return this.order().filter((n) => set.includes(n));
+  }
+  toObj(n) { return { id: n.toLowerCase().replace(/\s+/g, '-'), name: n, blurb: this.blurbs()[n] }; }
+  addAssistant(a) {
+    const added = this.readList('capsule.addedAssistants');
+    if (!added.includes(a.name)) { added.push(a.name); try { window.localStorage.setItem('capsule.addedAssistants', JSON.stringify(added)); } catch (e) {} }
+    this.forceUpdate();
+    (this.props.onAdd || (() => {}))(a);
   }
   renderVals() {
     const onboarding = this.props.mode === 'onboarding';
-    const provisioned = onboarding ? this.selectedAssistants() : null;
+    const active = this.activeNames();
+    const activeList = active.length ? active.map((n) => this.toObj(n)) : null;
+    const available = this.order().filter((n) => !active.includes(n)).map((n) => this.toObj(n));
     return {
       onboarding,
       showRecents: !onboarding,
       heading: onboarding ? 'Your assistants are ready' : '',
       showHeading: onboarding,
-      assistants: provisioned,
-      hasAssistantsProp: !!provisioned,
+      assistants: activeList,
+      hasAssistantsProp: !!activeList,
+      available,
+      hasAvailable: available.length > 0,
+      onAdd: (a) => this.addAssistant(a),
       onBack: this.props.onBack || (() => {}),
       onBell: this.props.onBell || (() => {}),
       onNav: this.props.onNav || (() => {}),

@@ -123,6 +123,82 @@ class Component extends DCLogic {
       },
     };
   }
+  personalizeData() {
+    return {
+      'Home helper': {
+        starters: [
+          { id: 'p1', label: 'Do you have children or people you care for?' },
+          { id: 'p2', label: 'Any dietary restrictions or allergies at home?' },
+          { id: 'p3', label: 'What does a typical week look like for you?' },
+        ],
+        replies: {
+          p1: 'Good to know — tell me who\u2019s in your household and I\u2019ll factor their schedules and needs into how I plan your week.',
+          p2: 'I\u2019ll remember that for meals and groceries, so nothing I suggest crosses those lines.',
+          p3: 'That helps me spot the recurring rhythms — school runs, work blocks, downtime — and protect the time that matters.',
+        },
+      },
+      'Health coach': {
+        starters: [
+          { id: 'p1', label: 'Do you have any long-term conditions?' },
+          { id: 'p2', label: 'Any medications I should be aware of?' },
+          { id: 'p3', label: 'What are your health goals right now?' },
+        ],
+        replies: {
+          p1: 'Thank you for telling me — I\u2019ll keep this in mind and always defer to your care team on anything clinical.',
+          p2: 'Noted. I\u2019ll factor timing and interactions into reminders, and flag anything that\u2019s a question for your doctor.',
+          p3: 'That gives us a direction. I\u2019ll shape suggestions around it and check in on progress gently.',
+        },
+      },
+      'Training buddy': {
+        starters: [
+          { id: 'p1', label: 'What kind of training do you enjoy?' },
+          { id: 'p2', label: 'How many days a week can you commit?' },
+          { id: 'p3', label: 'Who do you like to train with?' },
+        ],
+        replies: {
+          p1: 'Great — I\u2019ll build plans around what you actually enjoy, so showing up feels easier.',
+          p2: 'I\u2019ll keep the load realistic for that, and never overbook you.',
+          p3: 'I\u2019ll coordinate shared sessions with them — while keeping your personal health data on your side of the wall.',
+        },
+      },
+      'Companion': {
+        starters: [
+          { id: 'p1', label: 'What\u2019s been on your mind lately?' },
+          { id: 'p2', label: 'Who are the important people in your life?' },
+          { id: 'p3', label: 'What helps you feel grounded?' },
+        ],
+        replies: {
+          p1: 'Thank you for trusting me with that. It stays here, with you — take your time.',
+          p2: 'I\u2019ll hold that gently, and only ever bring them in if and when you choose to.',
+          p3: 'I\u2019ll remember what steadies you, so I can point back to it when things feel heavy.',
+        },
+      },
+      'Career coach': {
+        starters: [
+          { id: 'p1', label: 'What do you do, and where do you want to go?' },
+          { id: 'p2', label: 'What skills are you proud of?' },
+          { id: 'p3', label: 'What matters most in your next role?' },
+        ],
+        replies: {
+          p1: 'That gives me a north star — I\u2019ll shape goals and opportunities around where you\u2019re heading, not just where you are.',
+          p2: 'I\u2019ll build on those strengths and help you show them off in the right places.',
+          p3: 'I\u2019ll weigh openings against what you actually value, not just title or pay.',
+        },
+      },
+      'Financial coach': {
+        starters: [
+          { id: 'p1', label: 'What are your money goals this year?' },
+          { id: 'p2', label: 'Any big expenses coming up?' },
+          { id: 'p3', label: 'How hands-on do you want me to be?' },
+        ],
+        replies: {
+          p1: 'Clear goals help me tell signal from noise — I\u2019ll keep everything I suggest pointed at those.',
+          p2: 'I\u2019ll plan around it so it doesn\u2019t catch you off guard.',
+          p3: 'I\u2019ll match that — a light touch or a close eye, whichever you prefer, and you can change it anytime.',
+        },
+      },
+    };
+  }
   starterData() {
     return {
       'Home helper': {
@@ -179,6 +255,18 @@ class Component extends DCLogic {
           words: 'That\u2019s worth doing slowly. Start anywhere — even a fragment — and we\u2019ll shape it into words that feel true.',
         },
       },
+      'Career coach': {
+        starters: [
+          { id: 'goals', label: 'Help me set my career goals for this year' },
+          { id: 'skills', label: 'What skills should I build next?' },
+          { id: 'opps', label: 'Find opportunities that fit where I want to go' },
+        ],
+        replies: {
+          goals: 'Let\u2019s shape them together. Looking at your experience and where you want to head, I\u2019ll help you set a few clear, realistic goals for the year.',
+          skills: 'Based on your roles and the direction you\u2019re aiming for, I\u2019ll suggest a short list of skills worth building — and how to practice each.',
+          opps: 'I\u2019ll watch for roles and projects that match your goals, not just your current title — and only surface the ones genuinely worth your time.',
+        },
+      },
       'Financial coach': {
         starters: [
           { id: 'subs', label: 'Review my subscriptions for anything I don\u2019t use' },
@@ -211,6 +299,7 @@ class Component extends DCLogic {
       'Health coach': ['Show my recovery progress', 'Remind me at 8pm', 'Share an update with my clinic'],
       'Training buddy': ['Confirm this week\u2019s session', 'Add a Sunday long run', 'What can Marko see?'],
       'Companion': ['Say more about that', 'Help me find the words', 'Just sit with it for now'],
+      'Career coach': ['Draft a plan for this', 'Show me relevant openings', 'What skill first?'],
       'Financial coach': ['What else no longer fits?', 'Set a reminder for March', 'Keep briefings light'],
     };
     const labels = byAssistant[key] || ['Tell me more', 'Not now'];
@@ -224,6 +313,7 @@ class Component extends DCLogic {
       'Health coach': 'Got it. I\u2019ll factor that into your recovery plan.',
       'Training buddy': 'Noted — I\u2019ll line that up with the shared sessions.',
       'Companion': 'Thank you for sharing that. Take your time — this stays with us.',
+      'Career coach': 'Got it. I\u2019ll factor that into your goals and keep an eye out for the right opportunities.',
       'Financial coach': 'Understood. I\u2019ll keep an eye on that and flag anything relevant.',
     };
     this.setState((s) => ({ extra: [...(s.extra || []), { type: 'user', body: text, timestamp: ts }], thinking: true }));
@@ -234,7 +324,8 @@ class Component extends DCLogic {
   }
   starterReply(text, id) {
     const key = this.props.assistant || 'Health coach';
-    const data = this.starterData()[key] || {};
+    const personalize = this.props.personalize === true || this.props.personalize === 'true';
+    const data = (personalize ? this.personalizeData()[key] : this.starterData()[key]) || {};
     const reply = (data.replies && data.replies[id]) || 'Let\u2019s get into it.';
     this.setState((s) => ({ extra: [...(s.extra || []), { type: 'user', body: text, timestamp: this.now() }], thinking: true }));
     clearTimeout(this._t);
@@ -276,7 +367,8 @@ class Component extends DCLogic {
     const fresh = this.props.fresh === true || this.props.fresh === 'true';
     const convos = this.conversations();
     const convo = convos[key] || convos['Health coach'];
-    const sd = this.starterData()[key] || { starters: [] };
+    const personalize = this.props.personalize === true || this.props.personalize === 'true';
+    const sd = (personalize ? this.personalizeData()[key] : this.starterData()[key]) || { starters: [] };
     const all = seed ? [...seed.messages, ...(this.state.extra || [])]
       : (fresh ? [...(this.state.extra || [])] : [...convo.messages, ...(this.state.extra || [])]);
     const messages = all.map((m) => ({
